@@ -1,0 +1,23 @@
+{
+  "name": "0chan-utilities",
+  "version": "0.1.0",
+  "description": "Userscript for 0chan",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src --out-dir es5"
+  },
+  "keywords": [
+    "0chan"
+  ],
+  "author": "Snivy",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-latest": "^6.16.0"
+  },
+  "babel": {
+    "presets": [
+      "latest"
+    ]
+  }
+}
