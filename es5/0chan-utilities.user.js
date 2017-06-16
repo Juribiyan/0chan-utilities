@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
@@ -186,17 +186,27 @@ boardHider.init
   } else {
     boardHider.disable();
   }
+  var newForm = document.querySelector('.new-thread-form'),
+      textarea = newForm ? newForm.querySelector('textarea') : null;
   if (dir === '/sage' && !!+localStorage['u0_sageattempt']) {
-    document.querySelector('.new-thread-form').style = '';
-    forEveryNode('.reply-form-message textarea', function (textarea) {
+    if (newForm) {
+      newForm.style = '';
+    }
+    if (textarea) {
       textarea.value = '>>' + localStorage['u0_sageattempt'] + '\n';
       textarea.focus();
       injector.remove('reply-with-sage');
       localStorage['u0_sageattempt'] = 0;
-    }, 'reply-with-sage');
+    }
   } else {
     localStorage['u0_sageattempt'] = 0;
-    document.querySelector('.new-thread-form').style = 'display: none';
+    var _newForm = document.querySelector('.new-thread-form');
+    if (_newForm) {
+      _newForm.style = 'display: none';
+    }
+    if (textarea) {
+      textarea.value = '';
+    }
   }
 }, 'location-change'
 
