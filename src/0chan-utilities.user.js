@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
@@ -293,7 +293,11 @@ forEveryNode('.sidemenu-board-item a', board => {
   board.querySelector('.u0-board-delbtn').onclick = ev => {
     ev.preventDefault()
     ev.stopPropagation()
-    boardHider.toggleBoard(dir)
+    let btn = ev.target
+    while (btn.nodeName !== 'A') {
+      btn = btn.parentNode
+    }
+    boardHider.toggleBoard(btn.getAttribute('href').replace(/[\s\/]/g, ''))
     return false
   }
 }, 'board-filter')
