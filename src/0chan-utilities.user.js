@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
@@ -128,10 +128,10 @@ const css = `
   height: 19px;
   width: 21px;
   vertical-align: bottom;
-  color: #b5260d;
+  color: #ddd;
 }
 .u0-sage:hover {
-  color: #f13110;
+  color: #b5260d;
 }
 `
 injector.inject('u0-styles', css)

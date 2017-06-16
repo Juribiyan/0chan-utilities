@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
@@ -76,7 +76,7 @@ var injector = {
 }
 
 // Style
-var css = '\n.u0-board-delbtn {\n  height: 21px;\n  width: 21px;\n  line-height: 21px;\n  position: absolute;\n  opacity: 0;\n  transition: opacity 0.2s, color 0.2s;\n  color: #808080;\n  left: -22px;\n  top: 0;\n}\n.icontainer {\n  font-size: 0;\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n  border: none;\n  background: none;\n  outline: none;\n}\n.u0-board-delbtn:hover {\n  color: #fff;\n}\n.sidemenu-board-item:hover .u0-board-delbtn {\n  opacity: 1;\n}\n.icontainer svg {\n  height: 100%;\n  width: 100%;\n  fill: currentColor;\n}\n.svguse-undelete {\n  display: none;\n}\n.sidemenu-board-item a {\n  position: relative;\n}\n.u0-sage {\n  height: 19px;\n  width: 21px;\n  vertical-align: bottom;\n  color: #b5260d;\n}\n.u0-sage:hover {\n  color: #f13110;\n}\n';
+var css = '\n.u0-board-delbtn {\n  height: 21px;\n  width: 21px;\n  line-height: 21px;\n  position: absolute;\n  opacity: 0;\n  transition: opacity 0.2s, color 0.2s;\n  color: #808080;\n  left: -22px;\n  top: 0;\n}\n.icontainer {\n  font-size: 0;\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n  border: none;\n  background: none;\n  outline: none;\n}\n.u0-board-delbtn:hover {\n  color: #fff;\n}\n.sidemenu-board-item:hover .u0-board-delbtn {\n  opacity: 1;\n}\n.icontainer svg {\n  height: 100%;\n  width: 100%;\n  fill: currentColor;\n}\n.svguse-undelete {\n  display: none;\n}\n.sidemenu-board-item a {\n  position: relative;\n}\n.u0-sage {\n  height: 19px;\n  width: 21px;\n  vertical-align: bottom;\n  color: #ddd;\n}\n.u0-sage:hover {\n  color: #b5260d;\n}\n';
 injector.inject('u0-styles', css
 
 // SVG icons
