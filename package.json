@@ -10,6 +10,10 @@
     "0chan"
   ],
   "author": "Snivy",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/Juribiyan/0chan-utilities.git"
+  },
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.18.0",
