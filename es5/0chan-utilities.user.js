@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
@@ -183,38 +183,36 @@ boardHider.init
     var thread = post.parentNode.parentNode.parentNode.parentNode;
     thread.setAttribute('board-id', boardID);
   }
-}, 'post-detector'
+}, 'post-detector');
+
+var SAGE_THREAD = 14965;
 
 // Location change detector
-);forEveryNode('.headmenu', function (head) {
-  var dir = head.querySelector('.headmenu-title a');
-  dir = dir && dir.getAttribute('href');
+forEveryNode('.headmenu', function (head) {
+  var links = head.querySelectorAll('.headmenu-title a'),
+      dir = links && links[0] && links[0].getAttribute('href'),
+      thread = links && links[1] && links[1].getAttribute('href').split('/').reverse()[0];
+  // console.log(dir, thread)
   if (dir === '/') {
     boardHider.enable();
   } else {
     boardHider.disable();
   }
-  var newForm = document.querySelector('.new-thread-form'),
-      textarea = newForm ? newForm.querySelector('textarea') : null;
-  if (dir === '/sage' && !!+GM_getValue('u0_sageattempt')) {
-    if (newForm) {
-      newForm.style = '';
-    }
-    if (textarea) {
-      textarea.value = '>>' + GM_getValue('u0_sageattempt') + '\n';
-      textarea.focus();
-      injector.remove('reply-with-sage');
-      GM_setValue('u0_sageattempt', 0);
+  /*let newForm = document.querySelector('.new-thread-form')
+  , textarea = newForm ? newForm.querySelector('textarea') : null*/
+  if (thread == SAGE_THREAD && !!+GM_getValue('u0_sageattempt')) {
+    var replyBtn = document.querySelector('.post-op .fa-reply');
+    if (replyBtn) {
+      forEveryNode('.reply-form-message textarea', function (textarea) {
+        textarea.value = '>>' + GM_getValue('u0_sageattempt') + '\n';
+        textarea.focus();
+        injector.remove('reply-with-sage');
+        GM_setValue('u0_sageattempt', 0);
+      }, 'reply-with-sage');
+      replyBtn.click();
     }
   } else {
     GM_setValue('u0_sageattempt', 0);
-    var _newForm = document.querySelector('.new-thread-form');
-    if (_newForm) {
-      _newForm.style = 'display: none';
-    }
-    if (textarea) {
-      textarea.value = '';
-    }
   }
 }, 'location-change'
 
@@ -236,5 +234,5 @@ boardHider.init
 
 function replyWithSage(postID) {
   GM_setValue('u0_sageattempt', postID);
-  document.location.href = '/sage';
+  document.location.href = '/sage/14965';
 }
