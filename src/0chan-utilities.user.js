@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
 // @match        https://0chan.hk/*
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 
 'use strict'
@@ -156,12 +157,19 @@ const icons = `
   </svg>`
 document.body.insertAdjacentHTML('afterbegin', `<div style="none">${icons}</div>`)
 
+// Convert from localStorage to internal storage
+let ls_hiddenboards = localStorage['u0_hiddenboards']
+if (ls_hiddenboards) {
+  GM_setValue('u0_hiddenboards', ls_hiddenboards)
+  localStorage.removeItem('u0_hiddenboards')
+}
+
 // Hides threads from unwanted boards on index page
 const boardHider = {
   list: [],
   enabled: false,
   init: function() {
-    let hiddenBoards = localStorage['u0_hiddenboards']
+    let hiddenBoards = GM_getValue('u0_hiddenboards')
     if (hiddenBoards) {
       this.list = hiddenBoards.split(' ')
     }
@@ -207,7 +215,7 @@ const boardHider = {
   },
   sync: function() {
     this.refresh()
-    localStorage['u0_hiddenboards'] = this.list.join(' ')
+    GM_setValue('u0_hiddenboards', this.list.join(' '))
   },
   toggleBoard: function(dir) {
     let index = this.list.indexOf(dir)
@@ -267,19 +275,19 @@ forEveryNode('.headmenu', head => {
   }
   let newForm = document.querySelector('.new-thread-form')
   , textarea = newForm ? newForm.querySelector('textarea') : null
-  if (dir === '/sage' && !!+localStorage['u0_sageattempt']) {
+  if (dir === '/sage' && !!+GM_getValue('u0_sageattempt')) {
     if (newForm) {
       newForm.style = ''
     }
     if (textarea) {
-      textarea.value = `>>${localStorage['u0_sageattempt']}\n`
+      textarea.value = `>>${GM_getValue('u0_sageattempt')}\n`
       textarea.focus()
       injector.remove('reply-with-sage')
-      localStorage['u0_sageattempt'] = 0
+      GM_setValue('u0_sageattempt', 0)
     }
   }
   else {
-    localStorage['u0_sageattempt'] = 0
+    GM_setValue('u0_sageattempt', 0)
     let newForm = document.querySelector('.new-thread-form')
     if (newForm) {
       newForm.style = 'display: none'
@@ -313,6 +321,6 @@ forEveryNode('.sidemenu-board-item a', board => {
 }, 'board-filter')
 
 function replyWithSage(postID) {
-  localStorage['u0_sageattempt'] = postID
+  GM_setValue('u0_sageattempt', postID)
   document.location.href = '/sage'
 }

@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
 // @match        https://0chan.hk/*
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 
 'use strict';
@@ -83,12 +84,19 @@ injector.inject('u0-styles', css
 );var icons = '\n  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n  <defs>\n  <symbol id="i-delete" viewBox="0 0 32 32">\n  <title>delete</title>\n  <path d="M11.152 8.997l-2.154 2.154 4.85 4.851-4.85 4.848 2.152 2.152 4.85-4.848 4.85 4.848 2.154-2.154-4.848-4.85 4.848-4.85-2.152-2.152-4.848 4.85z"></path>\n  </symbol>\n  <symbol id="i-undelete" viewBox="0 0 32 32">\n  <title>undelete</title>\n  <path d="M11.152 8.997l-2.154 2.154 3.232 3.231 2.152-2.152-3.231-3.232zM13.848 16.001v0.001l-4.85 4.848 2.154 2.152 11.85-11.852-2.152-2.152-7.002 7.002zM17.617 19.769l3.232 3.234 2.154-2.154-3.234-3.232-2.152 2.152z"></path>\n  </symbol>\n  <symbol id="i-sage" viewBox="0 0 35 32">\n  <title>sage</title>\n  <path d="M13.475 15.159v-10.105h6.737v10.105h5.051l-8.42 8.423-8.42-8.423z"></path>\n  </symbol>\n  </defs>\n  </svg>';
 document.body.insertAdjacentHTML('afterbegin', '<div style="none">' + icons + '</div>'
 
+// Convert from localStorage to internal storage
+);var ls_hiddenboards = localStorage['u0_hiddenboards'];
+if (ls_hiddenboards) {
+  GM_setValue('u0_hiddenboards', ls_hiddenboards);
+  localStorage.removeItem('u0_hiddenboards');
+}
+
 // Hides threads from unwanted boards on index page
-);var boardHider = {
+var boardHider = {
   list: [],
   enabled: false,
   init: function init() {
-    var hiddenBoards = localStorage['u0_hiddenboards'];
+    var hiddenBoards = GM_getValue('u0_hiddenboards');
     if (hiddenBoards) {
       this.list = hiddenBoards.split(' ');
     }
@@ -135,7 +143,7 @@ document.body.insertAdjacentHTML('afterbegin', '<div style="none">' + icons + '<
   },
   sync: function sync() {
     this.refresh();
-    localStorage['u0_hiddenboards'] = this.list.join(' ');
+    GM_setValue('u0_hiddenboards', this.list.join(' '));
   },
   toggleBoard: function toggleBoard(dir) {
     var index = this.list.indexOf(dir);
@@ -188,18 +196,18 @@ boardHider.init
   }
   var newForm = document.querySelector('.new-thread-form'),
       textarea = newForm ? newForm.querySelector('textarea') : null;
-  if (dir === '/sage' && !!+localStorage['u0_sageattempt']) {
+  if (dir === '/sage' && !!+GM_getValue('u0_sageattempt')) {
     if (newForm) {
       newForm.style = '';
     }
     if (textarea) {
-      textarea.value = '>>' + localStorage['u0_sageattempt'] + '\n';
+      textarea.value = '>>' + GM_getValue('u0_sageattempt') + '\n';
       textarea.focus();
       injector.remove('reply-with-sage');
-      localStorage['u0_sageattempt'] = 0;
+      GM_setValue('u0_sageattempt', 0);
     }
   } else {
-    localStorage['u0_sageattempt'] = 0;
+    GM_setValue('u0_sageattempt', 0);
     var _newForm = document.querySelector('.new-thread-form');
     if (_newForm) {
       _newForm.style = 'display: none';
@@ -227,6 +235,6 @@ boardHider.init
 }, 'board-filter');
 
 function replyWithSage(postID) {
-  localStorage['u0_sageattempt'] = postID;
+  GM_setValue('u0_sageattempt', postID);
   document.location.href = '/sage';
 }
