@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.5
+// @version      0.2.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
 // @match        https://0chan.hk/*
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_setClipboard
+// @grant        unsafeWindow
 // ==/UserScript==
 
 'use strict'
@@ -88,52 +90,57 @@ function forEveryNode(selector, callback, identifier=(new Date().getTime().toStr
 
 // Style
 const css = `
-.u0-board-delbtn {
-  height: 21px;
-  width: 21px;
-  line-height: 21px;
-  position: absolute;
-  opacity: 0;
-  transition: opacity 0.2s, color 0.2s;
-  color: #808080;
-  left: -22px;
-  top: 0;
-}
-.icontainer {
-  font-size: 0;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: none;
-  outline: none;
-}
-.u0-board-delbtn:hover {
-  color: #fff;
-}
-.sidemenu-board-item:hover .u0-board-delbtn {
-  opacity: 1;
-}
-.icontainer svg {
-  height: 100%;
-  width: 100%;
-  fill: currentColor;
-}
-.svguse-undelete {
-  display: none;
-}
-.sidemenu-board-item a {
-  position: relative;
-}
-.u0-sage {
-  height: 19px;
-  width: 21px;
-  vertical-align: bottom;
-  color: #ddd;
-}
-.u0-sage:hover {
-  color: #b5260d;
-}
+ .u0-board-delbtn {
+   height: 21px;
+   width: 21px;
+   line-height: 21px;
+   position: absolute;
+   opacity: 0;
+   transition: opacity 0.2s, color 0.2s;
+   color: #808080;
+   left: -22px;
+   top: 0;
+ }
+ .icontainer {
+   font-size: 0;
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   border: none;
+   background: none;
+   outline: none;
+ }
+ .u0-board-delbtn:hover {
+   color: #fff;
+ }
+ .sidemenu-board-item:hover .u0-board-delbtn {
+   opacity: 1;
+ }
+ .icontainer svg {
+   height: 100%;
+   width: 100%;
+   fill: currentColor;
+ }
+ .svguse-undelete {
+   display: none;
+ }
+ .sidemenu-board-item a {
+   position: relative;
+ }
+ .u0-post-bottom-icon {
+   height: 19px;
+   width: 21px;
+   vertical-align: bottom;
+   color: #ccc;
+   margin-left: 7px;
+   transition: color 0.2s;
+ }
+ .u0-post-bottom-icon:hover {
+   color: #1abc9c;
+ }
+ .u0-sage:hover {
+   color: #b5260d;
+ }
 `
 injector.inject('u0-styles', css)
 
@@ -141,6 +148,14 @@ injector.inject('u0-styles', css)
 const icons = `
   <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
+  <symbol id="i-mention" viewBox="0 0 35 32">
+  <title>mention</title>
+  <path d="M27.399 14.259l-8.872-4.223v-3.113l11.788 6.19v2.385l-11.788 6.208v-3.145l8.872-4.303zM13.927 14.259l-8.872-4.223v-3.113l11.788 6.19v2.385l-11.788 6.208v-3.145l8.872-4.303z"></path>
+  </symbol>
+  <symbol id="i-sage" viewBox="0 0 35 32">
+  <title>sage</title>
+  <path d="M13.475 15.159v-10.105h6.737v10.105h5.051l-8.42 8.423-8.42-8.423z"></path>
+  </symbol>
   <symbol id="i-delete" viewBox="0 0 32 32">
   <title>delete</title>
   <path d="M11.152 8.997l-2.154 2.154 4.85 4.851-4.85 4.848 2.152 2.152 4.85-4.848 4.85 4.848 2.154-2.154-4.848-4.85 4.848-4.85-2.152-2.152-4.848 4.85z"></path>
@@ -148,10 +163,6 @@ const icons = `
   <symbol id="i-undelete" viewBox="0 0 32 32">
   <title>undelete</title>
   <path d="M11.152 8.997l-2.154 2.154 3.232 3.231 2.152-2.152-3.231-3.232zM13.848 16.001v0.001l-4.85 4.848 2.154 2.152 11.85-11.852-2.152-2.152-7.002 7.002zM17.617 19.769l3.232 3.234 2.154-2.154-3.234-3.232-2.152 2.152z"></path>
-  </symbol>
-  <symbol id="i-sage" viewBox="0 0 35 32">
-  <title>sage</title>
-  <path d="M13.475 15.159v-10.105h6.737v10.105h5.051l-8.42 8.423-8.42-8.423z"></path>
   </symbol>
   </defs>
   </svg>`
@@ -229,6 +240,13 @@ const boardHider = {
   }
 }
 
+// GUI alerts
+// Types available: info, error, success
+function nativeAlert(type, message) {
+  type = 'alert' + type.charAt(0).toUpperCase() + type.slice(1)
+  unsafeWindow.app.$bus.emit(type, message)
+}
+
 boardHider.init()
 
 // Adds board IDs to threads
@@ -244,7 +262,12 @@ forEveryNode('.post', post => {
   let replyBtn = post.querySelector('.post-footer .pull-right')
   if (replyBtn) {
     replyBtn.insertAdjacentHTML('afterbegin', `
-      <button class="u0-sage icontainer" title="SAGE!">
+      <button class="u0-mention u0-post-bottom-icon icontainer" title="Упомянуть">
+        <svg>
+          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-mention"></use>
+        </svg>
+      </button>
+      <button class="u0-sage u0-post-bottom-icon icontainer" title="SAGE!">
         <svg>
           <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-sage"></use>
         </svg>
@@ -253,6 +276,24 @@ forEveryNode('.post', post => {
       ev.preventDefault()
       ev.stopPropagation()
       replyWithSage(postID)
+      return false
+    }
+    replyBtn.parentNode.querySelector('.u0-mention').onclick = ev => {
+      ev.preventDefault()
+      ev.stopPropagation()
+      let textarea = document.querySelector('.thread textarea')
+      if (textarea) {
+        textarea.value += `${!textarea.value || textarea.value.match(/\n$/) ? '' : '\n'}>>${postID}\n`
+        textarea.dispatchEvent(new Event('input', {
+          'bubbles': true,
+          'cancelable': true
+        }))
+        textarea.focus()
+      }
+      else { // If no textarea found, copy to clipboard
+        GM_setClipboard(`>>${postID}\n`)
+        nativeAlert('success', 'Номер поста скопирован в буфер обмена')
+      }
       return false
     }
   }

@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.1.5
+// @version      0.2.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
 // @match        https://0chan.hk/*
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_setClipboard
+// @grant        unsafeWindow
 // ==/UserScript==
 
 'use strict';
@@ -77,11 +79,11 @@ var injector = {
 }
 
 // Style
-var css = '\n.u0-board-delbtn {\n  height: 21px;\n  width: 21px;\n  line-height: 21px;\n  position: absolute;\n  opacity: 0;\n  transition: opacity 0.2s, color 0.2s;\n  color: #808080;\n  left: -22px;\n  top: 0;\n}\n.icontainer {\n  font-size: 0;\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n  border: none;\n  background: none;\n  outline: none;\n}\n.u0-board-delbtn:hover {\n  color: #fff;\n}\n.sidemenu-board-item:hover .u0-board-delbtn {\n  opacity: 1;\n}\n.icontainer svg {\n  height: 100%;\n  width: 100%;\n  fill: currentColor;\n}\n.svguse-undelete {\n  display: none;\n}\n.sidemenu-board-item a {\n  position: relative;\n}\n.u0-sage {\n  height: 19px;\n  width: 21px;\n  vertical-align: bottom;\n  color: #ddd;\n}\n.u0-sage:hover {\n  color: #b5260d;\n}\n';
+var css = '\n .u0-board-delbtn {\n   height: 21px;\n   width: 21px;\n   line-height: 21px;\n   position: absolute;\n   opacity: 0;\n   transition: opacity 0.2s, color 0.2s;\n   color: #808080;\n   left: -22px;\n   top: 0;\n }\n .icontainer {\n   font-size: 0;\n   box-sizing: border-box;\n   margin: 0;\n   padding: 0;\n   border: none;\n   background: none;\n   outline: none;\n }\n .u0-board-delbtn:hover {\n   color: #fff;\n }\n .sidemenu-board-item:hover .u0-board-delbtn {\n   opacity: 1;\n }\n .icontainer svg {\n   height: 100%;\n   width: 100%;\n   fill: currentColor;\n }\n .svguse-undelete {\n   display: none;\n }\n .sidemenu-board-item a {\n   position: relative;\n }\n .u0-post-bottom-icon {\n   height: 19px;\n   width: 21px;\n   vertical-align: bottom;\n   color: #ccc;\n   margin-left: 7px;\n   transition: color 0.2s;\n }\n .u0-post-bottom-icon:hover {\n   color: #1abc9c;\n }\n .u0-sage:hover {\n   color: #b5260d;\n }\n';
 injector.inject('u0-styles', css
 
 // SVG icons
-);var icons = '\n  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n  <defs>\n  <symbol id="i-delete" viewBox="0 0 32 32">\n  <title>delete</title>\n  <path d="M11.152 8.997l-2.154 2.154 4.85 4.851-4.85 4.848 2.152 2.152 4.85-4.848 4.85 4.848 2.154-2.154-4.848-4.85 4.848-4.85-2.152-2.152-4.848 4.85z"></path>\n  </symbol>\n  <symbol id="i-undelete" viewBox="0 0 32 32">\n  <title>undelete</title>\n  <path d="M11.152 8.997l-2.154 2.154 3.232 3.231 2.152-2.152-3.231-3.232zM13.848 16.001v0.001l-4.85 4.848 2.154 2.152 11.85-11.852-2.152-2.152-7.002 7.002zM17.617 19.769l3.232 3.234 2.154-2.154-3.234-3.232-2.152 2.152z"></path>\n  </symbol>\n  <symbol id="i-sage" viewBox="0 0 35 32">\n  <title>sage</title>\n  <path d="M13.475 15.159v-10.105h6.737v10.105h5.051l-8.42 8.423-8.42-8.423z"></path>\n  </symbol>\n  </defs>\n  </svg>';
+);var icons = '\n  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n  <defs>\n  <symbol id="i-mention" viewBox="0 0 35 32">\n  <title>mention</title>\n  <path d="M27.399 14.259l-8.872-4.223v-3.113l11.788 6.19v2.385l-11.788 6.208v-3.145l8.872-4.303zM13.927 14.259l-8.872-4.223v-3.113l11.788 6.19v2.385l-11.788 6.208v-3.145l8.872-4.303z"></path>\n  </symbol>\n  <symbol id="i-sage" viewBox="0 0 35 32">\n  <title>sage</title>\n  <path d="M13.475 15.159v-10.105h6.737v10.105h5.051l-8.42 8.423-8.42-8.423z"></path>\n  </symbol>\n  <symbol id="i-delete" viewBox="0 0 32 32">\n  <title>delete</title>\n  <path d="M11.152 8.997l-2.154 2.154 4.85 4.851-4.85 4.848 2.152 2.152 4.85-4.848 4.85 4.848 2.154-2.154-4.848-4.85 4.848-4.85-2.152-2.152-4.848 4.85z"></path>\n  </symbol>\n  <symbol id="i-undelete" viewBox="0 0 32 32">\n  <title>undelete</title>\n  <path d="M11.152 8.997l-2.154 2.154 3.232 3.231 2.152-2.152-3.231-3.232zM13.848 16.001v0.001l-4.85 4.848 2.154 2.152 11.85-11.852-2.152-2.152-7.002 7.002zM17.617 19.769l3.232 3.234 2.154-2.154-3.234-3.232-2.152 2.152z"></path>\n  </symbol>\n  </defs>\n  </svg>';
 document.body.insertAdjacentHTML('afterbegin', '<div style="none">' + icons + '</div>'
 
 // Convert from localStorage to internal storage
@@ -154,7 +156,13 @@ var boardHider = {
     }
     this.sync();
   }
-};
+
+  // GUI alerts
+  // Types available: info, error, success
+};function nativeAlert(type, message) {
+  type = 'alert' + type.charAt(0).toUpperCase() + type.slice(1);
+  unsafeWindow.app.$bus.emit(type, message);
+}
 
 boardHider.init
 
@@ -170,11 +178,29 @@ boardHider.init
   // For all posts
   );var replyBtn = post.querySelector('.post-footer .pull-right');
   if (replyBtn) {
-    replyBtn.insertAdjacentHTML('afterbegin', '\n      <button class="u0-sage icontainer" title="SAGE!">\n        <svg>\n          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-sage"></use>\n        </svg>\n      </button>');
+    replyBtn.insertAdjacentHTML('afterbegin', '\n      <button class="u0-mention u0-post-bottom-icon icontainer" title="\u0423\u043F\u043E\u043C\u044F\u043D\u0443\u0442\u044C">\n        <svg>\n          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-mention"></use>\n        </svg>\n      </button>\n      <button class="u0-sage u0-post-bottom-icon icontainer" title="SAGE!">\n        <svg>\n          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-sage"></use>\n        </svg>\n      </button>');
     replyBtn.parentNode.querySelector('.u0-sage').onclick = function (ev) {
       ev.preventDefault();
       ev.stopPropagation();
       replyWithSage(postID);
+      return false;
+    };
+    replyBtn.parentNode.querySelector('.u0-mention').onclick = function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      var textarea = document.querySelector('.thread textarea');
+      if (textarea) {
+        textarea.value += (!textarea.value || textarea.value.match(/\n$/) ? '' : '\n') + '>>' + postID + '\n';
+        textarea.dispatchEvent(new Event('input', {
+          'bubbles': true,
+          'cancelable': true
+        }));
+        textarea.focus();
+      } else {
+        // If no textarea found, copy to clipboard
+        GM_setClipboard('>>' + postID + '\n');
+        nativeAlert('success', 'Номер поста скопирован в буфер обмена');
+      }
       return false;
     };
   }

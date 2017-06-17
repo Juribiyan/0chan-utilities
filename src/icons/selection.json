@@ -4,29 +4,89 @@
     {
       "icon": {
         "paths": [
+          "M876.781 456.301l-283.896-135.144v-99.622l377.225 198.093v76.331l-377.225 198.661v-100.628l283.896-137.69zM445.657 456.301l-283.912-135.144v-99.622l377.225 198.093v76.331l-377.225 198.661v-100.628l283.912-137.69z"
+        ],
+        "attrs": [],
+        "width": 1132,
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 19,
+        "tags": [
+          "mention"
+        ],
+        "colorPermutations": {}
+      },
+      "attrs": [],
+      "properties": {
+        "order": 6,
+        "id": 4,
+        "name": "mention",
+        "prevSize": 32
+      },
+      "setIdx": 0,
+      "setId": 1,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
+          "M431.195 485.072v-323.361h215.597v323.361h161.619l-269.453 269.523-269.435-269.523z"
+        ],
+        "width": 1132,
+        "attrs": [
+          {}
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "colorPermutations": {
+          "15315315312552552551": [
+            {}
+          ]
+        },
+        "tags": [
+          "sage"
+        ],
+        "grid": 19
+      },
+      "attrs": [
+        {}
+      ],
+      "properties": {
+        "order": 3,
+        "id": 2,
+        "name": "sage",
+        "prevSize": 32
+      },
+      "setIdx": 0,
+      "setId": 1,
+      "iconIdx": 1
+    },
+    {
+      "icon": {
+        "paths": [
           "M356.878 287.909l-68.924 68.924 155.189 155.234-155.189 155.145 68.879 68.879 155.189-155.145 155.189 155.145 68.924-68.924-155.145-155.189 155.145-155.189-68.879-68.879-155.145 155.189z"
         ],
         "attrs": [],
         "isMulticolor": false,
         "isMulticolor2": false,
-        "grid": 21,
+        "colorPermutations": {
+          "15315315312552552551": []
+        },
         "tags": [
           "delete"
         ],
-        "colorPermutations": {
-          "15315315312552552551": []
-        }
+        "grid": 21
       },
       "attrs": [],
       "properties": {
-        "order": 15,
-        "id": 1,
+        "order": 4,
+        "id": 0,
         "name": "delete",
         "prevSize": 32
       },
       "setIdx": 0,
-      "setId": 12,
-      "iconIdx": 0
+      "setId": 1,
+      "iconIdx": 2
     },
     {
       "icon": {
@@ -36,58 +96,24 @@
         "attrs": [],
         "isMulticolor": false,
         "isMulticolor2": false,
-        "grid": 21,
+        "colorPermutations": {
+          "15315315312552552551": []
+        },
         "tags": [
           "undelete"
         ],
-        "colorPermutations": {
-          "15315315312552552551": []
-        }
+        "grid": 21
       },
       "attrs": [],
       "properties": {
-        "order": 16,
-        "id": 0,
+        "order": 5,
+        "id": 1,
         "name": "undelete",
         "prevSize": 32
       },
       "setIdx": 0,
-      "setId": 12,
-      "iconIdx": 1
-    },
-    {
-      "icon": {
-        "paths": [
-          "M431.195 485.072v-323.361h215.597v323.361h161.619l-269.453 269.523-269.435-269.523z"
-        ],
-        "attrs": [
-          {}
-        ],
-        "width": 1132,
-        "isMulticolor": false,
-        "isMulticolor2": false,
-        "grid": 19,
-        "tags": [
-          "sage"
-        ],
-        "colorPermutations": {
-          "15315315312552552551": [
-            {}
-          ]
-        }
-      },
-      "attrs": [
-        {}
-      ],
-      "properties": {
-        "order": 17,
-        "id": 2,
-        "name": "sage",
-        "prevSize": 32
-      },
-      "setIdx": 0,
-      "setId": 12,
-      "iconIdx": 2
+      "setId": 1,
+      "iconIdx": 3
     }
   ],
   "height": 1024,
