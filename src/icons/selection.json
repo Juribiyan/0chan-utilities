@@ -1,0 +1,137 @@
+{
+  "IcoMoonType": "selection",
+  "icons": [
+    {
+      "icon": {
+        "paths": [
+          "M356.878 287.909l-68.924 68.924 155.189 155.234-155.189 155.145 68.879 68.879 155.189-155.145 155.189 155.145 68.924-68.924-155.145-155.189 155.145-155.189-68.879-68.879-155.145 155.189z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 21,
+        "tags": [
+          "delete"
+        ],
+        "colorPermutations": {
+          "15315315312552552551": []
+        }
+      },
+      "attrs": [],
+      "properties": {
+        "order": 15,
+        "id": 1,
+        "name": "delete",
+        "prevSize": 32
+      },
+      "setIdx": 0,
+      "setId": 12,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
+          "M356.878 287.909l-68.924 68.924 103.43 103.385 68.879-68.879-103.385-103.43zM443.143 512.022v0.045l-155.189 155.145 68.924 68.879 379.213-379.258-68.879-68.879-224.068 224.068zM563.737 632.616l103.43 103.474 68.924-68.924-103.474-103.43-68.879 68.879z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 21,
+        "tags": [
+          "undelete"
+        ],
+        "colorPermutations": {
+          "15315315312552552551": []
+        }
+      },
+      "attrs": [],
+      "properties": {
+        "order": 16,
+        "id": 0,
+        "name": "undelete",
+        "prevSize": 32
+      },
+      "setIdx": 0,
+      "setId": 12,
+      "iconIdx": 1
+    },
+    {
+      "icon": {
+        "paths": [
+          "M431.195 485.072v-323.361h215.597v323.361h161.619l-269.453 269.523-269.435-269.523z"
+        ],
+        "attrs": [
+          {}
+        ],
+        "width": 1132,
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 19,
+        "tags": [
+          "sage"
+        ],
+        "colorPermutations": {
+          "15315315312552552551": [
+            {}
+          ]
+        }
+      },
+      "attrs": [
+        {}
+      ],
+      "properties": {
+        "order": 17,
+        "id": 2,
+        "name": "sage",
+        "prevSize": 32
+      },
+      "setIdx": 0,
+      "setId": 12,
+      "iconIdx": 2
+    }
+  ],
+  "height": 1024,
+  "preferences": {
+    "showGlyphs": true,
+    "showQuickUse": true,
+    "showQuickUse2": true,
+    "showSVGs": true,
+    "fontPref": {
+      "prefix": "i-",
+      "metadata": {
+        "fontFamily": "instant-palette",
+        "majorVersion": 1,
+        "minorVersion": 0
+      },
+      "metrics": {
+        "emSize": 1024,
+        "baseline": 6.25,
+        "whitespace": 50
+      },
+      "resetPoint": 58880,
+      "showSelector": true,
+      "showMetrics": false,
+      "showMetadata": false,
+      "showVersion": false,
+      "selector": "i",
+      "embed": false,
+      "hideFormats": false
+    },
+    "imagePref": {
+      "prefix": "i-",
+      "png": false,
+      "useClassSelector": true,
+      "color": 4473924,
+      "bgColor": 16777215,
+      "classSelector": ".icon",
+      "columns": 16,
+      "margin": 16,
+      "height": 32
+    },
+    "historySize": 100,
+    "showCodes": true,
+    "gridSize": 16,
+    "showGrid": true,
+    "showLiga": false
+  }
+}

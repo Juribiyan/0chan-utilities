@@ -46,6 +46,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-#Node
-
+# Node
 node_modules
+
+# CorelDRAW backup files
+Резервная_копия_*.cdr
