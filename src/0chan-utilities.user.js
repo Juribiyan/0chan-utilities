@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.2.0
+// @version      0.2.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
@@ -281,7 +281,7 @@ forEveryNode('.post', post => {
     replyBtn.parentNode.querySelector('.u0-mention').onclick = ev => {
       ev.preventDefault()
       ev.stopPropagation()
-      let textarea = document.querySelector('.thread textarea')
+      let textarea = document.querySelector('.threads textarea')
       if (textarea) {
         textarea.value += `${!textarea.value || textarea.value.match(/\n$/) ? '' : '\n'}>>${postID}\n`
         textarea.dispatchEvent(new Event('input', {
