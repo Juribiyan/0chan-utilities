@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.2.3
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy
@@ -188,7 +188,7 @@ boardHider.init
     replyBtn.parentNode.querySelector('.u0-mention').onclick = function (ev) {
       ev.preventDefault();
       ev.stopPropagation();
-      var textarea = document.querySelector('.threads textarea');
+      var textarea = document.querySelectorAll('.thread textarea, .threads textarea')[0];
       if (textarea && textarea.offsetParent) {
         textarea.value += (!textarea.value || textarea.value.match(/\n$/) ? '' : '\n') + '>>' + postID + '\n';
         textarea.dispatchEvent(new Event('input', {
