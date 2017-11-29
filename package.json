@@ -1,6 +1,6 @@
 {
   "name": "0chan-utilities",
-  "version": "0.2.4",
+  "version": "1.1.0",
   "description": "Userscript for 0chan",
   "main": "index.js",
   "scripts": {

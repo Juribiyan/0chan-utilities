@@ -1,22 +1,1264 @@
 // ==UserScript==
 // @name         0chan Utilities
-// @namespace    http://tampermonkey.net/
-// @version      0.2.4
+// @namespace    http://0chan.hk/userjs
+// @version      1.1.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
-// @author       Snivy
-// @include     https://0chan.hk/*
-// @include     http://nullchan7msxi257.onion/*
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_setClipboard
-// @grant        unsafeWindow
+// @author       Snivy [0xf330f91f]
+// @include      https://0chan.hk/*
+// @include      http://nullchan7msxi257.onion/*
+// @grant        none
+// @icon         https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/icon.png
 // ==/UserScript==
 
-'use strict'
+/*'use strict';*/ // can't do because of eval()
+
+const icons = 
+  `<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+  <symbol id="i-logo" viewBox="0 0 32 32">
+  <path d="M19.454 21.933c-0.59 0.339-0.39 1.151-0.322 1.371 0.011 0.033-0.006 0.068-0.038 0.080-0.222 0.092-0.448 0.174-0.678 0.245-0.032 0.010-0.067-0.005-0.080-0.037-0.092-0.213-0.464-0.962-1.136-0.845-0.672 0.118-0.763 0.948-0.776 1.18-0.001 0.034-0.030 0.061-0.064 0.063-0.24 0.011-0.481 0.011-0.721 0-0.034-0.001-0.061-0.028-0.064-0.063-0.013-0.232-0.104-1.062-0.776-1.18-0.671-0.117-1.044 0.633-1.135 0.845-0.014 0.032-0.049 0.047-0.081 0.037-0.229-0.071-0.456-0.152-0.678-0.245-0.032-0.013-0.049-0.047-0.038-0.080 0.067-0.221 0.268-1.032-0.322-1.371-0.591-0.338-1.2 0.241-1.359 0.41-0.024 0.025-0.063 0.027-0.090 0.007-0.191-0.145-0.376-0.299-0.553-0.459-0.025-0.024-0.028-0.061-0.008-0.089 0.14-0.185 0.61-0.88 0.17-1.398-0.438-0.517-1.209-0.181-1.417-0.076-0.031 0.015-0.068 0.005-0.087-0.024-0.13-0.201-0.25-0.407-0.36-0.62-0.017-0.029-0.006-0.066 0.022-0.085 0.196-0.126 0.875-0.621 0.643-1.257-0.234-0.636-1.075-0.58-1.306-0.553-0.034 0.005-0.066-0.018-0.073-0.051-0.052-0.233-0.095-0.468-0.125-0.704-0.005-0.034 0.018-0.065 0.051-0.073 0.228-0.052 1.037-0.286 1.037-0.962s-0.809-0.91-1.037-0.963c-0.033-0.007-0.056-0.039-0.051-0.072 0.031-0.236 0.073-0.471 0.125-0.705 0.007-0.033 0.039-0.054 0.073-0.051 0.231 0.029 1.072 0.083 1.305-0.553s-0.446-1.129-0.642-1.255c-0.029-0.019-0.039-0.056-0.022-0.086 0.11-0.211 0.23-0.418 0.36-0.619 0.018-0.030 0.056-0.039 0.087-0.024 0.208 0.105 0.979 0.441 1.417-0.077 0.438-0.517-0.029-1.213-0.17-1.397-0.020-0.028-0.017-0.066 0.008-0.089 0.177-0.162 0.361-0.315 0.553-0.459 0.027-0.022 0.065-0.018 0.088 0.007 0.16 0.169 0.769 0.746 1.36 0.409s0.39-1.151 0.322-1.371c-0.011-0.033 0.006-0.067 0.038-0.080 0.222-0.092 0.448-0.174 0.678-0.245 0.032-0.010 0.067 0.006 0.080 0.037 0.092 0.213 0.464 0.962 1.136 0.845 0.672-0.118 0.763-0.948 0.776-1.18 0.002-0.034 0.030-0.060 0.064-0.063 0.24-0.011 0.481-0.011 0.721 0 0.034 0.002 0.063 0.028 0.064 0.063 0.013 0.232 0.104 1.062 0.776 1.18 0.671 0.117 1.044-0.632 1.136-0.845 0.013-0.031 0.048-0.047 0.080-0.037 0.23 0.071 0.456 0.152 0.678 0.245 0.032 0.013 0.049 0.047 0.038 0.080-0.067 0.221-0.268 1.034 0.322 1.371s1.2-0.24 1.36-0.409c0.022-0.025 0.061-0.029 0.088-0.008 0.191 0.145 0.376 0.299 0.553 0.46 0.025 0.022 0.029 0.060 0.008 0.087-0.14 0.185-0.608 0.88-0.17 1.398s1.209 0.182 1.417 0.077c0.031-0.015 0.068-0.006 0.086 0.024 0.13 0.201 0.25 0.407 0.36 0.619 0.017 0.029 0.007 0.067-0.022 0.086-0.195 0.125-0.875 0.62-0.642 1.255s1.074 0.581 1.305 0.553c0.034-0.005 0.066 0.018 0.073 0.051 0.052 0.232 0.095 0.467 0.125 0.704 0.005 0.034-0.018 0.066-0.051 0.073-0.228 0.053-1.037 0.287-1.037 0.963s0.809 0.911 1.037 0.962c0.033 0.007 0.056 0.039 0.051 0.073-0.031 0.236-0.073 0.471-0.125 0.704-0.007 0.033-0.039 0.056-0.073 0.051-0.231-0.027-1.072-0.083-1.305 0.553s0.446 1.13 0.642 1.257c0.029 0.018 0.039 0.056 0.022 0.085-0.11 0.211-0.23 0.418-0.36 0.62-0.018 0.029-0.056 0.038-0.086 0.023-0.208-0.104-0.979-0.441-1.417 0.077-0.438 0.518 0.029 1.213 0.17 1.398 0.020 0.027 0.017 0.065-0.008 0.089-0.177 0.16-0.361 0.314-0.553 0.459-0.027 0.020-0.065 0.018-0.088-0.008-0.16-0.169-0.769-0.746-1.36-0.409zM16 14.106c0.014 0 0.028 0 0.041 0 0.193 0.005 0.361-0.061 0.496-0.197l1.987-1.97c0.189-0.188 0.266-0.434 0.215-0.695-0.051-0.26-0.215-0.461-0.46-0.564-0.7-0.294-1.47-0.458-2.278-0.458-3.218 0-5.827 2.587-5.827 5.778 0 0.802 0.164 1.565 0.462 2.259 0.105 0.243 0.307 0.407 0.569 0.456 0.262 0.051 0.511-0.024 0.7-0.211l1.987-1.97c0.136-0.136 0.203-0.301 0.199-0.493 0-0.014-0.001-0.027-0.001-0.041 0-1.046 0.855-1.894 1.91-1.894zM17.908 15.958c0 0.014 0.001 0.027 0.001 0.041 0 1.045-0.855 1.893-1.91 1.893-0.014 0-0.027 0-0.041 0-0.193-0.005-0.36 0.063-0.496 0.197l-1.987 1.97c-0.189 0.188-0.266 0.435-0.215 0.695s0.215 0.461 0.46 0.564c0.7 0.296 1.47 0.458 2.279 0.458 3.217 0 5.826-2.587 5.826-5.778 0-0.802-0.164-1.565-0.462-2.26-0.105-0.243-0.307-0.405-0.569-0.456s-0.511 0.025-0.7 0.213l-1.986 1.97c-0.136 0.135-0.203 0.301-0.2 0.492zM16 14.991c-0.562 0-1.017 0.451-1.017 1.009s0.455 1.008 1.017 1.008c0.562 0 1.017-0.451 1.017-1.008s-0.455-1.009-1.017-1.009z"></path>
+  </symbol>
+  <symbol id="i-1chan" viewBox="0 0 32 32">
+  <path d="M15.001 2.001c-8.284 0-15 6.267-15 14 0 7.731 6.716 13.998 15 13.998s15-6.267 15-13.998c0-7.734-6.716-14-15-14zM18.001 9.999l1.998 1.002v9.999l-1.998 0.999v-12zM16 8.001h-2.001l-6 4.998 4.002 2.001v9h3.999v-15.999zM15.001 5.735c6.073 0 10.998 4.597 10.998 10.266 0 5.667-4.925 10.264-10.998 10.264s-10.998-4.597-10.998-10.264c0-5.669 4.925-10.266 10.998-10.266z"></path>
+  </symbol>
+  <symbol id="i-spinner" viewBox="0 0 32 32">
+  <path d="M23.957 20.347c-0.113-0.066-0.198-0.113-0.31-0.18-1.528-0.735-2.461-2.367-2.447-4.088 0.005-1.767 1.030-3.354 2.608-4.209 1.143-0.617 2.105-1.639 2.61-3.037 0.765-2.116 0.13-4.592-1.571-6.066-2.712-2.324-6.729-1.531-8.432 1.434-0.569 0.987-0.794 2.097-0.727 3.153 0.118 1.684-0.763 3.281-2.209 4.1l-0.059 0.040c-1.521 0.886-3.382 0.86-4.852-0.104-0.35-0.239-0.758-0.439-1.172-0.567-2.135-0.784-4.618-0.118-6.075 1.634-2.286 2.738-1.479 6.741 1.443 8.437 1.856 1.075 4.074 0.931 5.766-0.12 1.439-0.935 3.262-1.044 4.752-0.18l0.224 0.13c1.49 0.862 2.279 2.487 2.22 4.221-0.106 2.008 0.924 3.996 2.778 5.071 2.7 1.566 6.146 0.59 7.648-2.152 1.318-2.622 0.387-6.021-2.197-7.518zM4.28 18.198c-1.153-0.669-1.573-2.154-0.89-3.338 0.666-1.157 2.145-1.58 3.326-0.895s1.573 2.154 0.89 3.338c-0.695 1.141-2.173 1.564-3.326 0.895zM14.783 18.115c-1.153-0.669-1.573-2.152-0.89-3.338 0.68-1.186 2.145-1.58 3.326-0.895 1.179 0.685 1.571 2.154 0.89 3.338-0.683 1.186-2.173 1.564-3.326 0.895zM19.977 9.085c-1.153-0.669-1.573-2.152-0.893-3.338 0.683-1.186 2.145-1.58 3.326-0.895s1.573 2.154 0.89 3.338c-0.68 1.186-2.173 1.564-3.323 0.895zM19.963 27.289c-1.153-0.669-1.571-2.154-0.89-3.34 0.666-1.155 2.145-1.578 3.326-0.893 1.153 0.669 1.573 2.152 0.89 3.338-0.666 1.157-2.145 1.578-3.326 0.895z"></path>
+  </symbol>
+  </defs>
+  </svg>`
+document.body.insertAdjacentHTML('afterBegin', `<div style="display:none">${icons}</div>`)
+
+var appObserver, contentObserver, 
+content, contentVue, 
+singleThread, singleThreadVue,
+sidebar, sidebarVue, sidebarObserver, 
+alerts, alertsVue, 
+awaitBoardList,
+postQuotation = null,
+lastActiveTextarea
+, state = {
+  initialized: false
+}
+, version = GM_info.script.version
+
+const SAGE_THREAD = 14965
+
+var momInRoom = {
+  mainCSS: 
+    `.post-img-thumbnail { 
+      opacity: 0.2 ; 
+      filter: blur(4px) grayscale(50%) ; 
+    }}`,
+  hoverCSS: 
+    `.post-img .post-img-thumbnail,
+    .post-img .post-img-full {
+      transition: filter 0.3s, opacity 0.3s !important;
+    }
+    .post-img .post-img-thumbnail:hover,
+    .post-img .post-img-full:hover {
+      opacity: 1; 
+      filter: none; 
+    }`,
+  fullBlurCSS: 
+    `.post-img-full { 
+      opacity: 0.2 ; 
+      filter: blur(4px) grayscale(50%) ; 
+    }`,
+  toggle: function(val) {
+    let quickBtn = document.querySelector('#ZU-quickaction-momInRoom')
+    if (quickBtn) {
+      quickBtn.classList.toggle('active', val)
+    }
+    if (val) {
+      injector.inject('ZU-mom-in-room', this.mainCSS)
+    }
+    else {
+      injector.remove('ZU-mom-in-room')
+      injector.remove('ZU-mom-in-room-full')
+    }
+  },
+  toggleHover: function(val) {
+    if (val) {
+      injector.inject('ZU-unmask-on-hover', this.hoverCSS)
+      if (settings.momInRoom) {
+        injector.inject('ZU-mom-in-room-full', this.fullBlurCSS)
+      }
+    }
+    else {
+      injector.remove('ZU-unmask-on-hover')
+      injector.remove('ZU-mom-in-room-full')
+    }
+  }
+}
+
+const share = {
+  sites: {
+    '1chan': {
+      name: "1chan.ca",
+      link: (url, description) => `https://1chan.ca/live/addXS?link=${url}&description=${description}`,
+      icon: {
+        type: 'svg',
+        name: '1chan',
+        color: '#E42727'
+      },
+      width: 150,
+      height: 50
+    },
+    telegram: {
+      name: 'Telegram',
+      link: (url, description) => `https://telegram.me/share/url?url=${url}&text=${description}`,
+      icon: {
+        type: 'fa',
+        name: 'telegram',
+        color: '#2ca5e0'
+      },
+      width: 600,
+      height: 600
+    },
+    '1chanpl': {
+      name: "1chan.pl",
+      link: (url, description) => `https://1chan.pl/live/addXS?link=${url}&description=${description}`,
+      icon: {
+        type: 'svg',
+        name: '1chan',
+        color: '#dc143c'
+      },
+      width: 150,
+      height: 50
+    },
+  },
+  dropdown: function(url, description) {
+    url = encodeURIComponent(url)
+    return Object.keys(this.sites).reduce((htm, siteID) => {
+      let site = this.sites[siteID]
+      return htm + `
+        <li>
+          <a class="ZU-share-link" data-url="${url}" data-description="${description}" data-site="${siteID}" href="javascript:void(0)">
+          ${site.icon
+            ? `<span class="pull-left"><span${site.icon.color ? ` style="color:${site.icon.color}"` : ''}>` +
+            (site.icon.type == 'fa'
+              ? `<i class="fa fa-${site.icon.name}"></i>`
+              : `<svg class="ZU-svg ZU-svg-16 ${site.icon.extraClass ? site.icon.extraClass : ''}">
+                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-${site.icon.name}"></use>
+              </svg>`
+            ) + `</span></span>`
+            : ''
+          }
+          ${site.name}</a>
+        </li>`
+      }, '<ul class="dropdown-menu ZU-share-dropdown ZU-dropdown">') + '</ul>'
+  },
+  handleClick: function(link) {
+    let selectedText = postQuotation
+    , description = encodeURIComponent(selectedText ? selectedText.replace(/\n/g, ' ') : link.dataset.description)
+    , site = this.sites[link.dataset.site]
+    window.open(site.link(link.dataset.url, description), 
+      'targetWindow', 
+      `toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${site.width || 666},height=${site.height || 555}`)
+  }
+}
+
+var sideBar = {
+  init: () => {
+    app.$bus.on('toggleSidebar', sideBar.handleToggle)
+  },
+  handleToggle: () => {
+    if (window.innerWidth > 767) {
+      document.querySelector('.headmenu').classList.add('ZU-sidemenu-animation-allowed')
+      settings.hideSidebar = !settings.hideSidebar
+    }
+  },
+  toggle: function(hide) {
+    if (hide) {
+      document.body.classList.add('ZU-sidebar-hidden')
+    }
+    else {
+      document.body.classList.remove('ZU-sidebar-hidden')
+    }
+  }
+}
+
+const refresher = {
+  init: function() {
+    if (state.type !== 'thread') return;
+    let refreshIcon = document.querySelector('.btn-default .fa-refresh')
+    if (! refreshIcon) return;
+    let btn = refreshIcon.findParent('button')
+    btn.classList.add('ZU-refresh-btn')
+    btn.insertAdjacentHTML('afterBegin', `<div class="ZU-refresh-progressbar"></div><div class="ZU-refreshbtn-shadow-overlay"></div>`)
+    contentVue.checkNewReplies = () => {
+      this.timeoutStop()
+      contentVue.isFetchingMore = !0
+      var e = contentVue.posts[contentVue.posts.length - 1]
+      return contentVue.fetch(e.id).then(() => {
+        contentVue.isFetchingMore = !1
+        setTimeout(this.timeoutStart.bind(this), 400)
+      })
+    }
+    this.initialized = true
+    this.reset()
+  },
+  initialized: false,
+  reset: function(s = settings.updateInterval) {
+    if (s)
+      injector.inject('ZU-thread-update-interval', `
+        .ZU-refresh-progressbar.ZU-rpb-full {
+          transition: width ${s}s linear;
+          width: 100%;
+          opacity: 1;
+        }`)
+    if (! this.initialized) return;
+    this.timeoutStop()
+    setTimeout(() => this.timeoutStart(), 500)
+  },
+  timeout: null,
+  timeoutStart: function() {
+    if (! settings.updateInterval) return;
+    let progressBar = document.querySelector('.ZU-refresh-progressbar')
+    if (! progressBar) return;
+    void(progressBar.offsetWidth) // Animation won't start without this for some reason
+    progressBar.classList.add('ZU-rpb-full')
+    this.timeout = setTimeout(() => {
+      if (contentVue && contentVue.checkNewReplies) {
+        contentVue.checkNewReplies.bind(this)()
+      }
+    }, settings.updateInterval * 1000)
+  },
+  timeoutStop: function() {
+    clearTimeout(this.timeout)
+    let progressBar = document.querySelector('.ZU-refresh-progressbar')
+    if (! progressBar) return;
+    void(progressBar.offsetWidth) // Animation won't start without this for some reason
+    progressBar.classList.remove('ZU-rpb-full')
+  }
+}
+
+const catalog = {
+  enabledOn: ['home', 'favourite', 'watched', 'board'],
+  toggle: function(on=settings.catalogMode) {
+    let quickBtn = document.querySelector('#ZU-quickaction-catalogMode')
+    if (quickBtn)
+      quickBtn.classList.toggle('active', on)
+    if (this.isApplicable && on) {
+      injector.inject('ZU-catalog-mode', this.css)
+    }
+    else {
+      injector.remove('ZU-catalog-mode')
+    }
+  },
+  css: `
+    .thread-tree {
+      display: none;
+    }
+    div[board-id] {
+      width: 250px;
+      min-width: 250px;
+      display: inline-block;
+      height: 300px;
+      max-height: 300px;
+      min-height: 300px;
+      vertical-align: top;
+      margin: 4px !important;
+    }
+    .post-button {
+      padding: 0 4px;
+    }
+    .ZU-thread-controls {
+      display: none;
+    }
+    .thread-separator {
+      display: none;
+    }
+    .thread/*, .thread > div, .thread > div > div*/ {
+      height: 100%;
+    }
+    :not(.post-popup) > .post {
+      margin: 0;
+      width: 100%;
+      min-width: 0;
+      max-height: 300px;
+      min-height: 100%;
+    }
+    :not(.post-popup) > .post > .post-body {
+      max-height: 257px;
+      height: 257px;
+      overflow: auto;
+      min-height: 100%;
+    }
+    :not(.post-popup) > .post > .post-footer {
+      margin-top: 0;
+    }
+    .post-id > span:not(.ZU-hide-board-by-op) {
+      display: none;
+    }
+    .post-header .pull-right {
+      float: none !important;
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 2px 10px;
+      background: linear-gradient(to right, rgba(255, 35, 35, 0) 0px, white 18px 100%);
+    }
+    .post-header .pull-right:hover {
+      z-index: 2;
+    }
+    .post-header {
+      padding: 0 !important;
+    }
+    .post-id {
+      background: linear-gradient(to left, rgba(255, 35, 35, 0) 0px, white 18px, white 100%);
+      z-index: 2;
+      position: relative;
+      padding: 2px 6px;
+      display: inline-block;
+      padding-right: 20px;
+    }
+    .post-body-message {
+      overflow: hidden !important;
+      max-height: none !important;
+    }
+    .post-popup {
+      z-index: 3;
+    }
+    .reply-form {
+      max-width: none;
+      z-index: 3;
+    }
+    .ZU-noko-label {
+      display: none
+    }
+    .threads-scroll-spy + div {
+      margin-top: 15px;
+    }
+    .threads-scroll-spy {
+      z-index: 3;
+    }
+  `,
+  get isApplicable() {
+    return this.enabledOn.indexOf(state.type) !== -1
+  }
+}
+
+
+var settings = {
+  defaults: {
+    thumbNoScroll: true,
+    momInRoom: false,
+    unmaskOnHover: true,
+    hideSidebar: false,
+    hiddenBoards: [],
+    noko: true,
+    updateInterval: 10,
+    catalogMode: false
+  },
+  _: {},
+  hooks: {
+    momInRoom: momInRoom.toggle.bind(momInRoom),
+    unmaskOnHover: momInRoom.toggleHover.bind(momInRoom),
+    hideSidebar: sideBar.toggle.bind(sideBar),
+    updateInterval: refresher.reset.bind(refresher),
+    catalogMode: catalog.toggle.bind(catalog)
+  },
+  save: function() {
+    this._.hiddenBoards = this.hiddenBoards
+    localStorage['ZU-settings'] = JSON.stringify(this._)
+  },
+  init: function() {
+    let localSettins = LSfetchJSON('ZU-settings') || {}
+    , allSettings = Object.assign(this.defaults, localSettins)
+    Object.keys(allSettings).forEach(key => {
+      let value = allSettings[key]
+      if (typeof value !== "object") {
+        Object.defineProperty(this, key, {
+          set: function(val) {
+            this._[key] = val
+            if (this.hooks.hasOwnProperty(key)) {
+              this.hooks[key](val)
+            }
+            this.save()
+          },
+          get: function() {
+            return this._[key]
+          }
+        })
+      }
+      this[key] = value
+    })
+  }
+}
+
+// Hides threads from unwanted boards on index page
+const boardHider = {
+  enabled: false,
+  enable: function() {
+    if (this.enabled) {
+      return
+    }
+    this.enabled = true
+    this.refresh()
+  },
+  disable: function() {
+    if (this.enabled) {
+      injector.remove('ZU-hide-boards')
+    }
+    this.enabled = false
+  },
+  refresh: function() {
+    if (settings.hiddenBoards.length) {
+      let css
+      if (this.enabled) {
+        css = settings.hiddenBoards.map(boardID => `div[board-id="${boardID}"]`).join(', ')
+          + ' {display: none} '
+        injector.inject('ZU-hide-boards', css)
+      }
+      css = settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .ZU-board-hide-icon`).join(', ')
+        + ' {display: none} '
+        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .ZU-board-unhide-icon`).join(', ') 
+        + ' {display: block}'
+        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"]`).join(', ') 
+        + ' {text-decoration: line-through!important; }'
+        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .sidemenu-board-title`).join(', ') 
+        + ' {color:#808080!important; }'
+      injector.inject('ZU-hide-boards-ui', css)
+    }
+    else {
+      injector.remove('ZU-hide-boards')
+      injector.remove('ZU-hide-boards-ui')
+    }
+  },
+  toggleBoard: function(dir) {
+    let index = settings.hiddenBoards.indexOf(dir)
+    if (index >= 0) {
+      settings.hiddenBoards.splice(index, 1)
+    }
+    else {
+      settings.hiddenBoards.push(dir)
+    }
+    this.refresh()
+    settings.save()
+  }
+}
+
+
+
+var eventDispatcher = {
+  click: function(e) {
+    // Close alerts with one click
+    let alertsWrapper = e.path.find(el => el.classList && el.classList.contains('alerts-wrapper'))
+    if (alertsWrapper) {
+      alertsWrapper.__vue__.alerts = []
+    }
+    // Thread updating and expanding
+    if (e.target.classList && e.target.classList.contains('ZU-expand-thread')) {
+      let thread = e.path.find(el => (el.classList && el.classList.contains('thread')))
+      if (thread) {
+        expandThread(thread)
+      }
+    }
+    if (e.target.classList && e.target.classList.contains('ZU-update-thread')) {
+      let thread = e.path.find(el => (el.classList && el.classList.contains('thread')))
+      if (thread) {
+        updateThread(thread)
+      }
+    }
+    // No scroll
+    let img = e.path.find(el => el.classList && el.classList.contains('post-img'))
+    if (img) {
+      if (settings.thumbNoScroll) {
+        img.__vue__.noScroll = true
+      }
+    }
+    // Board hiding
+    let hideBtn = e.path.find(el => el.classList && el.classList.contains('ZU-boardhideunhide'))
+    if (hideBtn) {
+      e.preventDefault()
+      e.stopPropagation()
+      let dir = hideBtn.findParent('a').getAttribute('href').replace(/\//g, '')
+      boardHider.toggleBoard(dir)
+    }
+    // Board hiding by OP
+    let OPhideBtn = e.path.find(el => el.classList && el.classList.contains('ZU-hide-board-by-op'))
+    if (OPhideBtn) {
+      let dir = OPhideBtn.parentElement.querySelector('a').getAttribute('href').replace(/\//g, '')
+      boardHider.toggleBoard(dir)
+    }
+    // Share
+    let shareBtn = e.path.find(el => el.classList && el.classList.contains('ZU-share-btn'))
+    if (shareBtn) {
+      shareBtn.querySelector('.ZU-share-dropdown').classList.toggle('ZU-dropdown-show')
+    }
+    // Share link
+    let shareLink = e.path.find(el => el.classList && el.classList.contains('ZU-share-link'))
+    if (shareLink) {
+      share.handleClick(shareLink)
+    }
+    // Sage
+    let sage = e.path.find(el => el.classList && el.classList.contains('ZU-sage-btn'))
+    if (sage) {
+      router.push(`sage/${SAGE_THREAD}`)
+    }
+    // Mention
+    let mention = e.path.find(el => el.classList && el.classList.contains('ZU-mention-btn'))
+    if (mention) {
+      mentionPost(mention.findParent('.post'))
+    }
+    // Popup slosing
+    if (e.path.find(el => el.classList && el.classList.contains('ZU-settings-btn'))) {
+      document.querySelector('#ZU-settings').classList.toggle('ZU-dropdown-show')
+    }
+    else if (! e.path.find(el => el.classList && el.classList.contains('ZU-settings-dropdown'))) {
+      document.querySelector('#ZU-settings').classList.remove('ZU-dropdown-show')
+    }
+    if (! e.path.find(el => el.classList && (el.classList.contains('ZU-share-btn') || el.classList.contains('ZU-share-btn')))) {
+      Array.prototype.forEach.call(document.querySelectorAll('.ZU-share-dropdown'), dd => dd.classList.remove('ZU-dropdown-show'))
+    }
+  },
+  mousedown: function(e) {
+    // Quote on reply
+    let replyBtn = e.path.find(el => el.classList && (el.classList.contains('post-button-reply') || el.classList.contains('ZU-quote-on-click')))
+    if (replyBtn) {
+      if (replyBtn.classList.contains('ZU-qoc-from-anywhere')) {
+        let selection = getSelection()
+        if (selection)
+          postQuotation = selection.text
+      }
+      else
+        postQuotation = getPostQuotation(replyBtn.findParent('.post'), replyBtn.classList.contains('ZU-qoc-textonly') || replyBtn.classList.contains('post-button-reply'))
+    }
+  },
+  focusin: function(e) {
+    // Last active textarea
+    if (e.target.matches('.reply-form-message textarea')) {
+      lastActiveTextarea = e.target
+    }
+  },
+  change: function(e) {
+    // Noko
+    let noko = e.path.find(el => el.classList && el.classList.contains('ZU-noko'))
+    if (noko) {
+      settings.noko = noko.checked
+      Array.prototype.forEach.call(document.querySelectorAll('.ZU-noko'), otherNoko => {
+        if (otherNoko !== noko)
+          otherNoko.checked = noko.checked
+      })
+      
+    }
+  }
+}
+
+function getPostQuotation(post, withoutNumber = false) {
+  if (! post) return null;
+  let postData = getPostDataFromDOM(post)
+  if (! postData) return null;
+  let text = `>>${postData.id}`
+  , selection = getSelection()
+  if (selection && selection.post && selection.post == post) {
+    let selectedText = selection.text
+    .replace(/^\s/, '').replace(/\s$/, '') // remove leading and trailing whitespaces
+    .replace(/^>/gm, ' >').replace(/^/gm, '>') // add quotation marks
+    if (withoutNumber)
+      return selectedText + '\n'
+    text += '\n' + selectedText
+  }
+  else if (withoutNumber) return null;
+  text += '\n'
+  return text
+}
+
+function mentionPost(post) {
+  let text = postQuotation
+  if (! text) return;
+  postQuotation = null
+  let textarea = lastActiveTextarea
+  if (textarea && textarea.offsetParent) {
+    if (textarea.value && !textarea.value.match(/\n$/)) {
+      text = '\n'+text
+    }
+    textarea.value += text
+    textarea.dispatchEvent(new Event('input', {
+      'bubbles': true,
+      'cancelable': true
+    }))
+    textarea.focus()
+  }
+  else {
+    setClipboard(text)
+    nativeAlert('success', `Номер поста ${text.match(/[^>0-9\s]/g) ? 'и цитата скопированы' : 'скопирован'} в буфер обмена`)
+  }
+}
+
+
+function sageContinue() {
+  if (!postQuotation || singleThreadVue.thread.id != SAGE_THREAD) return;
+  let text = postQuotation
+  postQuotation = null
+  contentVue.isReplyToOpPostFormShown = true
+  app.$bus.once('refreshContentDone', () => {
+    window.scrollTo(0,document.body.scrollHeight)
+    let textarea = document.querySelector('.threads > div > .reply-form .reply-form-message textarea')
+    if (textarea.value && !textarea.value.match(/\n$/)) {
+      text = '\n'+text
+    }
+    textarea.value += text
+    textarea.dispatchEvent(new Event('input', {
+      'bubbles': true,
+      'cancelable': true
+    }))
+    textarea.focus()
+  })
+}
+
+function getSelection() {
+  if (! document.getSelection) return null;
+  let selection = document.getSelection()
+  if (selection.type !== "Range") return null;
+  let selectedText = selection.toString()
+  if (! selectedText) return null;
+  return {
+    text: selectedText,
+    post: selection.anchorNode.findParent('.post')
+  }
+}
+
+function setClipboard(text) {
+  if (! document.execCommand) return;
+  let input
+  try {
+    input = document.createElement('textarea')
+    document.body.appendChild(input)
+    input.value = text
+    input.focus()
+    input.select()
+    document.execCommand('Copy')
+  }
+  catch(e) {
+    console.warn('[u0] Unable to set clipboard')
+  }
+  input.remove()
+}
+
+function expandThread(threadDOM) {
+  let threadVue = threadVueFromDOM(threadDOM)
+  , threadID, opID, firstShownReplyID
+  if (!threadVue) {
+    console.warn('[0u] Unable to expand thread', e)
+    return
+  }
+  try {
+    threadID = threadVue.thread.id
+    , opID = threadVue.opPost.id
+    , firstShownReplyID = threadVue.lastPosts[0].id
+  }
+  catch(e) {
+    console.warn('[0u] Unable to expand thread', e)
+    return
+  }
+  getPosts(threadID, opID, firstShownReplyID)
+  .then(posts => {
+    threadVue.lastPosts = posts.concat(threadVue.lastPosts)
+    Array.prototype.forEach.call(threadDOM.querySelectorAll('.ZU-delete-on-threadexpand'), el => el.remove())
+  })
+  .catch(handleNetworkError)
+}
+function updateThread(thread) {
+  let threadVue, threadID, lastReplyID
+  if (thread instanceof Element) {
+    threadVue = threadVueFromDOM(thread)
+  }
+  else {
+    threadVue = thread
+  }
+  if (!threadVue) {
+    console.warn('[0u] Unable to update thread', e)
+    return
+  }
+  try {
+    threadID = threadVue.thread.id
+    lastReplyID = (threadVue.lastPosts[threadVue.lastPosts.length-1] || threadVue.opPost).id
+  }
+  catch(e) {
+    console.warn('[0u] Unable to update thread', e)
+    return
+  }
+  getPosts(threadID, lastReplyID)
+  .then(posts => {
+    threadVue.lastPosts = threadVue.lastPosts.concat(posts)
+  })
+  .catch(handleNetworkError)
+}
+
+
+const router = {
+  push: function(path) {
+    if (path.indexOf('/') !== 0) {
+      path = '/'+path
+    }
+    if (document.location.pathname == path) {
+      this.reload()
+    }
+    else {
+      app.$router.push({path: path})
+    }
+  },
+  reload: () => app.$bus.emit('refreshContent'),
+  setupInterceptor: function(doDebug=false) {
+    app.$router.push = (route, e, n) => {
+      let thread, threadID, postID
+      if (doDebug) 
+        console.log('ROUTE:', route)
+      if (
+        !settings.noko
+        && state.type !== "thread" 
+        && route.hasOwnProperty('name')
+        && route.name === "thread"
+        && route.hasOwnProperty('hash')
+        && (postID = route.hash.split('#')[1])
+        && route.hasOwnProperty('params')
+        && (threadID = route.params.threadId)
+        && !settings.catalogMode
+      ) {
+        // Quick reply case
+        let threadVue = contentVue.threads.find(thr => thr.thread.id == threadID)
+        if (
+          threadVue // Thread exists on page
+          && !document.querySelector(`a[data-post="${postID}"], a[href$="#${postID}"]`) // No link to new posts exists
+        ) {
+          try {
+            if (doDebug)
+              console.log('Route intercepted (quick reply)')
+            updateThread(threadVue)
+          }
+          catch(e) {
+            console.error(e)
+            app.$router.history.push(route, e, n)
+          }
+        }
+        // New thread case
+        else if (
+          state.type === "board" // New threads may be created only from a board view
+          && route.params.dir === contentVue.board.dir
+          && !document.querySelector(`a[href*="/${threadID}"]`) // Thread does not exist yet
+        ) {
+          if (doDebug)
+            console.log('Route intercepted (new thread)')
+          this.reload()
+        }
+        else {
+          app.$router.history.push(route, e, n)
+        }
+      }
+      else {
+        app.$router.history.push(route, e, n)
+      }
+    }
+  }
+}
+
+
+function setupAlertInterceptor() {
+  alertsVue.addAlert = function(t, e, a) {
+    var s = this
+      , n = {
+      type: t,
+      text: e
+    }
+    if (n.type === 'error' && n.text.indexOf('checking_browser')!== -1) {
+      let anusAlert = {
+        type: 'info',
+        text: 'Производится проверка ануса...'
+      }
+      this.alerts.unshift(anusAlert)
+      fuckCF(e, anusAlert, s)
+    }
+    else {
+      this.alerts.unshift(n),
+      setTimeout(function() {
+        s.closeAlert(n)
+      }, a || 3500)
+    }
+  }
+}
+
+// Thanks anoñchik from /userjs/
+function fuckCF(response, alertToClose, alertCloserContext) {
+  let query = 'jschl_vc=' + response.match(/jschl_vc" value="([^"]+)/)[1] + '&pass=' + response.match(/pass" value="([^"]+)/)[1] + '&jschl_answer=',
+  // basis for simplest eval 
+  a = {value: 0}, t = location.host
+  eval( response.match(/b,r,e,a,k,i,n,g,f, ([^;]+)/)[1] + '; ' + response.match(/getElementById\('challenge-form'\);\s+;([^']+)/)[1] )
+  query += a.value
+  let xhr = new XMLHttpRequest()
+  xhr.open("GET", '/cdn-cgi/l/chk_jschl?'+query, true)
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState !== xhr.DONE) return;
+    alertCloserContext.closeAlert(alertToClose) 
+    if (xhr.status == 200) {
+      // check if post is being sent
+      let sendingBtn = document.querySelector('.reply-form .btn-primary[disabled] .fa-spinner')
+      if (sendingBtn) {
+        try {
+          sendingBtn.findParent('.reply-form').__vue__.send()
+          return
+        }
+        catch(e) {}
+      }
+      // check if new threads are being fetched
+      if (contentVue.fetchingMore) {
+        contentVue.fetchingMore = false
+        if (app.$router.currentRoute.name === 'thread') {
+          /*singleThreadVue*/contentVue.checkNewReplies()
+        }
+        else {
+          contentVue.getMoreThreads()
+        }
+        return
+      }
+      // check if route has changed
+      if (! document.querySelector('#content div')) {
+        router.reload()
+        return
+      }
+      // default behavior
+      alertCloserContext.addAlert('success', 'Проверка ануса пройдена. Повторите попытку')
+    }
+    else {
+      alertCloserContext.addAlert('error', 'Проверка ануса провалилась.')
+    }
+  }
+  setTimeout(() => { 
+    xhr.send()
+  }, 4000)
+}
+
+function handleReplyForm(form) {
+  // Add noko button 
+  form.querySelector('.reply-form-message + div .pull-right').insertAdjacentHTML('beforeBegin', `
+    <label class="ZU-noko-label" title="После отправки сообщения переместиться к треду"><input class="ZU-noko" type="checkbox"${settings.noko ? 'checked' : '' }> Noko</label>`)
+  // Add quote from selection
+  if (postQuotation) {
+    let textarea = form.querySelector('textarea')
+    textarea.value = postQuotation
+    postQuotation = null
+    textarea.dispatchEvent(new Event('input', {
+      'bubbles': true,
+      'cancelable': true
+    }))
+    textarea.focus()
+    
+  }
+}
+
+
+function addSettingsButtons() {
+  let showCatBtn = catalog.isApplicable
+  document.querySelector('.headmenu-buttons-left').insertAdjacentHTML('beforeEnd', `
+    <div class="btn-group ZU-nomargin-btn-group">
+      <button title="0chan Utilities v.${version}" type="button" class="ZU-panel-btn btn btn-link ZU-btn-link ZU-svg-container-btn ZU-settings-btn">
+        <svg class="ZU-svg ZU-svg-32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-logo"></use></svg>
+      </button>
+      ${showCatBtn ? 
+      `<button title="Режим каталога" id="ZU-quickaction-catalogMode" data-prop="catalogMode" class="btn btn-link ZU-btn-link ZU-catalog-btn${settings.catalogMode ? ' active' : ''}">
+        <i class="fa fa-th ZU-onactive-hide"></i>
+        <i class="fa fa-th-list ZU-onactive-show"></i>
+      </button>` : '' }
+      <button title="Мамка в комнате" id="ZU-quickaction-momInRoom" data-prop="momInRoom" class="btn btn-link ZU-btn-link ZU-nsfw-btn${settings.momInRoom ? ' active' : ''}">
+        <i class="fa fa-low-vision"></i>
+      </button>
+    </div>
+    `)
+  injector.inject('ZU-headmenu-shift', `.headmenu-title { left: ${showCatBtn ? 170 : 130}px !important; }`)
+  ;['catalogMode', 'momInRoom'].forEach(prop => {
+    let btn = document.querySelector(`#ZU-quickaction-${prop}`)
+    if (! btn) return;
+    btn.addEventListener('click', ev => {
+      let btn = ev.target.findParent('button')
+      , on = !btn.classList.contains('active')
+      settings[prop] = document.querySelector(`#ZU-SP-${prop}`).checked = on
+    })
+  })
+}
+
+function handleBoardItem(board) {
+  if (board.querySelector('.ZU-boardhideunhide')) return;
+  board.insertAdjacentHTML('afterBegin', 
+    `<span class="pull-left sidemenu-board-icons ZU-boardhideunhide">
+      <span title="Скрыть" class="ZU-board-hide-icon">
+        <i class="fa fa-minus-square-o"></i>
+      </span>
+      <span title="Раскрыть" class="ZU-board-unhide-icon">
+        <i class="fa fa-plus-square-o"></i>
+      </span>
+    </span>`)
+}
+
+
+function init() {
+  if (typeof content.__vue__ === 'undefined') {
+    setupVueGetter() // *swoosh* — and __vue__ is available outside dev tools!
+  }
+
+  contentVue = content.__vue__
+
+  contentObserver = forAllNodes([
+    {
+      selector: '.thread',
+      fn: handleThread
+    },
+    {
+      selector: '.post',
+      fn: handlePost
+    }, {
+      selector: '.sidemenu-board-item a',
+      fn: handleBoardItem
+    },
+    {
+      selector: '.reply-form',
+      fn: handleReplyForm
+    }
+  ], content.parentElement, {subtree: true, queryChildren: true})
+  
+  sidebar = document.querySelector('#sidebar')
+  sidebarVue = sidebar.__vue__
+  awaitBoardList = forAllNodes([
+    {
+      selector: '.sidemenu-boards-list',
+      fn: boardList => {
+        app.$nextTick(()=>awaitBoardList.stop())
+        sidebarObserver = forAllNodes([
+          {
+            selector: '.sidemenu-board-item a',
+            fn: handleBoardItem
+          }
+        ], boardList, {queryChildren: true})
+      }
+    }
+  ], sidebar, {queryChildren: true})
+
+  router.setupInterceptor()
+
+  settings.init()
+
+  sideBar.init()
+
+  boardHider.refresh()
+
+  state.initialized = true
+}
+
+function handlePost(post) {
+  let extraIconsContainer = post.querySelector('.post-footer .pull-right')
+  if (!extraIconsContainer || extraIconsContainer.querySelector('.ZU-sage-btn'))
+    return;
+  extraIconsContainer.insertAdjacentHTML('afterBegin', `
+    <span title="Упомянуть" class="post-button ZU-mention-btn ZU-quote-on-click"><i class="fa fa-angle-double-right"></i></span>
+    <span title="SAGE!" class="post-button ZU-sage-btn ZU-quote-on-click"><i class="fa fa-arrow-down"></i></span>`)
+  let postData = getPostDataFromDOM(post)
+  if (!postData) return;
+  if (postData.isPopup) {
+    repositionPopup(post.parentNode)
+  }
+  else if (postData.isOpPost) {
+    extraIconsContainer.insertAdjacentHTML('beforeBegin', `
+      <div class="pull-left">
+        <span title="Поделиться" class="post-button ZU-share-btn ZU-quote-on-click ZU-qoc-from-anywhere">
+          <i class="fa fa-share-alt"></i>
+          ${share.dropdown(`${document.location.protocol}//${document.location.host}/${postData.dir}/${postData.threadID}`, postData.title)}
+          </span>
+      </div>`)
+  }
+}
+
+
+function repositionPopup(popup) {
+  let left = + popup.style.left.replace('px', '')
+  , top = + popup.style.top.replace('px', '')
+  , width = popup.offsetWidth
+  , height = popup.offsetHeight
+  let bcr = popup.getBoundingClientRect()
+  if (bcr.bottom > document.documentElement.clientHeight) {
+    popup.style.top = (top - height - 20)+'px'
+  }
+  let offsetRight = bcr.right - document.documentElement.clientWidth
+  if (offsetRight > 0) {
+    popup.style.left = (left - offsetRight)+'px'
+  }
+}
+
+function handleThread(thread) {
+  let threadVue = threadVueFromDOM(thread)
+  if (! threadVue) return;
+  thread.parentNode.setAttribute('board-id', threadVue.thread.board.dir)
+  addThreadControls(thread, threadVue)
+}
+
+function threadVueFromDOM(thread) {
+  try {
+    let threadID = thread.__vue__.thread.thread.id
+    return contentVue.threads.find(thread => thread.thread.id == threadID)
+  }
+  catch(e) {
+    console.warn('[0u] Unable to find thread model', thread, e)
+    return null
+  }
+}
+
+function getPostDataFromDOM(post) {
+  try {
+    let postVue = post.parentNode.__vue__
+    if (postVue.post) {
+      return {
+        id: postVue.post.id,
+        isOpPost: postVue.post.isOpPost,
+        dir: postVue.thread.board.dir,
+        threadID: postVue.thread.id,
+        title: postVue.thread.title,
+        isPopup: false,
+        postVue: postVue
+      }
+    }
+    else if (postVue.$el.classList.contains('post-popup')) {
+      let popupVue = postVue.$parent.popupPost
+      return {
+        id: popupVue.id,
+        isOpPost: popupVue.isOpPost,
+        dir: popupVue.boardDir,
+        threadID: popupVue.threadId,
+        isPopup: true,
+        popupVue: popupVue,
+        postVue: postVue
+      }
+    }
+    else return null
+  }
+  catch(e) {
+    console.warn('[0u] Unable to find post model', post, e)
+    return null
+  }
+}
+
+function addThreadControls(threadDOM, threadVue) {
+  let controlsContainer = Array.prototype.find.call(threadDOM.querySelectorAll(':scope > div > div:not(.thread-tree)'), div => !div.querySelector('.post-op'))
+  if (!controlsContainer || controlsContainer.classList.contains('ZU-thread-controls')) return;
+  let href = controlsContainer.querySelector('a').getAttribute('href')
+  if (threadVue.skippedPosts) {
+    controlsContainer.querySelector('span').classList.add('ZU-delete-on-threadexpand')
+    controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-expand-thread-container ZU-delete-on-threadexpand"> | <a href="${href}" onclick="return false" class="ZU-expand-thread">Развернуть</a></span>`)
+  }
+  controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-update-thread-container"> | <a href="${href}" onclick="return false" class="ZU-update-thread">Обновить</a></span>`)
+  controlsContainer.classList.add('ZU-thread-controls')
+
+  let op = threadDOM.querySelector('.post-op')
+  , opPostID = op.querySelector('.post-id')
+  op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container')
+  opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
+}
+
+var settingsPanelPage = {
+  modules: {
+    checkbox: {
+      build: checkbox => `
+        <div class="form-group">
+          <label class="control-label col-md-8">${checkbox.title}</label>
+          <div class="col-md-12">
+            <div class="checkbox">
+              <label><input data-id="${checkbox.id}" id="ZU-SP-${checkbox.id}" type="checkbox"${settings[checkbox.id] ? ' checked' : ''}> ${checkbox.description}</label>
+            </div>
+          </div>
+        </div>`,
+      events: {
+        change: ev => {
+          let checkbox = ev.target
+          try {
+            settings[checkbox.dataset.id] = checkbox.checked
+          }
+          catch(e) {
+            console.warn('[0u] Unable to handle checkbox change', checkbox)
+          }
+        }
+      }
+    }
+  },
+  controls: [
+    {
+      type: 'checkbox',
+      id: 'momInRoom',
+      title: "Мамка в комнате",
+      description: "Маскировать все картинки"
+    },
+    {
+      type: 'checkbox',
+      id: 'unmaskOnHover',
+      title: "Раскрывать по наведению",
+      description: "Раскрывать замаскированные картинки по наведению"
+    },
+    {
+      type: 'checkbox',
+      id: 'thumbNoScroll',
+      title: "Разворот без скролла",
+      description: "Не скроллить при разворачивании картинок"
+    }
+  ],
+  awaitInstall: function() {
+    let panelWaiter = forAllNodes([{
+      selector: '.profile-page .row',
+      fn: container => {
+        app.$nextTick(()=>panelWaiter.stop())
+        this.install(container)
+      }
+    }], content, {sutree: true, queryChildren: true})
+  },
+  install: function(container) {
+    container.insertAdjacentHTML('beforeEnd',  `
+      <div class="col-md-12">
+        <form>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <b>0chan Utilities v.${version}</b>
+            </div>
+            <div class="panel-body">
+              <div class="form-horizontal">
+                <div class="form-horizontal">
+                ${this.controls.reduce((htm, control) => htm + this.modules[control.type].build(control), '')}
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer text-right">
+              Изменения сохраняются автоматически.
+            </div>
+          </div>
+        </form>
+      </div>`)
+    this.controls.forEach(control => {
+      let allEvents = Object.assign(Object.create(this.modules[control.type].events || {}), control.events || {})
+      , controlDOM = document.querySelector(`#ZU-SP-${control.id}`)
+      if (! controlDOM) return;
+      for (let eventName in allEvents) {
+        controlDOM.addEventListener(eventName, allEvents[eventName])
+      }
+    })
+  }
+}
+
+var settingsPanel = {
+  modules: {
+    checkbox: {
+      build: checkbox => `
+        <li title="${checkbox.description || checkbox.title}">
+          <label for="ZU-SP-${checkbox.id}"><input data-id="${checkbox.id}" id="ZU-SP-${checkbox.id}" type="checkbox"${settings[checkbox.id] ? ' checked' : ''}> ${checkbox.title}</label>
+        </li>`,
+      events: {
+        change: ev => {
+          let checkbox = ev.target
+          settings[checkbox.dataset.id] = checkbox.checked
+        }
+      }
+    },
+    slider: {
+      build: slider => `
+        <li title="${slider.description || slider.title}">
+          <label for="ZU-SP-${slider.id}">${slider.title}
+            <span class="ZU-SP-slider-value">(${slider.displayValue ? slider.displayValue(settings[slider.id]) : settings[slider.id]})</span>
+            <input type="range" id="ZU-SP-${slider.id}" data-id="${slider.id}" value="${settings[slider.id]}" min="${slider.min}" max="${slider.max}" step="${slider.step}">
+          </label>
+        </li>`,
+      events: {
+        change: (ev, sliderObj) => {
+          let sliderDOM = ev.target
+          , val = +sliderDOM.value
+          settings[sliderObj.id] = val
+        },
+        input: (ev, sliderObj) => {
+          let sliderDOM = ev.target
+          , val = +sliderDOM.value
+          sliderDOM.findParent('label').querySelector('.ZU-SP-slider-value').innerText = `(${sliderObj.displayValue(val)})`
+        }
+      }
+    }
+  },
+  controls: [
+    {
+      type: 'checkbox',
+      id: 'momInRoom',
+      title: "Мамка в комнате",
+      description: "Маскировать все картинки"
+    },
+    {
+      type: 'checkbox',
+      id: 'unmaskOnHover',
+      title: "Раскрывать по наведению",
+      description: "Раскрывать замаскированные картинки по наведению"
+    },
+    {
+      type: 'checkbox',
+      id: 'thumbNoScroll',
+      title: "Разворот без скролла",
+      description: "Не скроллить при разворачивании картинок"
+    },
+    {
+      type: 'slider',
+      id: 'updateInterval',
+      title: "Период обновления",
+      title: "Период обновления треда",
+      min: 0,
+      step: 5,
+      max: 60,
+      condition: () => state.type==="thread",
+      displayValue: val => val ? `${val} с` : "Выкл."
+    },
+    {
+      type: 'checkbox',
+      id: 'catalogMode',
+      title: "Режим каталога",
+      description: "Отображать треды в виде каталога",
+      condition: () => catalog.isApplicable,
+    },
+  ],
+  install: function(container) {
+    let controls = this.controls.filter(control => !control.condition || control.condition())
+    document.querySelector('.headmenu').insertAdjacentHTML('beforeEnd',  `
+      <ul class="dropdown-menu ZU-settings-dropdown ZU-dropdown" id="ZU-settings">
+        ${controls.reduce((htm, control) => htm + this.modules[control.type].build(control), '')}
+      </ul>`)
+    controls.forEach(control => {
+      if (state.condition && !state.condition()) return;
+      let allEvents = Object.assign(Object.create(this.modules[control.type].events || {}), control.events || {})
+      , controlDOM = document.querySelector(`#ZU-SP-${control.id}`)
+      if (! controlDOM) return;
+      for (let eventName in allEvents) {
+        controlDOM.addEventListener(eventName, ev => allEvents[eventName](ev, control))
+      }
+    })
+  }
+}
+
+
+var ZURouter = {
+  currentRoute: 'initial',
+  enter: {
+    account: settingsPanelPage.awaitInstall.bind(settingsPanel),
+    home: boardHider.enable.bind(boardHider),
+    thread: sageContinue
+  },
+  leave: {
+    home: boardHider.disable.bind(boardHider),
+    thread: refresher.timeoutStop
+  },
+  handleRoute: function(type) {
+    catalog.toggle()
+    if (this.enter.hasOwnProperty(type)) {
+      this.enter[type]()
+    }
+    if (type !== this.currentRoute && this.leave.hasOwnProperty(this.currentRoute))  {
+      this.leave[this.currentRoute]()
+    }
+    this.currentRoute = type
+  }
+}
+
+
 
 // CSS injector
-const injector = {
+var injector = {
   inject: function(alias, css) {
     var id = `injector:${alias}`
     var existing = document.getElementById(id)
@@ -46,321 +1288,435 @@ const injector = {
   }
 }
 
-// Node insertion detector (fuck mutation observer)
-function forEveryNode(selector, callback, identifier=(new Date().getTime().toString(16)), classOnDone="FEN-done") {
-  identifier = 'FEN_'+identifier
-  let css = '', rule = ''
-  ;['', '-moz-', '-webkit-', '-ms-', '-o-'].forEach(prefix => {
-    if(prefix == '-ms-') {
-      css += `
-      @${prefix}keyframes ${identifier} {  
-        from { opacity: 0.999; }
-        to { opacity: 1; }
-      }`
-    }
-    else {
-      css += `
-      @${prefix}keyframes ${identifier} {  
-        from { clip: rect(1px, auto, auto, auto); }
-        to { clip: rect(0px, auto, auto, auto); }  
-      }`
-    }
-    rule += `
-    ${prefix}animation-duration: 0.001s;
-    ${prefix}animation-name: ${identifier};
-    `
-  })
-  css += `${selector} {${rule}}`
 
-  ;['animationstart', 'webkitAnimationStart', 'MSAnimationStart', 'oanimationstart'].forEach(evType => {
-    document.addEventListener(evType, function(ev) {
-      if(ev.animationName == identifier && !ev.target.classList.contains(classOnDone)) {
-        callback(ev.target)
-        ev.target.classList.add(classOnDone)
-      }
+function forAllNodes(selFnMap, parent=document.body, options={}) {
+  let config = Object.assign({
+    autoStart: true, // whether or not observer shall start observing immediately
+    subtree: false, 
+    childList: true,
+    queryChildren: false //whether or not inserted nodes shall be searched for selector-matching elements
+  }, options)
+  , afterClass
+  // Setup observer
+  let observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      Array.prototype.forEach.call(mutation.addedNodes, node => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        selFnMap.forEach(sf => {
+          if (node.matches(sf.selector)) {
+            sf.fn(node)
+          }
+          else if (config.queryChildren || sf.queryChildren) {
+            let foundChildren = node.querySelectorAll(sf.selector)
+            if (foundChildren) {
+              Array.prototype.forEach.call(foundChildren, childNode => {
+                sf.fn(childNode)
+              })
+            }
+          }
+        })
+      })
     })
   })
+  function start() {
+    // Handle existing nodes
+    selFnMap.forEach(sf => {
+      let existingNodes = parent.querySelectorAll(sf.selector) 
+      Array.prototype.forEach.call(existingNodes, node => {
+        sf.fn(node)
+      })
+    })
+    // Handle future nodes
+    observer.observe(parent, config)
+  }
+  if (config.autoStart) {
+    start()
+  }
+  return {
+    start: start,
+    stop: () => observer.disconnect()
+  }
+} 
 
-  injector.inject(identifier, css)
+function externallyResolvingPromise() {
+  let promiseResolve, promiseReject
+  , promise = new Promise(function(resolve, reject){
+    promiseResolve = resolve;
+    promiseReject = reject;
+  });
 
   return {
-    id: identifier,
-    disable: () => injector.remove(identifier)
+    promise: promise,
+    resolve: promiseResolve,
+    reject: promiseReject
   }
 }
 
-// Style
-const css = `
- .u0-board-delbtn {
-   height: 21px;
-   width: 21px;
-   line-height: 21px;
-   position: absolute;
-   opacity: 0;
-   transition: opacity 0.2s, color 0.2s;
-   color: #808080;
-   left: -22px;
-   top: 0;
- }
- .icontainer {
-   font-size: 0;
-   box-sizing: border-box;
-   margin: 0;
-   padding: 0;
-   border: none;
-   background: none;
-   outline: none;
- }
- .u0-board-delbtn:hover {
-   color: #fff;
- }
- .sidemenu-board-item:hover .u0-board-delbtn {
-   opacity: 1;
- }
- .icontainer svg {
-   height: 100%;
-   width: 100%;
-   fill: currentColor;
- }
- .svguse-undelete {
-   display: none;
- }
- .sidemenu-board-item a {
-   position: relative;
- }
- .u0-post-bottom-icon {
-   height: 19px;
-   width: 21px;
-   vertical-align: bottom;
-   color: #ccc;
-   margin-left: 7px;
-   transition: color 0.2s;
- }
- .u0-post-bottom-icon:hover {
-   color: #1abc9c;
- }
- .u0-sage:hover {
-   color: #b5260d;
- }
-`
-injector.inject('u0-styles', css)
+// Element.matches() polyfill
+;[Element.prototype, Text.prototype].forEach(e => {
+  e.matches || (e.matches=e.matchesSelector || function(selector) {
+    var matches = document.querySelectorAll(selector)
+    return Array.prototype.some.call(matches, e => {
+       return e === this
+    })
+  })
+  e.findParent = function(selector) {
+    let node = this
+    while(node && !node.matches(selector)) {
+      node = node.parentNode
+      if (! node.matches) return null;
+    }
+    return node
+  }
+})
 
-// SVG icons
-const icons = `
-  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <defs>
-  <symbol id="i-mention" viewBox="0 0 35 32">
-  <title>mention</title>
-  <path d="M27.399 14.259l-8.872-4.223v-3.113l11.788 6.19v2.385l-11.788 6.208v-3.145l8.872-4.303zM13.927 14.259l-8.872-4.223v-3.113l11.788 6.19v2.385l-11.788 6.208v-3.145l8.872-4.303z"></path>
-  </symbol>
-  <symbol id="i-sage" viewBox="0 0 35 32">
-  <title>sage</title>
-  <path d="M13.475 15.159v-10.105h6.737v10.105h5.051l-8.42 8.423-8.42-8.423z"></path>
-  </symbol>
-  <symbol id="i-delete" viewBox="0 0 32 32">
-  <title>delete</title>
-  <path d="M11.152 8.997l-2.154 2.154 4.85 4.851-4.85 4.848 2.152 2.152 4.85-4.848 4.85 4.848 2.154-2.154-4.848-4.85 4.848-4.85-2.152-2.152-4.848 4.85z"></path>
-  </symbol>
-  <symbol id="i-undelete" viewBox="0 0 32 32">
-  <title>undelete</title>
-  <path d="M11.152 8.997l-2.154 2.154 3.232 3.231 2.152-2.152-3.231-3.232zM13.848 16.001v0.001l-4.85 4.848 2.154 2.152 11.85-11.852-2.152-2.152-7.002 7.002zM17.617 19.769l3.232 3.234 2.154-2.154-3.234-3.232-2.152 2.152z"></path>
-  </symbol>
-  </defs>
-  </svg>`
-document.body.insertAdjacentHTML('afterbegin', `<div style="none">${icons}</div>`)
-
-// Convert from localStorage to internal storage
-let ls_hiddenboards = localStorage['u0_hiddenboards']
-if (ls_hiddenboards) {
-  GM_setValue('u0_hiddenboards', ls_hiddenboards)
-  localStorage.removeItem('u0_hiddenboards')
-}
-
-// Hides threads from unwanted boards on index page
-const boardHider = {
-  list: [],
-  enabled: false,
-  init: function() {
-    let hiddenBoards = GM_getValue('u0_hiddenboards')
-    if (hiddenBoards) {
-      this.list = hiddenBoards.split(' ')
-    }
-    if (document.location.href.match(/https?:\/\/0chan.hk\/?/)) {
-      this.enable()
-    }
-  },
-  enable: function() {
-    if (this.enabled) {
-      return
-    }
-    this.enabled = true
-    this.refresh()
-  },
-  disable: function() {
-    if (this.enabled) {
-      injector.remove('hide-boards')
-    }
-    this.enabled = false
-  },
-  refresh: function() {
-    if (this.list.length) {
-      let css
-      if (this.enabled) {
-        css = this.list.map(boardID => `div[board-id="${boardID}"]`).join(', ')
-          + ' {display: none} '
-        injector.inject('hide-boards', css)
+// event path polyfill
+;(e => {
+  if (e.hasOwnProperty('path')) return;
+  Object.defineProperty(e, 'path', {
+    get: function() {
+      if (! this.target) return [];
+      if (this.pathCached) return this.pathCached;
+      let path = []
+      , node = this.target
+      while(node && node != document.body) {
+        path.push(node)
+        node = node.parentNode
       }
-      css = this.list.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .svguse-delete`).join(', ')
-        + ' {display: none} '
-        + this.list.map(boardID => `.sidemenu-board-item a[href="/${boardID}"]`).join(', ') 
-        + ' {text-decoration: line-through!important; }'
-        + this.list.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .sidemenu-board-title`).join(', ') 
-        + ' {color:#808080!important; }'
-        + this.list.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .svguse-undelete`).join(', ') 
-        + ' {display: block}'
-      injector.inject('hide-boards-ui', css)
-    }
-    else {
-      injector.remove('hide-boards')
-      injector.remove('hide-boards-ui')
-    }
-  },
-  sync: function() {
-    this.refresh()
-    GM_setValue('u0_hiddenboards', this.list.join(' '))
-  },
-  toggleBoard: function(dir) {
-    let index = this.list.indexOf(dir)
-    if (index >= 0) {
-      this.list.splice(index, 1)
-    }
-    else {
-      this.list.push(dir)
-    }
-    this.sync()
+      this.pathCached = path
+      return path
+    },
+    enumerable: true,
+    configurable: false
+  })
+})(Event.prototype)
+
+function setupVueGetter() {
+  Object.defineProperty(Element.prototype, '__vue__', {
+    get: function() {
+      let stack = [app]
+      , child, found = null
+      while (stack.length && !found) {
+        child = stack.pop()
+        if (child && child.$el && child.$el === this) {
+          found = child
+        }
+        else if (child && child.$children)
+          stack = stack.concat(child.$children)
+      }
+      return found
+    },
+    enumerable: true,
+    configurable: false
+  })
+}
+
+// event path polyfill
+function getEventPath(e) {
+  let path = []
+  , node = e.target
+  while(node != document.body) {
+    path.push(node)
+    node = node.parentNode
   }
+  return path
+}
+
+function getPosts(threadID, after, before) {
+  return new Promise((resolve, reject) => {
+    fetch(`${document.location.protocol}//${document.location.host}/api/thread?thread=${threadID}${after ? '&after='+after : ''}`
+      , {credentials: 'same-origin'}
+    ).then(res => {
+      if (res.ok) {
+        res.json().then(resObj => {
+          if (resObj.posts && resObj.posts.length) {
+            let posts = resObj.posts
+            if (before) {
+              posts = posts.filter(post => (+post.id) < (+before) )
+            }
+            resolve(posts)
+          }
+          else {
+            resolve([])
+          }
+        })
+        .catch(e => reject(e))
+      }
+      else {
+        res.text().then(text => console.warn('[0u] Bad response: ', text)).catch(nop)
+        reject(res.status)
+      }
+    })
+    .catch(e => reject(e))
+  })
+}
+
+function handleNetworkError(err) {
+  nativeAlert('error', 'Сетевая ошибка')
+  if (err)
+    console.error(err)
 }
 
 // GUI alerts
 // Types available: info, error, success
 function nativeAlert(type, message) {
   type = 'alert' + type.charAt(0).toUpperCase() + type.slice(1)
-  unsafeWindow.app.$bus.emit(type, message)
+  app.$bus.emit(type, message)
 }
 
-boardHider.init()
-
-// Adds board IDs to threads
-forEveryNode('.post', post => {
-  let postLinks = post.querySelectorAll('.post-id a')
-  if (! postLinks.length) {
-    console.log('SOMETHING WRONG!', post)
-    return
-  }
-  let boardID = postLinks[0].getAttribute('href').replace(/[\s\/]/g, '')
-  , postID = +postLinks[1].innerHTML.replace(/[\s\/#]/g, '')
-  // For all posts
-  let replyBtn = post.querySelector('.post-footer .pull-right')
-  if (replyBtn) {
-    replyBtn.insertAdjacentHTML('afterbegin', `
-      <button class="u0-mention u0-post-bottom-icon icontainer" title="Упомянуть">
-        <svg>
-          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-mention"></use>
-        </svg>
-      </button>
-      <button class="u0-sage u0-post-bottom-icon icontainer" title="SAGE!">
-        <svg>
-          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-sage"></use>
-        </svg>
-      </button>`)
-    replyBtn.parentNode.querySelector('.u0-sage').onclick = ev => {
-      ev.preventDefault()
-      ev.stopPropagation()
-      replyWithSage(postID)
-      return false
+function LSfetchJSON(key) {
+  let val = null, data = localStorage[key]
+  if (typeof data !== 'undefined') {
+    try {
+      val = JSON.parse(data)
     }
-    replyBtn.parentNode.querySelector('.u0-mention').onclick = ev => {
-      ev.preventDefault()
-      ev.stopPropagation()
-      let textarea = document.querySelectorAll('.thread textarea, .threads textarea')[0]
-      if (textarea && textarea.offsetParent) {
-        textarea.value += `${!textarea.value || textarea.value.match(/\n$/) ? '' : '\n'}>>${postID}\n`
-        textarea.dispatchEvent(new Event('input', {
-          'bubbles': true,
-          'cancelable': true
-        }))
-        textarea.focus()
-      }
-      else { // If no textarea found, copy to clipboard
-        GM_setClipboard(`>>${postID}\n`)
-        nativeAlert('success', 'Номер поста скопирован в буфер обмена')
-      }
-      return false
+    catch(e) {
+      console.error(e)
+      localStorage.removeItem(key)
     }
   }
-  // For all OP posts
-  if (!post.parentNode.classList.contains('post-popup') && post.classList.contains('post-op')) {
-    let thread = post.parentNode.parentNode.parentNode.parentNode
-    thread.setAttribute('board-id', boardID)
-  }
-}, 'post-detector')
-
-const SAGE_THREAD = 14965
-
-// Location change detector
-forEveryNode('.headmenu', head => {
-  let links = head.querySelectorAll('.headmenu-title a')
-  , dir = (links && links[0]) && links[0].getAttribute('href')
-  , thread = (links && links[1]) && links[1].getAttribute('href').split('/').reverse()[0]
-  // console.log(dir, thread)
-  if (dir === '/') {
-    boardHider.enable()
-  }
-  else {
-    boardHider.disable()
-  }
-  /*let newForm = document.querySelector('.new-thread-form')
-  , textarea = newForm ? newForm.querySelector('textarea') : null*/
-  if (thread == SAGE_THREAD && !!+GM_getValue('u0_sageattempt')) {
-    let replyBtn = document.querySelector('.post-op .fa-reply')
-    if (replyBtn) {
-      forEveryNode('.reply-form-message textarea', textarea => {
-        textarea.value = `>>${GM_getValue('u0_sageattempt')}\n`
-        textarea.focus()
-        injector.remove('reply-with-sage')
-        GM_setValue('u0_sageattempt', 0)
-      }, 'reply-with-sage')
-      replyBtn.click()
-    }
-  }
-  else {
-    GM_setValue('u0_sageattempt', 0)
-  }
-}, 'location-change')
-
-// Board filter UI
-forEveryNode('.sidemenu-board-item a', board => {
-  let dir = board.getAttribute('href').replace(/[\s\/]/g, '')
-  board.insertAdjacentHTML('afterbegin', `
-    <button class="u0-board-delbtn icontainer" title="Скрыть/раскрыть доску">
-      <svg>
-        <use class="svguse-delete" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-delete"></use>
-        <use class="svguse-undelete" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-undelete"></use>
-      </svg>
-    </button>`)
-  board.querySelector('.u0-board-delbtn').onclick = ev => {
-    ev.preventDefault()
-    ev.stopPropagation()
-    let btn = ev.target
-    while (btn.nodeName !== 'A') {
-      btn = btn.parentNode
-    }
-    boardHider.toggleBoard(btn.getAttribute('href').replace(/[\s\/]/g, ''))
-    return false
-  }
-}, 'board-filter')
-
-function replyWithSage(postID) {
-  GM_setValue('u0_sageattempt', postID)
-  document.location.href = '/sage/14965'
+  return val
 }
+
+
+
+function start() {
+  let sidebarExtPromise = externallyResolvingPromise()
+  , contentExtPromise = externallyResolvingPromise()
+  Promise.all([sidebarExtPromise.promise, contentExtPromise.promise]).then(() => {
+    appObserver.stop()
+    forAllNodes([{
+      selector: '#content > div',
+      fn: onFreshContent
+    }], document.querySelector('#content'))
+  })
+  appObserver = forAllNodes([
+    {
+      selector: '#sidebar',
+      fn: () => sidebarExtPromise.resolve()
+    },
+    {
+      selector: '#content',
+      fn: () => contentExtPromise.resolve()
+    }
+  ], document.body, {subtree: true, queryChildren: true})
+
+  Object.keys(eventDispatcher).forEach(evType => {
+    document.addEventListener(evType, eventDispatcher[evType], true)
+  })
+}
+start()
+
+
+
+function onFreshContent() {
+  try {
+    state.type = app.$router.currentRoute.name
+  }
+  catch(e) {
+    console.warn('[0u] Unable to determine app state', e)
+  }
+
+  content = document.querySelector('#content > div')
+  if (state.type==='thread') 
+    singleThread = document.querySelector('.post-op').parentNode.parentNode
+  if (! state.initialized) {
+    init()
+  }
+  else {
+    contentVue = content.__vue__
+    if (state.type==='thread') 
+      singleThreadVue = singleThread.__vue__
+  }
+
+  alerts = document.querySelector('.alerts-wrapper')
+  alertsVue = alerts.__vue__
+  setupAlertInterceptor()
+  
+  addSettingsButtons()
+
+  settingsPanel.install()
+
+  ZURouter.handleRoute(state.type)
+  
+  refresher.init()
+}
+
+
+injector.inject('ZU-global', `
+  .btn-open-sidebar {
+    display: inline-block !important;
+  }
+  .headmenu-title {
+    white-space: nowrap;
+  }
+  .sidebar, #content {
+    transition: margin-left 0.3s cubic-bezier(0, 0.85, 0.72, 0.99);
+    will-change: margin-left;
+  }
+  .ZU-sidebar-hidden .sidebar {
+    margin-left: -250px;
+  }
+  .ZU-sidebar-hidden #content {
+    margin-left: 0;
+  }
+  .headmenu.ZU-sidemenu-animation-allowed {
+    transition: left 0.3s cubic-bezier(0, 0.85, 0.72, 0.99)
+  }
+  .ZU-sidebar-hidden .headmenu {
+    left: 0;
+  }
+  .ZU-settings-dropdown {
+    margin: 4px;
+    top: 30px;
+    padding: 6px 14px;
+  }
+  .ZU-dropdown {
+    display: block;
+    transform: translate(0px, 10px);
+    transition: transform 0.2s, opacity 0.2s, visibility 0s 0.2s;
+    opacity: 0;
+    user-select: none;
+    visibility: hidden;
+  }
+  .ZU-dropdown-show {
+    transform: translate(0px, 0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .ZU-settings-dropdown label,
+  .ZU-noko-label {
+    font-weight: normal;
+    margin-bottom: 0;
+  }
+  .ZU-noko-label {
+    vertical-align: middle;
+  }
+  .reply-form-limit-counter {
+    min-width: 60px;
+    display: inline-block;
+  }
+  .ZU-noko {
+    margin: 0;
+    vertical-align: -1px;
+  }
+  .ZU-settings-dropdown input[type="radio"], 
+  .ZU-settings-dropdown input[type="checkbox"] {
+    margin: 3px 0 0;
+    line-height: normal;
+    vertical-align: top;
+  }
+  .ZU-settings-dropdown li {
+    margin: 4px 0;
+  }
+  
+  .ZU-svg-container-btn {
+    font-size: 0;
+    padding: 0;
+    line-height: 0;
+  }
+  .ZU-svg {
+    fill: currentColor;
+  }
+  .ZU-svg-32 {
+    height: 32px;
+    width: 32px;
+  }
+  .ZU-svg-16 {
+    height: 16px;
+    width: 16px;
+  }
+  .dropdown-menu .ZU-svg-16 {
+    margin-right: 5px;
+  }
+  .ZU-share-dropdown {
+    left: 74px;
+  }
+  .ZU-boardhideunhide {
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .ZU-boardhideunhide:hover {
+    color: #3ccd9d;
+  }
+  .sidemenu-board-item:hover .ZU-boardhideunhide {
+    opacity: 1
+  }
+  .ZU-board-unhide-icon {
+    display: none;
+  }
+  .ZU-sage-btn:hover {
+    color: #bc1a1a;
+  }
+  body > textarea {
+    position:fixed;
+  }
+  .ZU-show {
+    display:block;
+  }
+  .ZU-refresh-progressbar,
+  .ZU-refreshbtn-shadow-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+  }
+  .ZU-refreshbtn-shadow-overlay {
+    width: 100%;
+  }
+  .ZU-refresh-btn {
+    box-shadow: none!important;
+    overflow: hidden;
+  }
+  .ZU-refresh-btn:active .ZU-refreshbtn-shadow-overlay {
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  }
+  .ZU-refresh-progressbar {
+    background: linear-gradient(to bottom, transparent 0%, rgba(22, 160, 133, 0.48) 100%);
+    width: 0%;
+    opacity: 0;
+    transition: width 0s 0.4s, opacity 0.4s;
+  }
+  .ZU-refresh-btn i,
+  .ZU-refresh-btn span {
+    position: relative;
+  }
+  .ZU-nomargin-btn-group {
+    margin-left: -1px;
+    float: right;
+  }
+  .ZU-panel-btn {
+    width: 40px;
+  }
+  .ZU-onactive-show,
+  .active .ZU-onactive-hide {
+    display: none;
+  }
+  .active .ZU-onactive-show {
+    display: block;
+  }
+  .ZU-btn-link {
+    color: #333333 !important;
+    text-decoration: none !important;
+  }
+  .ZU-btn-link.active {
+    color: #333;
+    background-color: #e6e6e6;
+    border: 1px solid #adadad;
+    outline: none !important;
+    background-image: none;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  }
+  .post-img .post-embed .post-embed-play-btn {
+    z-index: 2
+  }
+  .post .ZU-hide-board-by-op-container {
+    padding-left: 6px;
+  }
+  span.ZU-hide-board-by-op {
+    padding: 0;
+  }
+`)
