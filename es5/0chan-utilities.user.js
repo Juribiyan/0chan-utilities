@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      1.1.0
+// @version      1.2.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy [0xf330f91f]
@@ -10,8 +10,6 @@
 // @grant        none
 // @icon         https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/icon.png
 // ==/UserScript==
-
-/*'use strict';*/ // can't do because of eval()
 
 var _ref;
 
@@ -228,6 +226,79 @@ var catalog = {
   }
 };
 
+var autohide = {
+  init: function init() {
+    var spells = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : settings.autohide;
+
+    this.expressions = spells.map(function (spell) {
+      if (typeof spell === 'string') {
+        // Convert string to regExp literally, case-insensitive
+        spell = {
+          source: spell.toLowerCase().replace(/[|\\{}()[\]^$+*?.]/g, '\\$&'), //https://github.com/sindresorhus/escape-string-regexp
+          flags: 'i'
+        };
+      }
+      return new RegExp(spell.source, spell.flags);
+    });
+    settings.save();
+  },
+  check: function check(str) {
+    return !!this.expressions.find(function (exp) {
+      return str.match(exp);
+    });
+  },
+  expressions: [],
+  awaitInstall: function awaitInstall() {
+    var _this5 = this;
+
+    var panelWaiter = forAllNodes([{
+      selector: '.profile-page .row',
+      fn: function fn(container) {
+        app.$nextTick(function () {
+          return panelWaiter.stop();
+        });
+        _this5.install(container);
+      }
+    }], content, { sutree: true, queryChildren: true });
+  },
+  install: function install(container) {
+    var _this6 = this;
+
+    var spellsVal = settings.autohide.map(function (spell) {
+      return (typeof spell === 'undefined' ? 'undefined' : _typeof(spell)) === 'object' ? '/' + spell.source + '/' + spell.flags : spell;
+    }).join('\n');
+    container.insertAdjacentHTML('beforeEnd', '\n      <div class="col-md-12">\n        <form>\n          <div class="panel panel-default">\n            <div class="panel-heading" title="0chan Utilities v.' + version + '">\n              <svg class="ZU-svg ZU-svg-32 ZU-settingspage-icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-logo"></use></svg>\n              <b>\u0410\u0432\u0442\u043E\u0441\u043A\u0440\u044B\u0442\u0438\u0435</b>\n            </div>\n            <div class="panel-body">\n              <div class="form-horizontal">\n                <div class="form-horizontal">\n                  <textarea rows="10" name="autohide" id="autohide" style="resize:vertical" placeholder="\u0422\u0435\u043A\u0441\u0442 \u0438\u043B\u0438 \u0440\u0435\u0433\u0443\u043B\u044F\u0440\u043D\u044B\u0435 \u0432\u044B\u0440\u0430\u0436\u0435\u043D\u0438\u044F, \u0440\u0430\u0437\u0434\u0435\u043B\u0435\u043D\u043D\u044B\u0435 \u043F\u0435\u0440\u0435\u043D\u043E\u0441\u043E\u043C \u0441\u0442\u0440\u043E\u043A\u0438" class="ZU-spells-textarea form-control" wrap="soft"></textarea>\n                </div>\n              </div>\n            </div>\n            <div class="panel-footer text-right">\n              <button type="submit" class="btn btn-primary ZU-autohide-submit"><i class="fa fa-gears"></i> \u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button>\n            </div>\n          </div>\n        </form>\n      </div>');
+    var submitBtn = container.querySelector('.ZU-autohide-submit'),
+        textarea = container.querySelector('textarea');
+    if (spellsVal) textarea.value = spellsVal;
+    submitBtn.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      var val = textarea.value,
+          results = [];
+      val.split('\n').forEach(function (spell) {
+        if (!spell) return;
+        var rxr = spell.match(/^\/(.+)\/([gmiyu]+)$/),
+            result = void 0;
+        if (rxr) {
+          var source = rxr[1],
+              flags = rxr[2];
+          try {
+            result = new RegExp(source, flags);
+          } catch (e) {}
+        }
+        if (!result) result = spell;
+        results.push(result);
+      });
+      settings.autohide = results;
+      _this6.init();
+    });
+    textarea.addEventListener('input', function (ev) {
+      textarea.classList.toggle('non-empty', !!textarea.value.length);
+    });
+  }
+};
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -237,7 +308,8 @@ var settings = {
     hiddenBoards: [],
     noko: true,
     updateInterval: 10,
-    catalogMode: false
+    catalogMode: false,
+    autohide: []
   },
   _: {},
   hooks: {
@@ -245,21 +317,23 @@ var settings = {
     unmaskOnHover: momInRoom.toggleHover.bind(momInRoom),
     hideSidebar: sideBar.toggle.bind(sideBar),
     updateInterval: refresher.reset.bind(refresher),
-    catalogMode: catalog.toggle.bind(catalog)
+    catalogMode: catalog.toggle.bind(catalog),
+    autohide: autohide.init.bind(autohide)
   },
   save: function save() {
     this._.hiddenBoards = this.hiddenBoards;
+    this._.autohide = this.autohide;
     localStorage['ZU-settings'] = JSON.stringify(this._);
   },
   init: function init() {
-    var _this5 = this;
+    var _this7 = this;
 
-    var localSettins = LSfetchJSON('ZU-settings') || {},
-        allSettings = Object.assign(this.defaults, localSettins);
+    var localSettings = LSfetchJSON('ZU-settings') || {},
+        allSettings = Object.assign(this.defaults, localSettings);
     Object.keys(allSettings).forEach(function (key) {
       var value = allSettings[key];
       if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) !== "object") {
-        Object.defineProperty(_this5, key, {
+        Object.defineProperty(_this7, key, {
           set: function set(val) {
             this._[key] = val;
             if (this.hooks.hasOwnProperty(key)) {
@@ -272,12 +346,20 @@ var settings = {
           }
         });
       }
-      _this5[key] = value;
+      _this7[key] = value;
     });
   }
+};
 
-  // Hides threads from unwanted boards on index page
-};var boardHider = {
+RegExp.prototype.toJSON = function () {
+  return {
+    source: this.source,
+    flags: this.flags
+  };
+};
+
+// Hides threads from unwanted boards on index page
+var boardHider = {
   enabled: false,
   enable: function enable() {
     if (this.enabled) {
@@ -608,7 +690,7 @@ var router = {
     return app.$bus.emit('refreshContent');
   },
   setupInterceptor: function setupInterceptor() {
-    var _this6 = this;
+    var _this8 = this;
 
     var doDebug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
@@ -638,7 +720,7 @@ var router = {
           && route.params.dir === contentVue.board.dir && !document.querySelector('a[href*="/' + threadID + '"]' // Thread does not exist yet
           )) {
             if (doDebug) console.log('Route intercepted (new thread)');
-            _this6.reload();
+            _this8.reload();
           } else {
             app.$router.history.push(route, e, n);
           }
@@ -763,6 +845,16 @@ function init() {
 
   contentVue = content.__vue__;
 
+  router.setupInterceptor();
+
+  settings.init();
+
+  sideBar.init();
+
+  boardHider.refresh();
+
+  autohide.init();
+
   contentObserver = forAllNodes([{
     selector: '.thread',
     fn: handleThread
@@ -792,14 +884,6 @@ function init() {
     }
   }], sidebar, { queryChildren: true });
 
-  router.setupInterceptor();
-
-  settings.init();
-
-  sideBar.init();
-
-  boardHider.refresh();
-
   state.initialized = true;
 }
 
@@ -814,6 +898,12 @@ function handlePost(post) {
   } else if (postData.isOpPost) {
     extraIconsContainer.insertAdjacentHTML('beforeBegin', '\n      <div class="pull-left">\n        <span title="\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F" class="post-button ZU-share-btn ZU-quote-on-click ZU-qoc-from-anywhere">\n          <i class="fa fa-share-alt"></i>\n          ' + share.dropdown(document.location.protocol + '//' + document.location.host + '/' + postData.dir + '/' + postData.threadID, postData.title) + '\n          </span>\n      </div>');
   }
+
+  var msg = postData.message;
+  if (msg && autohide.check(msg) && !postData.postVue.isPopup /*&& !postData.postVue.isHidden*/) {
+      postData.postVue.isHidden = true;
+      postData.postVue.$emit('hidden', true);
+    }
 }
 
 function repositionPopup(popup) {
@@ -861,7 +951,8 @@ function getPostDataFromDOM(post) {
         threadID: postVue.thread.id,
         title: postVue.thread.title,
         isPopup: false,
-        postVue: postVue
+        postVue: postVue,
+        message: postVue.post.message
       };
     } else if (postVue.$el.classList.contains('post-popup')) {
       var popupVue = postVue.$parent.popupPost;
@@ -872,7 +963,8 @@ function getPostDataFromDOM(post) {
         threadID: popupVue.threadId,
         isPopup: true,
         popupVue: popupVue,
-        postVue: postVue
+        postVue: postVue,
+        message: popupVue.message
       };
     } else return null;
   } catch (e) {
@@ -899,70 +991,6 @@ function addThreadControls(threadDOM, threadVue) {
   op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container');
   opPostID.insertAdjacentHTML('afterBegin', '<span title="\u0421\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u0441\u043A\u0443" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>');
 }
-
-var settingsPanelPage = {
-  modules: {
-    checkbox: {
-      build: function build(checkbox) {
-        return '\n        <div class="form-group">\n          <label class="control-label col-md-8">' + checkbox.title + '</label>\n          <div class="col-md-12">\n            <div class="checkbox">\n              <label><input data-id="' + checkbox.id + '" id="ZU-SP-' + checkbox.id + '" type="checkbox"' + (settings[checkbox.id] ? ' checked' : '') + '> ' + checkbox.description + '</label>\n            </div>\n          </div>\n        </div>';
-      },
-      events: {
-        change: function change(ev) {
-          var checkbox = ev.target;
-          try {
-            settings[checkbox.dataset.id] = checkbox.checked;
-          } catch (e) {
-            console.warn('[0u] Unable to handle checkbox change', checkbox);
-          }
-        }
-      }
-    }
-  },
-  controls: [{
-    type: 'checkbox',
-    id: 'momInRoom',
-    title: "Мамка в комнате",
-    description: "Маскировать все картинки"
-  }, {
-    type: 'checkbox',
-    id: 'unmaskOnHover',
-    title: "Раскрывать по наведению",
-    description: "Раскрывать замаскированные картинки по наведению"
-  }, {
-    type: 'checkbox',
-    id: 'thumbNoScroll',
-    title: "Разворот без скролла",
-    description: "Не скроллить при разворачивании картинок"
-  }],
-  awaitInstall: function awaitInstall() {
-    var _this7 = this;
-
-    var panelWaiter = forAllNodes([{
-      selector: '.profile-page .row',
-      fn: function fn(container) {
-        app.$nextTick(function () {
-          return panelWaiter.stop();
-        });
-        _this7.install(container);
-      }
-    }], content, { sutree: true, queryChildren: true });
-  },
-  install: function install(container) {
-    var _this8 = this;
-
-    container.insertAdjacentHTML('beforeEnd', '\n      <div class="col-md-12">\n        <form>\n          <div class="panel panel-default">\n            <div class="panel-heading">\n              <b>0chan Utilities v.' + version + '</b>\n            </div>\n            <div class="panel-body">\n              <div class="form-horizontal">\n                <div class="form-horizontal">\n                ' + this.controls.reduce(function (htm, control) {
-      return htm + _this8.modules[control.type].build(control);
-    }, '') + '\n                </div>\n              </div>\n            </div>\n            <div class="panel-footer text-right">\n              \u0418\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F \u0441\u043E\u0445\u0440\u0430\u043D\u044F\u044E\u0442\u0441\u044F \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438.\n            </div>\n          </div>\n        </form>\n      </div>');
-    this.controls.forEach(function (control) {
-      var allEvents = Object.assign(Object.create(_this8.modules[control.type].events || {}), control.events || {}),
-          controlDOM = document.querySelector('#ZU-SP-' + control.id);
-      if (!controlDOM) return;
-      for (var eventName in allEvents) {
-        controlDOM.addEventListener(eventName, allEvents[eventName]);
-      }
-    });
-  }
-};
 
 var settingsPanel = {
   modules: {
@@ -1058,7 +1086,7 @@ var settingsPanel = {
 var ZURouter = {
   currentRoute: 'initial',
   enter: {
-    account: settingsPanelPage.awaitInstall.bind(settingsPanel),
+    account: autohide.awaitInstall.bind(autohide),
     home: boardHider.enable.bind(boardHider),
     thread: sageContinue
   },
@@ -1360,4 +1388,4 @@ function onFreshContent() {
   refresher.init();
 }
 
-injector.inject('ZU-global', '\n  .btn-open-sidebar {\n    display: inline-block !important;\n  }\n  .headmenu-title {\n    white-space: nowrap;\n  }\n  .sidebar, #content {\n    transition: margin-left 0.3s cubic-bezier(0, 0.85, 0.72, 0.99);\n    will-change: margin-left;\n  }\n  .ZU-sidebar-hidden .sidebar {\n    margin-left: -250px;\n  }\n  .ZU-sidebar-hidden #content {\n    margin-left: 0;\n  }\n  .headmenu.ZU-sidemenu-animation-allowed {\n    transition: left 0.3s cubic-bezier(0, 0.85, 0.72, 0.99)\n  }\n  .ZU-sidebar-hidden .headmenu {\n    left: 0;\n  }\n  .ZU-settings-dropdown {\n    margin: 4px;\n    top: 30px;\n    padding: 6px 14px;\n  }\n  .ZU-dropdown {\n    display: block;\n    transform: translate(0px, 10px);\n    transition: transform 0.2s, opacity 0.2s, visibility 0s 0.2s;\n    opacity: 0;\n    user-select: none;\n    visibility: hidden;\n  }\n  .ZU-dropdown-show {\n    transform: translate(0px, 0);\n    opacity: 1;\n    visibility: visible;\n    transition: transform 0.2s, opacity 0.2s;\n  }\n  .ZU-settings-dropdown label,\n  .ZU-noko-label {\n    font-weight: normal;\n    margin-bottom: 0;\n  }\n  .ZU-noko-label {\n    vertical-align: middle;\n  }\n  .reply-form-limit-counter {\n    min-width: 60px;\n    display: inline-block;\n  }\n  .ZU-noko {\n    margin: 0;\n    vertical-align: -1px;\n  }\n  .ZU-settings-dropdown input[type="radio"], \n  .ZU-settings-dropdown input[type="checkbox"] {\n    margin: 3px 0 0;\n    line-height: normal;\n    vertical-align: top;\n  }\n  .ZU-settings-dropdown li {\n    margin: 4px 0;\n  }\n  \n  .ZU-svg-container-btn {\n    font-size: 0;\n    padding: 0;\n    line-height: 0;\n  }\n  .ZU-svg {\n    fill: currentColor;\n  }\n  .ZU-svg-32 {\n    height: 32px;\n    width: 32px;\n  }\n  .ZU-svg-16 {\n    height: 16px;\n    width: 16px;\n  }\n  .dropdown-menu .ZU-svg-16 {\n    margin-right: 5px;\n  }\n  .ZU-share-dropdown {\n    left: 74px;\n  }\n  .ZU-boardhideunhide {\n    position: absolute;\n    left: 0;\n    opacity: 0;\n    transition: opacity 0.2s, color 0.2s;\n  }\n  .ZU-boardhideunhide:hover {\n    color: #3ccd9d;\n  }\n  .sidemenu-board-item:hover .ZU-boardhideunhide {\n    opacity: 1\n  }\n  .ZU-board-unhide-icon {\n    display: none;\n  }\n  .ZU-sage-btn:hover {\n    color: #bc1a1a;\n  }\n  body > textarea {\n    position:fixed;\n  }\n  .ZU-show {\n    display:block;\n  }\n  .ZU-refresh-progressbar,\n  .ZU-refreshbtn-shadow-overlay {\n    position: absolute;\n    left: 0;\n    top: 0;\n    height: 100%;\n  }\n  .ZU-refreshbtn-shadow-overlay {\n    width: 100%;\n  }\n  .ZU-refresh-btn {\n    box-shadow: none!important;\n    overflow: hidden;\n  }\n  .ZU-refresh-btn:active .ZU-refreshbtn-shadow-overlay {\n    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);\n  }\n  .ZU-refresh-progressbar {\n    background: linear-gradient(to bottom, transparent 0%, rgba(22, 160, 133, 0.48) 100%);\n    width: 0%;\n    opacity: 0;\n    transition: width 0s 0.4s, opacity 0.4s;\n  }\n  .ZU-refresh-btn i,\n  .ZU-refresh-btn span {\n    position: relative;\n  }\n  .ZU-nomargin-btn-group {\n    margin-left: -1px;\n    float: right;\n  }\n  .ZU-panel-btn {\n    width: 40px;\n  }\n  .ZU-onactive-show,\n  .active .ZU-onactive-hide {\n    display: none;\n  }\n  .active .ZU-onactive-show {\n    display: block;\n  }\n  .ZU-btn-link {\n    color: #333333 !important;\n    text-decoration: none !important;\n  }\n  .ZU-btn-link.active {\n    color: #333;\n    background-color: #e6e6e6;\n    border: 1px solid #adadad;\n    outline: none !important;\n    background-image: none;\n    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);\n  }\n  .post-img .post-embed .post-embed-play-btn {\n    z-index: 2\n  }\n  .post .ZU-hide-board-by-op-container {\n    padding-left: 6px;\n  }\n  span.ZU-hide-board-by-op {\n    padding: 0;\n  }\n');
+injector.inject('ZU-global', '\n  .btn-open-sidebar {\n    display: inline-block !important;\n  }\n  .headmenu-title {\n    white-space: nowrap;\n  }\n  .sidebar, #content {\n    transition: margin-left 0.3s cubic-bezier(0, 0.85, 0.72, 0.99);\n    will-change: margin-left;\n  }\n  .ZU-sidebar-hidden .sidebar {\n    margin-left: -250px;\n  }\n  .ZU-sidebar-hidden #content {\n    margin-left: 0;\n  }\n  .headmenu.ZU-sidemenu-animation-allowed {\n    transition: left 0.3s cubic-bezier(0, 0.85, 0.72, 0.99)\n  }\n  .ZU-sidebar-hidden .headmenu {\n    left: 0;\n  }\n  .ZU-settings-dropdown {\n    margin: 4px;\n    top: 30px;\n    padding: 6px 14px;\n  }\n  .ZU-dropdown {\n    display: block;\n    transform: translate(0px, 10px);\n    transition: transform 0.2s, opacity 0.2s, visibility 0s 0.2s;\n    opacity: 0;\n    user-select: none;\n    visibility: hidden;\n  }\n  .ZU-dropdown-show {\n    transform: translate(0px, 0);\n    opacity: 1;\n    visibility: visible;\n    transition: transform 0.2s, opacity 0.2s;\n  }\n  .ZU-settings-dropdown label,\n  .ZU-noko-label {\n    font-weight: normal;\n    margin-bottom: 0;\n  }\n  .ZU-noko-label {\n    vertical-align: middle;\n  }\n  .reply-form-limit-counter {\n    min-width: 60px;\n    display: inline-block;\n  }\n  .ZU-noko {\n    margin: 0;\n    vertical-align: -1px;\n  }\n  .ZU-settings-dropdown input[type="radio"], \n  .ZU-settings-dropdown input[type="checkbox"] {\n    margin: 3px 0 0;\n    line-height: normal;\n    vertical-align: top;\n  }\n  .ZU-settings-dropdown li {\n    margin: 4px 0;\n  }\n  \n  .ZU-svg-container-btn {\n    font-size: 0;\n    padding: 0;\n    line-height: 0;\n  }\n  .ZU-svg {\n    fill: currentColor;\n  }\n  .ZU-svg-32 {\n    height: 32px;\n    width: 32px;\n  }\n  .ZU-svg-16 {\n    height: 16px;\n    width: 16px;\n  }\n  .dropdown-menu .ZU-svg-16 {\n    margin-right: 5px;\n  }\n  .ZU-share-dropdown {\n    left: 74px;\n  }\n  .ZU-boardhideunhide {\n    position: absolute;\n    left: 0;\n    opacity: 0;\n    transition: opacity 0.2s, color 0.2s;\n  }\n  .ZU-boardhideunhide:hover {\n    color: #3ccd9d;\n  }\n  .sidemenu-board-item:hover .ZU-boardhideunhide {\n    opacity: 1\n  }\n  .ZU-board-unhide-icon {\n    display: none;\n  }\n  .ZU-sage-btn:hover {\n    color: #bc1a1a;\n  }\n  body > textarea {\n    position:fixed;\n  }\n  .ZU-show {\n    display:block;\n  }\n  .ZU-refresh-progressbar,\n  .ZU-refreshbtn-shadow-overlay {\n    position: absolute;\n    left: 0;\n    top: 0;\n    height: 100%;\n  }\n  .ZU-refreshbtn-shadow-overlay {\n    width: 100%;\n  }\n  .ZU-refresh-btn {\n    box-shadow: none!important;\n    overflow: hidden;\n  }\n  .ZU-refresh-btn:active .ZU-refreshbtn-shadow-overlay {\n    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);\n  }\n  .ZU-refresh-progressbar {\n    background: linear-gradient(to bottom, transparent 0%, rgba(22, 160, 133, 0.48) 100%);\n    width: 0%;\n    opacity: 0;\n    transition: width 0s 0.4s, opacity 0.4s;\n  }\n  .ZU-refresh-btn i,\n  .ZU-refresh-btn span {\n    position: relative;\n  }\n  .ZU-nomargin-btn-group {\n    margin-left: -1px;\n    float: right;\n  }\n  .ZU-panel-btn {\n    width: 40px;\n  }\n  .ZU-onactive-show,\n  .active .ZU-onactive-hide {\n    display: none;\n  }\n  .active .ZU-onactive-show {\n    display: block;\n  }\n  .ZU-btn-link {\n    color: #333333 !important;\n    text-decoration: none !important;\n  }\n  .ZU-btn-link.active {\n    color: #333;\n    background-color: #e6e6e6;\n    border: 1px solid #adadad;\n    outline: none !important;\n    background-image: none;\n    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);\n  }\n  .post-img .post-embed .post-embed-play-btn {\n    z-index: 2\n  }\n  .post .ZU-hide-board-by-op-container {\n    padding-left: 6px;\n  }\n  span.ZU-hide-board-by-op {\n    padding: 0;\n  }\n  .ZU-settingspage-icon {\n    vertical-align: middle;\n    margin: -8px;\n    margin-right: 0;\n  }\n  .non-empty.ZU-spells-textarea {\n    white-space: nowrap;\n  }\n');

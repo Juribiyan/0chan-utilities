@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      1.1.0
+// @version      1.2.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy [0xf330f91f]
@@ -340,6 +340,90 @@ const catalog = {
   }
 }
 
+var autohide = {
+  init: function(spells=settings.autohide) {
+    this.expressions = spells.map(spell => {
+      if (typeof spell === 'string') {
+        // Convert string to regExp literally, case-insensitive
+        spell = {
+          source: spell.toLowerCase().replace(/[|\\{}()[\]^$+*?.]/g, '\\$&'), //https://github.com/sindresorhus/escape-string-regexp
+          flags: 'i'
+        }
+      }
+      return new RegExp(spell.source, spell.flags)
+    })
+    settings.save()
+  },
+  check: function(str) {
+    return !!this.expressions.find(exp => str.match(exp))
+  },
+  expressions: [],
+  awaitInstall: function() {
+    let panelWaiter = forAllNodes([{
+      selector: '.profile-page .row',
+      fn: container => {
+        app.$nextTick(()=>panelWaiter.stop())
+        this.install(container)
+      }
+    }], content, {sutree: true, queryChildren: true})
+  },
+  install: function(container) {
+    let spellsVal = settings.autohide
+    .map(spell => (typeof spell === 'object') ? `/${spell.source}/${spell.flags}` : spell)
+    .join('\n')
+    container.insertAdjacentHTML('beforeEnd',  `
+      <div class="col-md-12">
+        <form>
+          <div class="panel panel-default">
+            <div class="panel-heading" title="0chan Utilities v.${version}">
+              <svg class="ZU-svg ZU-svg-32 ZU-settingspage-icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-logo"></use></svg>
+              <b>Автоскрытие</b>
+            </div>
+            <div class="panel-body">
+              <div class="form-horizontal">
+                <div class="form-horizontal">
+                  <textarea rows="10" name="autohide" id="autohide" style="resize:vertical" placeholder="Текст или регулярные выражения, разделенные переносом строки" class="ZU-spells-textarea form-control" wrap="soft"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="panel-footer text-right">
+              <button type="submit" class="btn btn-primary ZU-autohide-submit"><i class="fa fa-gears"></i> Сохранить</button>
+            </div>
+          </div>
+        </form>
+      </div>`)
+    let submitBtn = container.querySelector('.ZU-autohide-submit')
+    , textarea = container.querySelector('textarea')
+    if (spellsVal)
+      textarea.value = spellsVal
+    submitBtn.addEventListener('click', ev => {
+      ev.preventDefault()
+      ev.stopPropagation()
+      let val = textarea.value
+      , results = []
+      val.split('\n').forEach(spell => {
+        if (!spell) return;
+        let rxr = spell.match(/^\/(.+)\/([gmiyu]+)$/)
+        , result
+        if (rxr) {
+          let source = rxr[1], flags = rxr[2]
+          try {
+            result = new RegExp(source, flags)
+          }
+          catch(e) {}
+        }
+        if (! result)
+          result = spell
+        results.push(result)
+      })
+      settings.autohide = results
+      this.init()
+    })
+    textarea.addEventListener('input', ev => {
+      textarea.classList.toggle('non-empty', !!textarea.value.length)
+    })
+  }
+}
 
 var settings = {
   defaults: {
@@ -350,7 +434,8 @@ var settings = {
     hiddenBoards: [],
     noko: true,
     updateInterval: 10,
-    catalogMode: false
+    catalogMode: false,
+    autohide: []
   },
   _: {},
   hooks: {
@@ -358,15 +443,17 @@ var settings = {
     unmaskOnHover: momInRoom.toggleHover.bind(momInRoom),
     hideSidebar: sideBar.toggle.bind(sideBar),
     updateInterval: refresher.reset.bind(refresher),
-    catalogMode: catalog.toggle.bind(catalog)
+    catalogMode: catalog.toggle.bind(catalog),
+    autohide: autohide.init.bind(autohide)
   },
   save: function() {
     this._.hiddenBoards = this.hiddenBoards
+    this._.autohide = this.autohide
     localStorage['ZU-settings'] = JSON.stringify(this._)
   },
   init: function() {
-    let localSettins = LSfetchJSON('ZU-settings') || {}
-    , allSettings = Object.assign(this.defaults, localSettins)
+    let localSettings = LSfetchJSON('ZU-settings') || {}
+    , allSettings = Object.assign(this.defaults, localSettings)
     Object.keys(allSettings).forEach(key => {
       let value = allSettings[key]
       if (typeof value !== "object") {
@@ -386,6 +473,13 @@ var settings = {
       this[key] = value
     })
   }
+}
+
+RegExp.prototype.toJSON = function() {
+  return {
+    source: this.source, 
+    flags: this.flags
+  } 
 }
 
 // Hides threads from unwanted boards on index page
@@ -899,6 +993,16 @@ function init() {
 
   contentVue = content.__vue__
 
+  router.setupInterceptor()
+
+  settings.init()
+
+  sideBar.init()
+
+  boardHider.refresh()
+
+  autohide.init()
+
   contentObserver = forAllNodes([
     {
       selector: '.thread',
@@ -934,13 +1038,7 @@ function init() {
     }
   ], sidebar, {queryChildren: true})
 
-  router.setupInterceptor()
-
-  settings.init()
-
-  sideBar.init()
-
-  boardHider.refresh()
+  
 
   state.initialized = true
 }
@@ -965,6 +1063,12 @@ function handlePost(post) {
           ${share.dropdown(`${document.location.protocol}//${document.location.host}/${postData.dir}/${postData.threadID}`, postData.title)}
           </span>
       </div>`)
+  }
+
+  let msg = postData.message
+  if (msg && autohide.check(msg) && !postData.postVue.isPopup /*&& !postData.postVue.isHidden*/) {
+    postData.postVue.isHidden = true
+    postData.postVue.$emit('hidden', true)
   }
 }
 
@@ -1013,7 +1117,8 @@ function getPostDataFromDOM(post) {
         threadID: postVue.thread.id,
         title: postVue.thread.title,
         isPopup: false,
-        postVue: postVue
+        postVue: postVue,
+        message: postVue.post.message
       }
     }
     else if (postVue.$el.classList.contains('post-popup')) {
@@ -1025,7 +1130,8 @@ function getPostDataFromDOM(post) {
         threadID: popupVue.threadId,
         isPopup: true,
         popupVue: popupVue,
-        postVue: postVue
+        postVue: postVue,
+        message: popupVue.message
       }
     }
     else return null
@@ -1053,91 +1159,8 @@ function addThreadControls(threadDOM, threadVue) {
   opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
 }
 
-var settingsPanelPage = {
-  modules: {
-    checkbox: {
-      build: checkbox => `
-        <div class="form-group">
-          <label class="control-label col-md-8">${checkbox.title}</label>
-          <div class="col-md-12">
-            <div class="checkbox">
-              <label><input data-id="${checkbox.id}" id="ZU-SP-${checkbox.id}" type="checkbox"${settings[checkbox.id] ? ' checked' : ''}> ${checkbox.description}</label>
-            </div>
-          </div>
-        </div>`,
-      events: {
-        change: ev => {
-          let checkbox = ev.target
-          try {
-            settings[checkbox.dataset.id] = checkbox.checked
-          }
-          catch(e) {
-            console.warn('[0u] Unable to handle checkbox change', checkbox)
-          }
-        }
-      }
-    }
-  },
-  controls: [
-    {
-      type: 'checkbox',
-      id: 'momInRoom',
-      title: "Мамка в комнате",
-      description: "Маскировать все картинки"
-    },
-    {
-      type: 'checkbox',
-      id: 'unmaskOnHover',
-      title: "Раскрывать по наведению",
-      description: "Раскрывать замаскированные картинки по наведению"
-    },
-    {
-      type: 'checkbox',
-      id: 'thumbNoScroll',
-      title: "Разворот без скролла",
-      description: "Не скроллить при разворачивании картинок"
-    }
-  ],
-  awaitInstall: function() {
-    let panelWaiter = forAllNodes([{
-      selector: '.profile-page .row',
-      fn: container => {
-        app.$nextTick(()=>panelWaiter.stop())
-        this.install(container)
-      }
-    }], content, {sutree: true, queryChildren: true})
-  },
-  install: function(container) {
-    container.insertAdjacentHTML('beforeEnd',  `
-      <div class="col-md-12">
-        <form>
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <b>0chan Utilities v.${version}</b>
-            </div>
-            <div class="panel-body">
-              <div class="form-horizontal">
-                <div class="form-horizontal">
-                ${this.controls.reduce((htm, control) => htm + this.modules[control.type].build(control), '')}
-                </div>
-              </div>
-            </div>
-            <div class="panel-footer text-right">
-              Изменения сохраняются автоматически.
-            </div>
-          </div>
-        </form>
-      </div>`)
-    this.controls.forEach(control => {
-      let allEvents = Object.assign(Object.create(this.modules[control.type].events || {}), control.events || {})
-      , controlDOM = document.querySelector(`#ZU-SP-${control.id}`)
-      if (! controlDOM) return;
-      for (let eventName in allEvents) {
-        controlDOM.addEventListener(eventName, allEvents[eventName])
-      }
-    })
-  }
-}
+
+
 
 var settingsPanel = {
   modules: {
@@ -1235,7 +1258,7 @@ var settingsPanel = {
 var ZURouter = {
   currentRoute: 'initial',
   enter: {
-    account: settingsPanelPage.awaitInstall.bind(settingsPanel),
+    account: autohide.awaitInstall.bind(autohide),
     home: boardHider.enable.bind(boardHider),
     thread: sageContinue
   },
@@ -1718,5 +1741,13 @@ injector.inject('ZU-global', `
   }
   span.ZU-hide-board-by-op {
     padding: 0;
+  }
+  .ZU-settingspage-icon {
+    vertical-align: middle;
+    margin: -8px;
+    margin-right: 0;
+  }
+  .non-empty.ZU-spells-textarea {
+    white-space: nowrap;
   }
 `)
