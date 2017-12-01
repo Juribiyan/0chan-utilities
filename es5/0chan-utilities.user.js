@@ -278,7 +278,7 @@ var autohide = {
           results = [];
       val.split('\n').forEach(function (spell) {
         if (!spell) return;
-        var rxr = spell.match(/^\/(.+)\/([gmiyu]+)$/),
+        var rxr = spell.match(/^\/(.+)\/([gmiyu]+)?$/),
             result = void 0;
         if (rxr) {
           var source = rxr[1],

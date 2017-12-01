@@ -403,7 +403,7 @@ var autohide = {
       , results = []
       val.split('\n').forEach(spell => {
         if (!spell) return;
-        let rxr = spell.match(/^\/(.+)\/([gmiyu]+)$/)
+        let rxr = spell.match(/^\/(.+)\/([gmiyu]+)?$/)
         , result
         if (rxr) {
           let source = rxr[1], flags = rxr[2]
