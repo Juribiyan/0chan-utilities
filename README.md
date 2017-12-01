@@ -1,5 +1,5 @@
 # 0chan Utilities
-*v.1.1.0* 
+*v.1.2.0 (тестирование автовскрытия)*
 
 [<a href="https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=1.1.0">Install</a>]
 
