@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      1.2.0
+// @version      1.2.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
 // @author       Snivy [0xf330f91f]
@@ -419,9 +419,11 @@ var autohide = {
       settings.autohide = results
       this.init()
     })
-    textarea.addEventListener('input', ev => {
-      textarea.classList.toggle('non-empty', !!textarea.value.length)
-    })
+    function unwrap() {
+      textarea.setAttribute('wrap', !!textarea.value.length ? 'off' : 'soft')
+    }
+    textarea.addEventListener('input', unwrap)
+    unwrap()
   }
 }
 
@@ -1746,8 +1748,5 @@ injector.inject('ZU-global', `
     vertical-align: middle;
     margin: -8px;
     margin-right: 0;
-  }
-  .non-empty.ZU-spells-textarea {
-    white-space: nowrap;
   }
 `)
