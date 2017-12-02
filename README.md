@@ -1,7 +1,7 @@
 # 0chan Utilities
-*v.1.2.0 (тестирование автовскрытия)*
+*v.1.2.1 (тестирование автовскрытия)*
 
-[<a href="https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=1.1.0">Install</a>]
+[<a href="https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.user.js?v=1.2.1">Install</a>]
 
 ## Фичи
 * Скрытие досок
