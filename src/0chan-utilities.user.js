@@ -1,19 +1,18 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      1.2.1
+// @version      2.0.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.meta.js
 // @author       Snivy [0xf330f91f]
 // @include      https://0chan.hk/*
 // @include      http://nullchan7msxi257.onion/*
+// @include      https://0chan.xyz/*
 // @grant        none
 // @icon         https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/icon.png
 // ==/UserScript==
 
-/*'use strict';*/ // can't do because of eval()
-
-const icons = 
+const icons =
   `<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
   <symbol id="i-logo" viewBox="0 0 32 32">
@@ -29,11 +28,11 @@ const icons =
   </svg>`
 document.body.insertAdjacentHTML('afterBegin', `<div style="display:none">${icons}</div>`)
 
-var appObserver, contentObserver, 
-content, contentVue, 
+var appObserver, contentObserver,
+content, contentVue,
 singleThread, singleThreadVue,
-sidebar, sidebarVue, sidebarObserver, 
-alerts, alertsVue, 
+sidebar, sidebarVue, sidebarObserver,
+alerts, alertsVue,
 awaitBoardList,
 postQuotation = null,
 lastActiveTextarea
@@ -42,28 +41,28 @@ lastActiveTextarea
 }
 , version = GM_info.script.version
 
-const SAGE_THREAD = 14965
+const SAGE_THREAD = 3551
 
 var momInRoom = {
-  mainCSS: 
-    `.post-img-thumbnail { 
-      opacity: 0.2 ; 
-      filter: blur(4px) grayscale(50%) ; 
+  mainCSS:
+    `.post-img-thumbnail {
+      opacity: 0.2 ;
+      filter: blur(4px) grayscale(50%) ;
     }}`,
-  hoverCSS: 
+  hoverCSS:
     `.post-img .post-img-thumbnail,
     .post-img .post-img-full {
       transition: filter 0.3s, opacity 0.3s !important;
     }
     .post-img .post-img-thumbnail:hover,
     .post-img .post-img-full:hover {
-      opacity: 1; 
-      filter: none; 
+      opacity: 1;
+      filter: none;
     }`,
-  fullBlurCSS: 
-    `.post-img-full { 
-      opacity: 0.2 ; 
-      filter: blur(4px) grayscale(50%) ; 
+  fullBlurCSS:
+    `.post-img-full {
+      opacity: 0.2 ;
+      filter: blur(4px) grayscale(50%) ;
     }`,
   toggle: function(val) {
     let quickBtn = document.querySelector('#ZU-quickaction-momInRoom')
@@ -153,8 +152,8 @@ const share = {
     let selectedText = postQuotation
     , description = encodeURIComponent(selectedText ? selectedText.replace(/\n/g, ' ') : link.dataset.description)
     , site = this.sites[link.dataset.site]
-    window.open(site.link(link.dataset.url, description), 
-      'targetWindow', 
+    window.open(site.link(link.dataset.url, description),
+      'targetWindow',
       `toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${site.width || 666},height=${site.height || 555}`)
   }
 }
@@ -367,63 +366,188 @@ var autohide = {
       }
     }], content, {sutree: true, queryChildren: true})
   },
-  install: function(container) {
-    let spellsVal = settings.autohide
-    .map(spell => (typeof spell === 'object') ? `/${spell.source}/${spell.flags}` : spell)
-    .join('\n')
-    container.insertAdjacentHTML('beforeEnd',  `
-      <div class="col-md-12">
-        <form>
-          <div class="panel panel-default">
-            <div class="panel-heading" title="0chan Utilities v.${version}">
-              <svg class="ZU-svg ZU-svg-32 ZU-settingspage-icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-logo"></use></svg>
-              <b>Автоскрытие</b>
-            </div>
-            <div class="panel-body">
-              <div class="form-horizontal">
-                <div class="form-horizontal">
-                  <textarea rows="10" name="autohide" id="autohide" style="resize:vertical" placeholder="Текст или регулярные выражения, разделенные переносом строки" class="ZU-spells-textarea form-control" wrap="soft"></textarea>
-                </div>
-              </div>
-            </div>
-            <div class="panel-footer text-right">
-              <button type="submit" class="btn btn-primary ZU-autohide-submit"><i class="fa fa-gears"></i> Сохранить</button>
-            </div>
-          </div>
-        </form>
-      </div>`)
-    let submitBtn = container.querySelector('.ZU-autohide-submit')
-    , textarea = container.querySelector('textarea')
-    if (spellsVal)
-      textarea.value = spellsVal
-    submitBtn.addEventListener('click', ev => {
-      ev.preventDefault()
-      ev.stopPropagation()
-      let val = textarea.value
-      , results = []
-      val.split('\n').forEach(spell => {
-        if (!spell) return;
-        let rxr = spell.match(/^\/(.+)\/([gmiyu]+)?$/)
-        , result
-        if (rxr) {
-          let source = rxr[1], flags = rxr[2]
-          try {
-            result = new RegExp(source, flags)
-          }
-          catch(e) {}
+  save: function() {
+    let autohideTextarea = document.querySelector('#ZU-autohide-text')
+    , val = autohideTextarea.value
+    , results = []
+    val.split('\n').forEach(spell => {
+      if (!spell) return;
+      let rxr = spell.match(/^\/(.+)\/([gmiyu]+)?$/)
+      , result
+      if (rxr) {
+        let source = rxr[1], flags = rxr[2]
+        try {
+          result = new RegExp(source, flags)
         }
-        if (! result)
-          result = spell
-        results.push(result)
-      })
-      settings.autohide = results
-      this.init()
+        catch(e) {}
+      }
+      if (! result)
+        result = spell
+      results.push(result)
     })
-    function unwrap() {
-      textarea.setAttribute('wrap', !!textarea.value.length ? 'off' : 'soft')
+    settings.autohide = results
+    this.init()
+  }
+}
+
+var autohideAtt = {
+  init: function(spells=settings.autohideAtt) {
+    let images = [], embeds = []
+    spells.forEach(spell => (spell.eid ? embeds : images).push(spell))
+    this.images = images
+    this.embeds = embeds
+    settings.save()
+  },
+  check: function(att) {
+    return !!this[att.embed ? 'embeds' : 'images']
+    .find(spell => att.embed
+      ? (
+          att.embed.service == spell.svc
+          &&
+          att.embed.embedId == spell.eid
+        )
+      : (
+          att.images.original.width == spell.w
+          &&
+          att.images.original.height == spell.h
+          &&
+          Math.abs(att.images.thumb_400px.size_kb - spell.kb) < this.treshold
+        )
+    )
+  },
+  treshold: 0.5,
+  addButton: function(fig) {
+    let inList = this.check(fig.__vue__.attachment)
+    , btnContainer = fig.querySelector('.post-img-buttons')
+    if (! btnContainer) return;
+    btnContainer.insertAdjacentHTML('afterBegin', `
+      <span data-inlist="${inList.toString()}" title="${inList ? 'Не с' : 'С'}крывать посты с этой картинкой" class="post-img-button ZU-hide-attachment ZU-prevent-settings-dropdown-close">
+        <i class="fa fa-${inList ? 'plus' : 'minus'}-square-o fa-fw"></i>
+      </span>
+    `)
+  },
+  add: function(figVue) {
+    let att = figVue.attachment
+    if (settings.autohideAtt.find(entry => entry.aid == att.id)) {
+      return nativeAlert('info', `${att.embed ? 'Видео' : 'Картинка'} уже присутствует в списке крываемых.`)
     }
-    textarea.addEventListener('input', unwrap)
-    unwrap()
+    let entry = {
+      pid: +figVue.$parent.post.id,
+      aid: +att.id
+    }
+    Object.assign(entry, att.embed
+      ? {
+        svc: att.embed.service,
+        eid: att.embed.embedId
+      }
+      : {
+        w: +att.images.original.width,
+        h: +att.images.original.height,
+        kb: att.images.thumb_400px.size_kb
+      }
+    )
+    settings.autohideAtt.push(entry)
+    autohideAtt.init()
+
+    document.querySelector(`.ZU-autohide-${entry.eid ? 'embeds' : 'images'}-section`)
+    .insertAdjacentHTML('beforeEnd', this.itemHTML(entry, {away: true}))
+
+    // TODO: something with this fucking shit...
+    let menu = document.querySelector('#ZU-settings')
+    , timeout = 600
+    if (menu.classList.contains('ZU-dropdown-show')) {
+      if (document.querySelector('#ZU-top-autohide').hidden) {
+        ;[].forEach.call(document.querySelectorAll('.ZU-autohide-content'), el => el.hidden = true)
+        document.querySelector('#ZU-autohide-images').hidden = false
+        fancyResizeXfade(menu, '#ZU-settings-main', '#ZU-top-autohide')
+      }
+      else {
+        if (document.querySelector('#ZU-autohide-images').hidden) {
+          fancyResizeXfade(menu, '#ZU-autohide-text', '#ZU-autohide-images')
+        }
+        else {
+          timeout = 0
+        }
+      }
+    }
+    else {
+      ;[].forEach.call(document.querySelectorAll('.ZU-top-menu-page'), el => el.hidden = true)
+      document.querySelector('#ZU-top-autohide').hidden = false
+      ;[].forEach.call(document.querySelectorAll('.ZU-autohide-content'), el => el.hidden = true)
+        document.querySelector('#ZU-autohide-images').hidden = false
+      menu.classList.toggle('ZU-dropdown-show')
+    }
+
+    setTimeout(() => document.querySelector(`.ZU-autohide-attachemnt-entry[data-aid="${entry.aid}"]`)
+      .classList.remove('ZU-away')
+    , timeout)
+
+    reAutohidePosts()
+  },
+  itemHTML: function(item, options={away: false}) {
+    // get thumbnail
+    fetch(`${document.location.protocol}//${document.location.host}/api/post?post=${item.pid}`, {credentials: 'same-origin'})
+    .then(res => {
+      if (res.ok) {
+        res.json().then(json => {
+          if (json.post && json.post.attachments) {
+            let att = json.post.attachments.find(att => att.id == item.aid)
+            if (att) {
+              try {
+                // TODO: remove dups
+                ;[].forEach.call(document.querySelectorAll(`.ZU-autohide-attachemnt-entry[data-aid="${item.aid}"]`), entry => { // our future item
+                  entry.style.backgroundImage = `url("${att.images.thumb_100px.url}")`
+                })
+              }
+              catch(e) {
+                console.warn('[0u] Error retrieving thumbnail for autohide item: ', e)
+              }
+            }
+          }
+        })
+        .catch(e => console.warn('[0u] Bad JSON: ', e))
+      }
+      else {
+        res.text().then(text => console.warn('[0u] Bad response: ', text)).catch(nop)
+      }
+    })
+
+    return `
+    <div class="ZU-autohide-attachemnt-entry${options.away ? ' ZU-away' : ''}"  ${item.eid
+      ? `data-svc="${item.svc}" data-eid="${item.eid}"`
+      : ''
+    } data-aid="${item.aid}" data-pid="${item.pid}" title="${item.eid
+      ? `${item.svc}/${item.eid}`
+      : `${item.w}×${item.h}, ${item.kb} кБ`}" >
+      <button class="btn btn-xs btn-primary ZU-xbtn ZU-remove-autohide-entry" title="Убрать из списка скрываемых">
+        <span><i class="fa fa-close"></i></span>
+      </button>
+    </div>`
+  },
+  getListHTML: function() {
+    return `
+    <div class="ZU-autohide-images-section">
+      ${this.images.reduce((htm, img) => htm + this.itemHTML(img), '')}
+    </div>
+    <hr style="margin: 8px 0">
+    <div class="ZU-autohide-embeds-section">
+      ${this.embeds.reduce((htm, emb) => htm + this.itemHTML(emb), '')}
+    </div>
+    `
+  },
+  remove: function(aid, isEmbed) {
+    document.querySelector(`.ZU-autohide-attachemnt-entry[data-aid="${aid}"]`).remove()
+    let index = -1
+    settings.autohideAtt.find((i,x) => {if (i.aid == aid) index = x})
+    if (index !== -1)
+      settings.autohideAtt.splice(index, 1)
+    let arr = this[isEmbed ? 'embeds' : 'images']
+    arr.find((i,x) => {if (i.aid == aid) index = x})
+    if (index !== -1)
+      arr.splice(index, 1)
+    settings.save()
+
+    reAutohidePosts()
   }
 }
 
@@ -437,7 +561,8 @@ var settings = {
     noko: true,
     updateInterval: 10,
     catalogMode: false,
-    autohide: []
+    autohide: [],
+    autohideAtt: []
   },
   _: {},
   hooks: {
@@ -446,11 +571,13 @@ var settings = {
     hideSidebar: sideBar.toggle.bind(sideBar),
     updateInterval: refresher.reset.bind(refresher),
     catalogMode: catalog.toggle.bind(catalog),
-    autohide: autohide.init.bind(autohide)
+    autohide: autohide.init.bind(autohide),
+    autohideAtt: autohideAtt.init.bind(autohideAtt)
   },
   save: function() {
     this._.hiddenBoards = this.hiddenBoards
     this._.autohide = this.autohide
+    this._.autohideAtt = this.autohideAtt
     localStorage['ZU-settings'] = JSON.stringify(this._)
   },
   init: function() {
@@ -479,9 +606,9 @@ var settings = {
 
 RegExp.prototype.toJSON = function() {
   return {
-    source: this.source, 
+    source: this.source,
     flags: this.flags
-  } 
+  }
 }
 
 // Hides threads from unwanted boards on index page
@@ -510,11 +637,11 @@ const boardHider = {
       }
       css = settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .ZU-board-hide-icon`).join(', ')
         + ' {display: none} '
-        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .ZU-board-unhide-icon`).join(', ') 
+        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .ZU-board-unhide-icon`).join(', ')
         + ' {display: block}'
-        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"]`).join(', ') 
+        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"]`).join(', ')
         + ' {text-decoration: line-through!important; }'
-        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .sidemenu-board-title`).join(', ') 
+        + settings.hiddenBoards.map(boardID => `.sidemenu-board-item a[href="/${boardID}"] .sidemenu-board-title`).join(', ')
         + ' {color:#808080!important; }'
       injector.inject('ZU-hide-boards-ui', css)
     }
@@ -601,13 +728,51 @@ var eventDispatcher = {
     }
     // Popup slosing
     if (e.path.find(el => el.classList && el.classList.contains('ZU-settings-btn'))) {
+      [].forEach.call(document.querySelectorAll('#ZU-settings > div'), el => el.hidden = true)
+      document.querySelector('#ZU-settings-main').hidden = false
       document.querySelector('#ZU-settings').classList.toggle('ZU-dropdown-show')
     }
-    else if (! e.path.find(el => el.classList && el.classList.contains('ZU-settings-dropdown'))) {
+    else if (! e.path.find(el => el.classList && (el.classList.contains('ZU-settings-dropdown') || el.classList.contains('ZU-prevent-settings-dropdown-close')))) {
       document.querySelector('#ZU-settings').classList.remove('ZU-dropdown-show')
     }
     if (! e.path.find(el => el.classList && (el.classList.contains('ZU-share-btn') || el.classList.contains('ZU-share-btn')))) {
       Array.prototype.forEach.call(document.querySelectorAll('.ZU-share-dropdown'), dd => dd.classList.remove('ZU-dropdown-show'))
+    }
+    // Top in-menu navigation
+    let eat = e.path.find(el => el.classList && el.classList.contains('ZU-enter-autohide-top'))
+    if (eat) {
+      fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-settings-main', '#ZU-top-autohide')
+    }
+    // Saving autohide menu
+    let ret = e.path.find(el => el.classList && el.classList.contains('ZU-exit-autohide-top'))
+    if (ret) {
+      fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-top-autohide', '#ZU-settings-main')
+      autohide.save()
+      reAutohidePosts()
+    }
+    // Hide by attachment
+    let hba = e.path.find(el => el.classList && el.classList.contains('ZU-hide-attachment'))
+    if (hba) {
+      let figVue = hba.findParent('figure').__vue__
+      if (hba.dataset.inlist == 'true') {
+        autohideAtt.remove(figVue.attachment.id)
+        // ??
+      }
+      else
+        autohideAtt.add(figVue)
+    }
+    // Remove autohide entry
+    let rae = e.path.find(el => el.classList && el.classList.contains('ZU-remove-autohide-entry'))
+    if (rae) {
+      let data = rae.findParent('.ZU-autohide-attachemnt-entry').dataset
+      autohideAtt.remove(data.aid, !!data.eid)
+    }
+    // Radio button group behavior
+    let rbg = e.path.find(el => el.classList && el.classList.contains('ZU-radio-btn-group'))
+    , rbb = e.path.find(el => el.classList && el.classList.contains('btn'))
+    if (rbg && rbb) {
+      ;[].forEach.call(rbg.querySelectorAll('.btn'), btn => btn.classList.remove('active'))
+      rbb.classList.add('active')
     }
   },
   mousedown: function(e) {
@@ -638,7 +803,24 @@ var eventDispatcher = {
         if (otherNoko !== noko)
           otherNoko.checked = noko.checked
       })
-      
+
+    }
+  },
+  mouseenter: function(e) {
+    // Peek into hidden thread
+    let peek = e.path.find(el =>
+      el.classList
+      &&
+      el.classList.contains('fa-plus-square-o')
+      &&
+      el.findParent('.post-footer')
+    )
+    if (peek) {
+      let post = peek.findParent('.post').parentNode
+      , postVue = post.__vue__
+      if (postVue && postVue.isAutoHidden) {
+        console.log(postVue)
+      }
     }
   }
 }
@@ -801,11 +983,11 @@ const router = {
   setupInterceptor: function(doDebug=false) {
     app.$router.push = (route, e, n) => {
       let thread, threadID, postID
-      if (doDebug) 
+      if (doDebug)
         console.log('ROUTE:', route)
       if (
         !settings.noko
-        && state.type !== "thread" 
+        && state.type !== "thread"
         && route.hasOwnProperty('name')
         && route.name === "thread"
         && route.hasOwnProperty('hash')
@@ -879,7 +1061,7 @@ function setupAlertInterceptor() {
 // Thanks anoñchik from /userjs/
 function fuckCF(response, alertToClose, alertCloserContext) {
   let query = 'jschl_vc=' + response.match(/jschl_vc" value="([^"]+)/)[1] + '&pass=' + response.match(/pass" value="([^"]+)/)[1] + '&jschl_answer=',
-  // basis for simplest eval 
+  // basis for simplest eval
   a = {value: 0}, t = location.host
   eval( response.match(/b,r,e,a,k,i,n,g,f, ([^;]+)/)[1] + '; ' + response.match(/getElementById\('challenge-form'\);\s+;([^']+)/)[1] )
   query += a.value
@@ -887,7 +1069,7 @@ function fuckCF(response, alertToClose, alertCloserContext) {
   xhr.open("GET", '/cdn-cgi/l/chk_jschl?'+query, true)
   xhr.onreadystatechange = function() {
     if (xhr.readyState !== xhr.DONE) return;
-    alertCloserContext.closeAlert(alertToClose) 
+    alertCloserContext.closeAlert(alertToClose)
     if (xhr.status == 200) {
       // check if post is being sent
       let sendingBtn = document.querySelector('.reply-form .btn-primary[disabled] .fa-spinner')
@@ -921,13 +1103,13 @@ function fuckCF(response, alertToClose, alertCloserContext) {
       alertCloserContext.addAlert('error', 'Проверка ануса провалилась.')
     }
   }
-  setTimeout(() => { 
+  setTimeout(() => {
     xhr.send()
   }, 4000)
 }
 
 function handleReplyForm(form) {
-  // Add noko button 
+  // Add noko button
   form.querySelector('.reply-form-message + div .pull-right').insertAdjacentHTML('beforeBegin', `
     <label class="ZU-noko-label" title="После отправки сообщения переместиться к треду"><input class="ZU-noko" type="checkbox"${settings.noko ? 'checked' : '' }> Noko</label>`)
   // Add quote from selection
@@ -940,7 +1122,7 @@ function handleReplyForm(form) {
       'cancelable': true
     }))
     textarea.focus()
-    
+
   }
 }
 
@@ -952,7 +1134,7 @@ function addSettingsButtons() {
       <button title="0chan Utilities v.${version}" type="button" class="ZU-panel-btn btn btn-link ZU-btn-link ZU-svg-container-btn ZU-settings-btn">
         <svg class="ZU-svg ZU-svg-32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#i-logo"></use></svg>
       </button>
-      ${showCatBtn ? 
+      ${showCatBtn ?
       `<button title="Режим каталога" id="ZU-quickaction-catalogMode" data-prop="catalogMode" class="btn btn-link ZU-btn-link ZU-catalog-btn${settings.catalogMode ? ' active' : ''}">
         <i class="fa fa-th ZU-onactive-hide"></i>
         <i class="fa fa-th-list ZU-onactive-show"></i>
@@ -976,7 +1158,7 @@ function addSettingsButtons() {
 
 function handleBoardItem(board) {
   if (board.querySelector('.ZU-boardhideunhide')) return;
-  board.insertAdjacentHTML('afterBegin', 
+  board.insertAdjacentHTML('afterBegin',
     `<span class="pull-left sidemenu-board-icons ZU-boardhideunhide">
       <span title="Скрыть" class="ZU-board-hide-icon">
         <i class="fa fa-minus-square-o"></i>
@@ -1004,6 +1186,7 @@ function init() {
   boardHider.refresh()
 
   autohide.init()
+  autohideAtt.init()
 
   contentObserver = forAllNodes([
     {
@@ -1018,11 +1201,15 @@ function init() {
       fn: handleBoardItem
     },
     {
+      selector: '.post-img',
+      fn: handleAttachment
+    },
+    {
       selector: '.reply-form',
       fn: handleReplyForm
     }
   ], content.parentElement, {subtree: true, queryChildren: true})
-  
+
   sidebar = document.querySelector('#sidebar')
   sidebarVue = sidebar.__vue__
   awaitBoardList = forAllNodes([
@@ -1040,7 +1227,7 @@ function init() {
     }
   ], sidebar, {queryChildren: true})
 
-  
+
 
   state.initialized = true
 }
@@ -1067,11 +1254,37 @@ function handlePost(post) {
       </div>`)
   }
 
-  let msg = postData.message
-  if (msg && autohide.check(msg) && !postData.postVue.isPopup /*&& !postData.postVue.isHidden*/) {
+  // Autohide posts
+  autohidePost(postData, post)
+}
+
+function autohidePost(postData, postDOM) { // TODO: prevent hiding thread inside the thread; Force unhide thread
+  if (
+    !postData.postVue.isPopup
+    &&
+    (
+      postData.attachments.find(att => autohideAtt.check(att))
+      ||
+      (postData.message && autohide.check(postData.message))
+    )
+  ) {
     postData.postVue.isHidden = true
+    postData.postVue.isAutoHidden = true
     postData.postVue.$emit('hidden', true)
   }
+  else if(postData.postVue.isAutoHidden) {
+    postData.postVue.isHidden = false
+    postData.postVue.isAutoHidden = false
+    postData.postVue.$emit('hidden', false)
+  }
+}
+
+function handleAttachment(att) {
+  autohideAtt.addButton(att)
+}
+
+function reAutohidePosts() {
+  [].forEach.call(document.querySelectorAll('.post'), post => autohidePost(getPostDataFromDOM(post)))
 }
 
 
@@ -1120,7 +1333,8 @@ function getPostDataFromDOM(post) {
         title: postVue.thread.title,
         isPopup: false,
         postVue: postVue,
-        message: postVue.post.message
+        message: postVue.post.message,
+        attachments: postVue.post.attachments
       }
     }
     else if (postVue.$el.classList.contains('post-popup')) {
@@ -1133,7 +1347,8 @@ function getPostDataFromDOM(post) {
         isPopup: true,
         popupVue: popupVue,
         postVue: postVue,
-        message: popupVue.message
+        message: popupVue.message,
+        attachments: popupVue.attachments
       }
     }
     else return null
@@ -1238,12 +1453,57 @@ var settingsPanel = {
       condition: () => catalog.isApplicable,
     },
   ],
-  install: function(container) {
+  install: function() {
     let controls = this.controls.filter(control => !control.condition || control.condition())
     document.querySelector('.headmenu').insertAdjacentHTML('beforeEnd',  `
-      <ul class="dropdown-menu ZU-settings-dropdown ZU-dropdown" id="ZU-settings">
-        ${controls.reduce((htm, control) => htm + this.modules[control.type].build(control), '')}
-      </ul>`)
+      <div class="dropdown-menu ZU-settings-dropdown ZU-dropdown" id="ZU-settings">
+        <div id="ZU-settings-main" class="ZU-top-menu-page">
+          <ul class="ZU-settings-list">
+            ${controls.reduce((htm, control) => htm + this.modules[control.type].build(control), '')}
+          </ul>
+          <button class="btn btn-default btn-xs ZU-enter-autohide-top"><span>Автоскрытие</span></button>
+        </div>
+        <div id="ZU-top-autohide" class="ZU-top-menu-page" hidden>
+          <div class="btn-group">
+            <button class="btn btn-default btn-xs ZU-exit-autohide-top"><span><i class="fa fa-chevron-left"></i> <i class="fa fa-save"></i> Назад</span></button>
+            <!-- button class="btn btn-default btn-xs"><span><i class="fa fa-undo"></i></span></button -->
+          </div>
+          <div class="btn-group ZU-autohide-type-switch ZU-radio-btn-group" data-toggle="buttons">
+            <label class="btn btn-xs btn-default active">
+              <input type="radio" name="ZU-autohide-type" value="txt" autocomplete="off" checked> Текст
+            </label>
+            <label class="btn btn-xs btn-default">
+              <input type="radio" name="ZU-autohide-type" value="img" autocomplete="off"> Картинки
+            </label>
+          </div>
+          <br>
+          <textarea id="ZU-autohide-text" cols="30" rows="10" class="form-control ZU-autohide-content"></textarea>
+          <div id="ZU-autohide-images" class="ZU-autohide-content" hidden>
+            ${autohideAtt.getListHTML()}
+          </div>
+        </div>
+      </div>`)
+    let spellsVal = settings.autohide
+    .map(spell => (typeof spell === 'object') ? `/${spell.source}/${spell.flags}` : spell)
+    .join('\n')
+    , autohideTextarea = document.querySelector('#ZU-autohide-text')
+    if (spellsVal)
+      autohideTextarea.value = spellsVal
+    function unwrap() {
+      autohideTextarea.setAttribute('wrap', !!autohideTextarea.value.length ? 'off' : 'soft')
+    }
+    autohideTextarea.addEventListener('input', unwrap)
+    unwrap()
+    ;[].forEach.call(document.querySelectorAll('input[name=ZU-autohide-type]'), input => {
+      input.addEventListener('change', function() {
+        if (this.value == 'img') {
+          fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-autohide-text', '#ZU-autohide-images')
+        }
+        if (this.value == 'txt') {
+          fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-autohide-images', '#ZU-autohide-text')
+        }
+      })
+    })
     controls.forEach(control => {
       if (state.condition && !state.condition()) return;
       let allEvents = Object.assign(Object.create(this.modules[control.type].events || {}), control.events || {})
@@ -1260,7 +1520,7 @@ var settingsPanel = {
 var ZURouter = {
   currentRoute: 'initial',
   enter: {
-    account: autohide.awaitInstall.bind(autohide),
+    // account: autohide.awaitInstall.bind(autohide),
     home: boardHider.enable.bind(boardHider),
     thread: sageContinue
   },
@@ -1317,7 +1577,7 @@ var injector = {
 function forAllNodes(selFnMap, parent=document.body, options={}) {
   let config = Object.assign({
     autoStart: true, // whether or not observer shall start observing immediately
-    subtree: false, 
+    subtree: false,
     childList: true,
     queryChildren: false //whether or not inserted nodes shall be searched for selector-matching elements
   }, options)
@@ -1346,7 +1606,7 @@ function forAllNodes(selFnMap, parent=document.body, options={}) {
   function start() {
     // Handle existing nodes
     selFnMap.forEach(sf => {
-      let existingNodes = parent.querySelectorAll(sf.selector) 
+      let existingNodes = parent.querySelectorAll(sf.selector)
       Array.prototype.forEach.call(existingNodes, node => {
         sf.fn(node)
       })
@@ -1361,7 +1621,7 @@ function forAllNodes(selFnMap, parent=document.body, options={}) {
     start: start,
     stop: () => observer.disconnect()
   }
-} 
+}
 
 function externallyResolvingPromise() {
   let promiseResolve, promiseReject
@@ -1543,28 +1803,137 @@ function onFreshContent() {
   }
 
   content = document.querySelector('#content > div')
-  if (state.type==='thread') 
+  if (state.type==='thread')
     singleThread = document.querySelector('.post-op').parentNode.parentNode
   if (! state.initialized) {
     init()
   }
   else {
     contentVue = content.__vue__
-    if (state.type==='thread') 
+    if (state.type==='thread')
       singleThreadVue = singleThread.__vue__
   }
 
   alerts = document.querySelector('.alerts-wrapper')
   alertsVue = alerts.__vue__
   setupAlertInterceptor()
-  
+
   addSettingsButtons()
 
   settingsPanel.install()
 
   ZURouter.handleRoute(state.type)
-  
+
   refresher.init()
+}
+
+function freezeSize(el) {
+  let bcr = el.getBoundingClientRect()
+  if (el.style.width) {
+    el.__frozenWidth = el.style.width
+  }
+  else {
+    el.style.width = `${bcr.width}px`
+    el.__frozenWidth = null
+  }
+  if (el.style.height) {
+    el.__frozenHeight = el.style.height
+  }
+  else {
+    el.style.height = `${bcr.height}px`
+    el.__frozenHeight = null
+  }
+}
+
+function unfreezeSize(el) {
+  el.style.height = el.__frozenHeight || null
+  el.style.width = el.__frozenWidth || null
+}
+
+function fancyResizeXfade(container, hide, show) {
+  // !!! This function needs proper CSS to be set up
+
+  hide = container.querySelectorAll(hide)
+  show = container.querySelectorAll(show)
+
+  let foEl, fiEl
+
+  // apply transformations
+  ;[].forEach.call(hide, el => el.hidden = true)
+  ;[].forEach.call(show, el => {
+    el.hidden = false
+    freezeSize(el)
+  })
+
+  // memoize resulting size
+  let [endWidth, endHeight] = [container.offsetWidth, container.offsetHeight]
+
+  // rollback transformations; setup fade
+  ;[].forEach.call(hide, el => {
+    el.hidden = false
+    setTimeout(() => {
+      el.classList.add('fancy-fadeout')
+      freezeSize(el)
+    }, 0)
+    foEl = el
+  })
+  ;[].forEach.call(show, el => {
+    el.hidden = true
+    el.classList.add('fancy-fadein')
+    fiEl = el
+  })
+
+  setTimeout(() => {
+    // freeze current size
+    freezeSize(container)
+
+    // run resize
+    container.classList.add('fancy-resize')
+    setTimeout(() => {
+      Object.assign(container.style, {
+        height: `${endHeight}px`,
+        width: `${endWidth}px`
+      })
+    }, 0)
+
+    // get timeline points from CSS
+    let [fadeOutDuration, resizeDelay, resizeDuration, fadeInDelay, fadeInDuration] =
+    [
+      [foEl, 'transitionDuration'],
+      [container, 'transitionDelay'],
+      [container, 'transitionDuration'],
+      [fiEl, 'animationDelay'],
+      [fiEl, 'animationDuration']
+    ]
+    .map(ep => {
+      return getComputedStyle(ep[0])[ep[1]]
+    })
+    .map(prop => (+prop.split('s')[0])*1000)
+
+    // hide and show elements @ appropriate timepoints
+    setTimeout(() => {
+      ;[].forEach.call(hide, el => {
+        el.hidden = true
+      })
+      ;[].forEach.call(show, el => {
+        el.hidden = false
+      })
+    }, fadeOutDuration)
+
+    // clean up
+    setTimeout(() => {
+      container.classList.remove('fancy-resize')
+      unfreezeSize(container)
+      ;[].forEach.call(hide, el => {
+        el.classList.remove('fancy-fadeout')
+        unfreezeSize(el)
+      })
+      ;[].forEach.call(show, el => {
+        el.classList.remove('fancy-fadein')
+        unfreezeSize(el)
+      })
+    }, resizeDelay + resizeDuration + fadeInDelay + fadeInDuration)
+  }, 0)
 }
 
 
@@ -1626,7 +1995,7 @@ injector.inject('ZU-global', `
     margin: 0;
     vertical-align: -1px;
   }
-  .ZU-settings-dropdown input[type="radio"], 
+  .ZU-settings-dropdown input[type="radio"],
   .ZU-settings-dropdown input[type="checkbox"] {
     margin: 3px 0 0;
     line-height: normal;
@@ -1635,7 +2004,7 @@ injector.inject('ZU-global', `
   .ZU-settings-dropdown li {
     margin: 4px 0;
   }
-  
+
   .ZU-svg-container-btn {
     font-size: 0;
     padding: 0;
@@ -1748,5 +2117,89 @@ injector.inject('ZU-global', `
     vertical-align: middle;
     margin: -8px;
     margin-right: 0;
+  }
+  .ZU-settings-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  .fancy-fadeout {
+    transition-duration: 0.2s;
+    transition-property: opacity;
+  }
+  .fancy-resize {
+    transition-duration: 0.4s;
+    transition-property: height, width;
+    transition-delay: 0s;
+    overflow: hidden;
+  }
+  .fancy-fadeout {
+    opacity: 0;
+  }
+  .fancy-fadein {
+    animation: fancyfadein 0.2s;
+  }
+  @keyframes fancyfadein {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+  #ZU-top-autohide {
+    padding: 6px 0;
+  }
+  .ZU-enter-autohide-top {
+    margin-top: 4px;
+    width: 100%;
+  }
+  #ZU-settings-main {
+    padding-bottom: 5px;
+  }
+  .ZU-autohide-type-switch {
+    float: right;
+  }
+  .ZU-autohide-content {
+    margin-top: 8px;
+    min-width: 217px;
+    min-height: 70px;
+  }
+  .ZU-xbtn {
+    padding: 0px;
+    height: 16px;
+    width: 16px;
+    line-height: 16px;
+    border: none;
+    border-radius: 100px;
+  }
+  .ZU-autohide-attachemnt-entry{
+    background-color: #efefef;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 100px;
+    box-sizing: border-box;
+    border: 1px solid #dadada;
+    margin: 4px;
+    background-size: cover;
+    background-position: center center;
+    transition: transform 0.3s;
+  }
+  .ZU-autohide-attachemnt-entry .ZU-xbtn {
+    transform: scale(0);
+    transition: transform 0.2s;
+    float: right;
+  }
+  .ZU-autohide-attachemnt-entry:hover .ZU-xbtn {
+    transform: scale(1);
+  }
+  #ZU-autohide-images > div {
+    font-size: 0;
+  }
+  #ZU-autohide-images {
+    overflow: auto;
+    resize: both;
+    /*margin: 4px -4px -4px;*/
+    max-width: 600px;
+  }
+  .ZU-away {
+    transform: scale(0);
   }
 `)
