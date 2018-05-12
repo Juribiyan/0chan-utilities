@@ -1,5 +1,8 @@
 <?php
 
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: '.$_GET['domain']);
+
 if (!isset($_GET['post']) || !preg_match('/^[0-9]+$/', $_GET['post']))
   exitWithError('Wrong post ID');
 if (!isset($_GET['attachment']) || !preg_match_all('/^[0-9]+$/', $_GET['attachment']))
