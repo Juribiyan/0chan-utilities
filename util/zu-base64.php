@@ -1,6 +1,4 @@
 <?php
-
-header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: '.$_GET['domain']);
 
 if (!isset($_GET['post']) || !preg_match('/^[0-9]+$/', $_GET['post']))
@@ -88,7 +86,7 @@ function fetch($url) {
 
 function returnBase64($res) {
   ob_start(); // Let's start output buffering.
-    imagejpeg($res); //This will normally output the image, but because of ob_start(), it won't.
+    imagejpeg($res, NULL, 66); //This will normally output the image, but because of ob_start(), it won't.
     $contents = ob_get_contents(); //Instead, output above is saved to $contents
   ob_end_clean(); //End the output buffer.
 
@@ -104,11 +102,13 @@ function debug_gd($res) {
 }
 
 function exitWithError($errmsg, $code=400) {
+  header('Content-Type: application/json');
   http_response_code($code);
   exit(json_encode(array(error => $errmsg)));
 }
 
 function exitWithSUCC($data=array()) {
+  header('Content-Type: application/json');
   $data['error'] = false;
   exit(json_encode($data));
 }
