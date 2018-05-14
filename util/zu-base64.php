@@ -48,12 +48,12 @@ else {
   }
   elseif ($w > $h) {
     $y = 0;
-    $x = round($w/2 - 25);
+    $x = round($w/2 - $h/2);
     $src_w = $src_h = $h;
   }
   elseif ($h > $w) {
     $x = 0;
-    $y = round($h/2 - 25);
+    $y = round($h/2 - $w/2);
     $src_w = $src_h = $w;
   }
   imagecopyresampled($dest, $src, 0, 0, $x, $y, 50, 50, $src_w, $src_h);
