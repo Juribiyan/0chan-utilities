@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      2.0.0
+// @version      2.1.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.meta.js
 // @author       Snivy [0xf330f91f]
@@ -46,7 +46,8 @@ var appObserver,
 },
     version = GM_info.script.version;
 
-const SAGE_THREAD = 3551;
+const SAGE_THREAD = 3551,
+      THUMB_API = 'https://0chan.one/zu-base64.php';
 
 var momInRoom = {
   mainCSS: `.post-img-thumbnail {
@@ -383,7 +384,7 @@ var autohideAtt = {
     spells.forEach(spell => (spell.eid ? embeds : images).push(spell));
     this.images = images;
     this.embeds = embeds;
-    settings.save();
+    // settings.save()
   },
   check: function (att) {
     return !!this[att.embed ? 'embeds' : 'images'].find(spell => att.embed ? att.embed.service == spell.svc && att.embed.embedId == spell.eid : att.images.original.width == spell.w && att.images.original.height == spell.h && Math.abs(att.images.thumb_400px.size_kb - spell.kb) < this.treshold);
@@ -419,6 +420,10 @@ var autohideAtt = {
     settings.autohideAtt.push(entry);
     autohideAtt.init();
 
+    Object.assign(entry, {
+      tempThumb: att.images.thumb_100px.url
+    });
+
     document.querySelector(`.ZU-autohide-${entry.eid ? 'embeds' : 'images'}-section`).insertAdjacentHTML('beforeEnd', this.itemHTML(entry, { away: true }));
 
     // TODO: something with this fucking shit...
@@ -448,32 +453,54 @@ var autohideAtt = {
     reAutohidePosts();
   },
   itemHTML: function (item, options = { away: false }) {
-    // get thumbnail
-    fetch(`${document.location.protocol}//${document.location.host}/api/post?post=${item.pid}`, { credentials: 'same-origin' }).then(res => {
-      if (res.ok) {
-        res.json().then(json => {
-          if (json.post && json.post.attachments) {
-            let att = json.post.attachments.find(att => att.id == item.aid);
-            if (att) {
-              try {
-                // TODO: remove dups
-                ;[].forEach.call(document.querySelectorAll(`.ZU-autohide-attachemnt-entry[data-aid="${item.aid}"]`), entry => {
-                  // our future item
-                  entry.style.backgroundImage = `url("${att.images.thumb_100px.url}")`;
-                });
-              } catch (e) {
-                console.warn('[0u] Error retrieving thumbnail for autohide item: ', e);
-              }
+    if (!item.thumb) {
+      // get thumbnail
+      fetch(`${THUMB_API}?post=${item.pid}&attachment=${item.aid}&domain=${getOrigin()}`).then(response => response.json()).then(json => {
+        if (json.error) {
+          console.warn('[0u] Error retrieving thumbnail for autohide item: ', json.error, item);
+        } else {
+          // TODO: remove dups
+          ;[].forEach.call(document.querySelectorAll(`.ZU-autohide-attachemnt-entry[data-aid="${item.aid}"]`), entry => {
+            // our future item
+            entry.style.backgroundImage = `url('${json.url}')`;
+            // write item thumbnail to LS
+            let entryIX = settings.autohideAtt.findIndex(i => i.aid == item.aid);
+            if (entryIX !== -1) {
+              settings.autohideAtt[entryIX].thumb = json.url;
+              settings.save();
             }
+          });
+        }
+      }).catch(e => {
+        console.warn(`[0u] Error connecting to thumbnailer API (${THUMB_API}), falling back to non-persisten method`, e, item);
+        // Fallback to old method in case thumbnailer is down
+        fetch(`${getOrigin()}/api/post?post=${item.pid}`, { credentials: 'same-origin' }).then(res => {
+          if (res.ok) {
+            res.json().then(json => {
+              if (json.post && json.post.attachments) {
+                let att = json.post.attachments.find(att => att.id == item.aid);
+                if (att) {
+                  try {
+                    // TODO: remove dups
+                    ;[].forEach.call(document.querySelectorAll(`.ZU-autohide-attachemnt-entry[data-aid="${item.aid}"]`), entry => {
+                      // our future item
+                      entry.style.backgroundImage = `url("${att.images.thumb_100px.url}")`;
+                    });
+                  } catch (e) {
+                    console.warn('[0u] Error retrieving thumbnail for autohide item: ', e);
+                  }
+                }
+              }
+            }).catch(e => console.warn('[0u] Bad JSON: ', e));
+          } else {
+            res.text().then(text => console.warn('[0u] Bad response: ', text)).catch(nop);
           }
-        }).catch(e => console.warn('[0u] Bad JSON: ', e));
-      } else {
-        res.text().then(text => console.warn('[0u] Bad response: ', text)).catch(nop);
-      }
-    });
+        });
+      });
+    }
 
     return `
-    <div class="ZU-autohide-attachemnt-entry${options.away ? ' ZU-away' : ''}"  ${item.eid ? `data-svc="${item.svc}" data-eid="${item.eid}"` : ''} data-aid="${item.aid}" data-pid="${item.pid}" title="${item.eid ? `${item.svc}/${item.eid}` : `${item.w}×${item.h}, ${item.kb} кБ`}" >
+    <div class="ZU-autohide-attachemnt-entry${options.away ? ' ZU-away' : ''}"  ${item.eid ? `data-svc="${item.svc}" data-eid="${item.eid}"` : ''} data-aid="${item.aid}" data-pid="${item.pid}" title="${item.eid ? `${item.svc}/${item.eid}` : `${item.w}×${item.h}, ${item.kb} кБ`}" style="background-image: url('${item.thumb ? item.thumb : item.tempThumb || ''}')">
       <button class="btn btn-xs btn-primary ZU-xbtn ZU-remove-autohide-entry" title="Убрать из списка скрываемых">
         <span><i class="fa fa-close"></i></span>
       </button>
@@ -487,8 +514,7 @@ var autohideAtt = {
     <hr style="margin: 8px 0">
     <div class="ZU-autohide-embeds-section">
       ${this.embeds.reduce((htm, emb) => htm + this.itemHTML(emb), '')}
-    </div>
-    `;
+    </div>`;
   },
   remove: function (aid, isEmbed) {
     document.querySelector(`.ZU-autohide-attachemnt-entry[data-aid="${aid}"]`).remove();
@@ -1123,7 +1149,7 @@ function handlePost(post) {
       <div class="pull-left">
         <span title="Поделиться" class="post-button ZU-share-btn ZU-quote-on-click ZU-qoc-from-anywhere">
           <i class="fa fa-share-alt"></i>
-          ${share.dropdown(`${document.location.protocol}//${document.location.host}/${postData.dir}/${postData.threadID}`, postData.title)}
+          ${share.dropdown(`${getOrigin()}/${postData.dir}/${postData.threadID}`, postData.title)}
           </span>
       </div>`);
   }
@@ -1550,7 +1576,7 @@ function getEventPath(e) {
 
 function getPosts(threadID, after, before) {
   return new Promise((resolve, reject) => {
-    fetch(`${document.location.protocol}//${document.location.host}/api/thread?thread=${threadID}${after ? '&after=' + after : ''}`, { credentials: 'same-origin' }).then(res => {
+    fetch(`${getOrigin()}/api/thread?thread=${threadID}${after ? '&after=' + after : ''}`, { credentials: 'same-origin' }).then(res => {
       if (res.ok) {
         res.json().then(resObj => {
           if (resObj.posts && resObj.posts.length) {
@@ -1595,6 +1621,10 @@ function LSfetchJSON(key) {
     }
   }
   return val;
+}
+
+function getOrigin() {
+  return `${document.location.protocol}//${document.location.host}`;
 }
 
 function start() {

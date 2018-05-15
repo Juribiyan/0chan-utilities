@@ -1,7 +1,7 @@
 # 0chan Utilities
-*v.2.0.0*
+*v.2.1.0*
 
-[<a href="https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=2.0.0">Install</a>]
+[<a href="https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=2.1.0">Install</a>]
 
 ## Фичи
 * Скрытие досок

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      2.0.0
+// @version      2.1.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.meta.js
 // @author       Snivy [0xf330f91f]
