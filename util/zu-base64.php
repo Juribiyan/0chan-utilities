@@ -72,6 +72,7 @@ function fetch($url) {
   curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
   curl_setopt($ch, CURLOPT_TIMEOUT, 10);
   curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array("Cookie: disclaimer=1"));
   $result=curl_exec($ch);
   $respcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
   switch ($respcode) {
@@ -92,7 +93,7 @@ function returnBase64($res) {
 
   $dataUri = "data:image/jpeg;base64," . base64_encode($contents);
   // echo '<img src="'.$dataUri.'">';
-  exitWithSUCC(array(url => $dataUri));
+  exitWithSUCC(array('url' => $dataUri));
 }
 
 function debug_gd($res) {
@@ -104,7 +105,7 @@ function debug_gd($res) {
 function exitWithError($errmsg, $code=400) {
   header('Content-Type: application/json');
   http_response_code($code);
-  exit(json_encode(array(error => $errmsg)));
+  exit(json_encode(array('error' => $errmsg)));
 }
 
 function exitWithSUCC($data=array()) {
