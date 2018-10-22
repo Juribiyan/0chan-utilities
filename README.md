@@ -1,7 +1,9 @@
 # 0chan Utilities
 *v.2.1.4*
 
-[<a href="https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=2.1.4">Install</a>]
+[<b><a href="https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=2.1.4">Install</a></b>] 
+
+[<a href="https://0chan.pl/userjs">Доска</a>][<a href="https://0chan.pl/0x88d27947">ЛС</a>]
 
 ## Фичи
 * Скрытие досок

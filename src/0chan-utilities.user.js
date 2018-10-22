@@ -4,7 +4,7 @@
 // @version      2.1.4
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.meta.js
-// @author       Snivy [0xf330f91f]
+// @author       Snivy [0x88d27947]
 // @include      https://0chan.hk/*
 // @include      http://nullchan7msxi257.onion/*
 // @include      https://0chan.xyz/*
