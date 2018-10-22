@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      2.1.3
+// @version      2.1.4
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.meta.js
 // @author       Snivy [0xf330f91f]
@@ -2049,5 +2049,12 @@ injector.inject('ZU-global', `
   .threads-scroll-spy .threads-scroll-toggler {
     left: -20px;
     right: unset;
+  }
+  .sage-label {
+    height: auto;
+    margin-right: 6px;
+  }
+  .sage {
+    vertical-align: -1px!important;
   }
 `);
