@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      2.1.4
+// @version      2.1.5
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.meta.js
 // @author       Snivy [0x88d27947]
@@ -857,7 +857,22 @@ var eventDispatcher = {
         console.log(postVue)
       }
     }
+  },
+  input: function(e) {
+    let dialogTextArea = e.path.find(el => 
+      el.tagName == "TEXTAREA"
+      &&
+      el.findParent('.dialog-footer')
+    )
+    if (dialogTextArea) {
+      resizeTextAreaToContent(dialogTextArea)
+    }
   }
+}
+
+function resizeTextAreaToContent(area) {
+  area.style.height = "1px";
+  area.style.height = area.scrollHeight+"px";
 }
 
 function getPostQuotation(post, withoutNumber = false) {
@@ -1262,7 +1277,12 @@ function init() {
     }
   ], sidebar, {queryChildren: true})
 
-
+  window.addEventListener('resize', () => {
+    console.log('derp')
+    let dialogTextArea = document.querySelector('.dialog-view textarea')
+    if (dialogTextArea)
+      resizeTextAreaToContent(dialogTextArea)
+  })
 
   state.initialized = true
 }
@@ -2255,5 +2275,34 @@ injector.inject('ZU-global', `
   }
   .sage {
     vertical-align: -1px!important;
+  }
+  .dialog-view textarea {
+    min-height: 100px;
+    resize: vertical;
+    max-height: calc(100vh - 230px);
+  }
+  .dialog-view .dialog-footer.panel-footer {
+    height: auto;
+  }
+  .dialog.panel.panel-default {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+  }
+  .dialog-footer.panel-footer {
+    position: relative;
+  }
+  .dialog-body.panel-body {
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .dialog-footer.panel-footer .input-group {
+    display: flex;
+  }
+  .dialog-footer.panel-footer .input-group-btn {
+    width: auto;
+  }
+  .dialog-footer.panel-footer .input-group-btn button {
+    height: 100%;
   }
 `)
