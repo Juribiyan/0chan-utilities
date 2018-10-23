@@ -1,13 +1,10 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      2.1.5
+// @version      2.1.6
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.meta.js
 // @author       Snivy [0x88d27947]
-// @include      https://0chan.hk/*
-// @include      http://nullchan7msxi257.onion/*
-// @include      https://0chan.xyz/*
 // @include      https://0chan.pl/*
 // @include      http://nullchpl673e6jo3.onion/*
 // @grant        none
@@ -48,8 +45,7 @@ var appObserver,
 },
     version = GM_info.script.version;
 
-const SAGE_THREAD = 3551,
-      THUMB_API = 'https://0chan.one/zu-base64.php';
+const THUMB_API = 'https://0chan.one/zu-base64.php';
 
 var momInRoom = {
   mainCSS: `.post-img-thumbnail {
@@ -689,11 +685,6 @@ var eventDispatcher = {
     if (shareLink) {
       share.handleClick(shareLink);
     }
-    // Sage
-    let sage = e.path.find(el => el.classList && el.classList.contains('ZU-sage-btn'));
-    if (sage) {
-      router.push(`sage/${SAGE_THREAD}`);
-    }
     // Mention
     let mention = e.path.find(el => el.classList && el.classList.contains('ZU-mention-btn'));
     if (mention) {
@@ -830,26 +821,6 @@ function mentionPost(post) {
     setClipboard(text);
     nativeAlert('success', `Номер поста ${text.match(/[^>0-9\s]/g) ? 'и цитата скопированы' : 'скопирован'} в буфер обмена`);
   }
-}
-
-function sageContinue() {
-  if (!postQuotation || singleThreadVue.thread.id != SAGE_THREAD) return;
-  let text = postQuotation;
-  postQuotation = null;
-  contentVue.isReplyToOpPostFormShown = true;
-  app.$bus.once('refreshContentDone', () => {
-    window.scrollTo(0, document.body.scrollHeight);
-    let textarea = document.querySelector('.threads > div > .reply-form .reply-form-message textarea');
-    if (textarea.value && !textarea.value.match(/\n$/)) {
-      text = '\n' + text;
-    }
-    textarea.value += text;
-    textarea.dispatchEvent(new Event('input', {
-      'bubbles': true,
-      'cancelable': true
-    }));
-    textarea.focus();
-  });
 }
 
 function getSelection() {
@@ -1155,10 +1126,8 @@ function init() {
 
 function handlePost(post) {
   let extraIconsContainer = post.querySelector('.post-footer .pull-right');
-  if (!extraIconsContainer || extraIconsContainer.querySelector('.ZU-sage-btn')) return;
-  extraIconsContainer.insertAdjacentHTML('afterBegin', `
-    <span title="Упомянуть" class="post-button ZU-mention-btn ZU-quote-on-click"><i class="fa fa-angle-double-right"></i></span>
-    <span title="SAGE!" class="post-button ZU-sage-btn ZU-quote-on-click"><i class="fa fa-arrow-down"></i></span>`);
+  if (!extraIconsContainer || extraIconsContainer.querySelector('.ZU-mention-btn')) return;
+  extraIconsContainer.insertAdjacentHTML('afterBegin', `<span title="Упомянуть" class="post-button ZU-mention-btn ZU-quote-on-click"><i class="fa fa-angle-double-right"></i></span>`);
   let postData = getPostDataFromDOM(post);
   if (!postData) return;
   if (postData.isPopup) {
@@ -1413,8 +1382,7 @@ var ZURouter = {
   currentRoute: 'initial',
   enter: {
     // account: autohide.awaitInstall.bind(autohide),
-    home: boardHider.enable.bind(boardHider),
-    thread: sageContinue
+    home: boardHider.enable.bind(boardHider)
   },
   leave: {
     home: boardHider.disable.bind(boardHider),
@@ -1896,9 +1864,6 @@ injector.inject('ZU-global', `
   }
   .ZU-board-unhide-icon {
     display: none;
-  }
-  .ZU-sage-btn:hover {
-    color: #bc1a1a;
   }
   body > textarea {
     position:fixed;
