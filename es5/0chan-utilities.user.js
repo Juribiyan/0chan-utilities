@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    http://0chan.hk/userjs
-// @version      2.1.6
+// @version      2.2.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/Autohide/es5/0chan-utilities.meta.js
 // @author       Snivy [0x88d27947]
@@ -532,6 +532,87 @@ var autohideAtt = {
   }
 };
 
+var NullRestyler = {
+  init: function () {
+    document.querySelector('#sidebar').insertAdjacentHTML('afterBegin', `
+        <div class="ZU-nulltwk-container hidden-xs">
+          <button class="ZU-sidebar-btn fa fa-save ZU-nulltwk-save" title="Сохранить"></button>
+          <button class="ZU-sidebar-btn fa fa-undo ZU-nulltwk-revert" title="Вернуть оригинальный цвет"></button>
+          <div class="ZU-nulltwk-range-container">
+            <label for="ZU-hue-input">HUE</label>
+            <output>
+              <span class="ZU-output">0</span><span>°</span>
+            </output>
+            <input type="range" min="-180" max=180 step=1 id="ZU-hue-input" class="ZU-range" value=0>
+          </div>
+          <div class="ZU-nulltwk-range-container">
+            <label for="ZU-saturation-input">SAT</label>
+            <output>
+              <span class="ZU-output">100</span><span>%</span>
+            </output>
+            <input type="range" min=0 max=300 step=1 id="ZU-saturation-input" class="ZU-range" value=100>
+          </div>
+          <div class="ZU-nulltwk-range-container">
+            <label for="ZU-brightness-input">BRI</label>
+            <output>
+              <span class="ZU-output">100</span><span>%</span>
+            </output>
+            <input type="range" min=0 max=300 step=1 id="ZU-brightness-input" class="ZU-range" value=100>
+          </div>
+          <div class="ZU-nulltwk-range-container">
+            <label for="ZU-contrast-input">CON</label>
+            <output>
+              <span class="ZU-output">100</span><span>%</span>
+            </output>
+            <input type="range" min=0 max=500 step=1 id="ZU-contrast-input" class="ZU-range" value=100>
+          </div>
+        </div>
+    `);
+    this.setValues(settings.nullColor);
+  },
+  addControls: function (sideBarLogo) {
+    // earlier restyling (aka КОСТЫЛЬ ЕБАНЫЙ)
+    let css = localStorage['ZU-null-css-cached'];
+    if (css) injector.inject('ZU-null-tweak', css);
+    sideBarLogo.insertAdjacentHTML('beforeend', `
+      <button class="ZU-restyle-null ZU-sidebar-btn fa fa-paint-brush hidden-xs" title="Перекрасить"></button>
+    `);
+  },
+  save: function () {
+    document.querySelector('#sidebar').classList.remove('edit-null');
+    let res = this.update();
+    localStorage['ZU-null-css-cached'] = res.css;
+    delete res.css;
+    settings.nullColor = res;
+    settings.save();
+  },
+  update: function () {
+    let hue = document.querySelector('#ZU-hue-input').value,
+        sat = document.querySelector('#ZU-saturation-input').value,
+        bri = document.querySelector('#ZU-brightness-input').value,
+        con = document.querySelector('#ZU-contrast-input').value,
+        css = `.sidebar-logo img { filter: saturate(${sat}%) hue-rotate(${hue}deg) brightness(${bri}%) contrast(${con}%); }`;
+    injector.inject('ZU-null-tweak', css);
+    // Save for earlier restyling
+    return {
+      hue: hue,
+      sat: sat,
+      bri: bri,
+      con: con,
+      css: css
+    };
+  },
+  setValues: function (vals) {
+    ['hue', 'saturation', 'brightness', 'contrast'].forEach(prop => {
+      let input = document.querySelector(`#ZU-${prop}-input`),
+          val = vals[prop.slice(0, 3)];
+      input.value = val;
+      input.parentElement.querySelector('output .ZU-output').innerText = val;
+    });
+    return this.update();
+  }
+};
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -543,7 +624,13 @@ var settings = {
     updateInterval: 10,
     catalogMode: false,
     autohide: [],
-    autohideAtt: []
+    autohideAtt: [],
+    nullColor: {
+      hue: 0,
+      sat: 100,
+      bri: 100,
+      con: 100
+    }
   },
   _: {},
   hooks: {
@@ -553,17 +640,19 @@ var settings = {
     updateInterval: refresher.reset.bind(refresher),
     catalogMode: catalog.toggle.bind(catalog),
     autohide: autohide.init.bind(autohide),
-    autohideAtt: autohideAtt.init.bind(autohideAtt)
+    autohideAtt: autohideAtt.init.bind(autohideAtt),
+    nullColor: NullRestyler.setValues.bind(NullRestyler)
   },
   save: function () {
     this._.hiddenBoards = this.hiddenBoards;
     this._.autohide = this.autohide;
     this._.autohideAtt = this.autohideAtt;
+    this._.nullColor = this.nullColor;
     localStorage['ZU-settings'] = JSON.stringify(this._);
   },
   init: function () {
     let localSettings = LSfetchJSON('ZU-settings') || {},
-        allSettings = Object.assign(this.defaults, localSettings);
+        allSettings = Object.assign(cloneObj(this.defaults, true), localSettings);
     Object.keys(allSettings).forEach(key => {
       let value = allSettings[key];
       if (typeof value !== "object") {
@@ -584,6 +673,29 @@ var settings = {
     });
   }
 };
+
+function cloneObj(obj, deep = false) {
+  var result = {};
+  for (key in obj) {
+    if (deep && obj[key] instanceof Object) {
+      if (obj[key] instanceof Array) {
+        result[key] = [];
+        obj[key].forEach(function (item) {
+          if (item instanceof Object) {
+            result[key].push(cloneObj(item, true));
+          } else {
+            result[key].push(item);
+          }
+        });
+      } else {
+        result[key] = cloneObj(obj[key]);
+      }
+    } else {
+      result[key] = obj[key];
+    }
+  }
+  return result;
+}
 
 RegExp.prototype.toJSON = function () {
   return {
@@ -735,6 +847,25 @@ var eventDispatcher = {
       ;[].forEach.call(rbg.querySelectorAll('.btn'), btn => btn.classList.remove('active'));
       rbb.classList.add('active');
     }
+    // Entering Null Restyling mode
+    let nr = e.path.find(el => el.classList && el.classList.contains('ZU-restyle-null'));
+    if (nr) {
+      document.querySelector('#sidebar').classList.add('edit-null');
+    }
+    // Exiting Null Restyling mode
+    let nrs = e.path.find(el => el.classList && el.classList.contains('ZU-nulltwk-save'));
+    if (nrs) {
+      NullRestyler.save();
+    }
+    //Resetting the Null
+    let nrr = e.path.find(el => el.classList && el.classList.contains('ZU-nulltwk-revert'));
+    if (nrr) {
+      let res = NullRestyler.setValues(settings.defaults.nullColor);
+      localStorage['ZU-null-css-cached'] = res.css;
+      delete res.css;
+      settings.nullColor = res;
+      settings.save();
+    }
   },
   mousedown: function (e) {
     // Quote on reply
@@ -778,6 +909,12 @@ var eventDispatcher = {
     if (dialogTextArea) {
       resizeTextAreaToContent(dialogTextArea);
     }
+    // Null Restyling inputs
+    let nr = e.path.find(el => el.classList && el.classList.contains('ZU-range'));
+    if (nr) {
+      nr.parentElement.querySelector('output .ZU-output').innerText = nr.value;
+    }
+    NullRestyler.update();
   }
 };
 
@@ -1078,6 +1215,8 @@ function init() {
 
   settings.init();
 
+  NullRestyler.init();
+
   sideBar.init();
 
   boardHider.refresh();
@@ -1116,7 +1255,6 @@ function init() {
   }], sidebar, { queryChildren: true });
 
   window.addEventListener('resize', () => {
-    console.log('derp');
     let dialogTextArea = document.querySelector('.dialog-view textarea');
     if (dialogTextArea) resizeTextAreaToContent(dialogTextArea);
   });
@@ -1632,6 +1770,11 @@ function start() {
     fn: () => contentExtPromise.resolve()
   }], document.body, { subtree: true, queryChildren: true });
 
+  forAllNodes([{
+    selector: '.sidebar-logo',
+    fn: NullRestyler.addControls.bind(NullRestyler)
+  }], document.body, { subtree: true, queryChildren: true });
+
   Object.keys(eventDispatcher).forEach(evType => {
     document.addEventListener(evType, eventDispatcher[evType], true);
   });
@@ -2067,5 +2210,176 @@ injector.inject('ZU-global', `
   }
   .dialog-footer.panel-footer .input-group-btn button {
     height: 100%;
+  }
+` + `
+  .sidebar-logo {
+    transition: transform .2s;
+  }
+  .edit-null .sidebar-logo {
+    transform: translateX(-75px);
+  }
+  .ZU-sidebar-btn {
+    background: none;
+    border: none;
+    color: #666;
+    outline: none;
+    transition: color .2s;
+    font-size: 14px;
+  }
+  .ZU-sidebar-btn:hover {
+    color: #1abc9c;
+  }
+  .ZU-restyle-null {
+    position: absolute;
+    opacity: 0;
+    transition: color .2s, opacity .2s;
+  }
+  #sidebar:not(.edit-null) .sidebar-logo:hover .ZU-restyle-null {
+    opacity: 1;
+  }
+  .ZU-nulltwk-container  {
+    opacity: 0;
+    pointer-events: none;
+    width: 137px;
+    height: 106px;
+    color: #999;
+    font-family: Roboto;
+    text-align: center;
+    font-size: 0;
+    display: inline-block;
+    vertical-align: -7px;
+    user-select: none;
+    position: absolute;
+    right: 20px;
+    transform: translate(10px);
+    top: 8px;
+    z-index: 2;
+    transition: opacity .2s, transform .2s;
+  }
+  .edit-null
+  .ZU-nulltwk-container {
+    opacity: 1;
+    pointer-events: all;
+    transform: none;
+  }
+  .ZU-nulltwk-range-container label,
+  .ZU-nulltwk-range-container output {
+    font-size: 11px;
+    margin-bottom: -1px;
+  }
+  .ZU-nulltwk-range-container label {
+    float: left;
+  }
+  .ZU-nulltwk-range-container output {
+    float: right;
+    padding: 0;
+    line-height: normal;
+    color: inherit;
+  }
+  .ZU-nulltwk-save, .ZU-nulltwk-revert {
+    padding: 0;
+    margin: 0 8px;
+    color: #999;
+  }
+  .ZU-nulltwk-btn:hover {
+    color: #3c9;
+  }
+  .ZU-nulltwk-range-container {
+    transition: color .2s;
+    margin: 0;
+    display: inline-block;
+    margin-top: -2px;
+    margin-bottom: 3px;
+  }
+  .ZU-nulltwk-range-container:hover {
+    color: #3c9;
+  }
+  .ZU-range {
+    width: 100%;
+    margin: 0;
+    -webkit-appearance: none;
+    background: transparent;
+  }
+  .ZU-range::-ms-track {
+    width: 100%;
+    cursor: pointer;
+    background: transparent; 
+    border-color: transparent;
+    color: transparent;
+  }
+  .ZU-range:focus {
+    outline: none;
+  }
+  .ZU-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 8px;
+    width: 8px;
+    background-color: #b7b7b7;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 3px black;
+    transition: transform .2s, background-color .2s;
+  }
+  .ZU-range::-moz-range-thumb {
+    height: 8px;
+    width: 8px;
+    background-color: #b7b7b7;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 3px black;
+    transition: transform .2s, background-color .2s;
+  }
+  .ZU-range::-ms-thumb {
+    height: 8px;
+    width: 8px;
+    background-color: #b7b7b7;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 3px black;
+    transition: transform .2s, background-color .2s;
+  }
+  .ZU-range::-webkit-slider-thumb:hover {
+    transform: scale(1.25);
+  }
+  .ZU-nulltwk-range-container:hover .ZU-range::-webkit-slider-thumb {
+    background-color:#3c9;
+  }
+  .ZU-range::-moz-range-thumb:hover {
+    transform: scale(1.25);
+  }
+  .ZU-nulltwk-range-container:hover .ZU-range::-moz-range-thumb {
+    background-color:#3c9;
+  }
+  .ZU-range::-ms-thumb:hover {
+    transform: scale(1.25);
+  }
+  .ZU-nulltwk-range-container:hover .ZU-range::-ms-thumb {
+    background-color:#3c9;
+  }
+  .ZU-range::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    box-sizing: border-box;
+    cursor: pointer;
+    background: linear-gradient(to bottom, transparent 2.999px, #000 3px, #000 3.999px, #777 4px, #777 4.999px, transparent 5px)
+  }
+  .ZU-range::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    box-sizing: border-box;
+    cursor: pointer;
+    color: transparent;
+    border: none;
+    background: linear-gradient(to bottom, transparent 2.999px, #000 3px, #000 3.999px, #777 4px, #777 4.999px, transparent 5px)
+  }
+  .ZU-range::-ms-track {
+    width: 100%;
+    height: 8px;
+    box-sizing: border-box;
+    cursor: pointer;
+    background: transparent;
+  }
+  .ZU-range::-ms-fill-lower, .ZU-range::-ms-fill-upper {
+    background: linear-gradient(to bottom, transparent 2.999px, #000 3px, #000 3.999px, #777 4px, #777 4.999px, transparent 5px)
   }
 `);
