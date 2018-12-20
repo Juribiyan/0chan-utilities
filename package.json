@@ -1,6 +1,6 @@
 {
   "name": "0chan-utilities",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Userscript for 0chan",
   "main": "index.js",
   "scripts": {
@@ -11,8 +11,8 @@
   ],
   "author": "Snivy",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Juribiyan/0chan-utilities.git"
+    "type": "git",
+    "url": "https://github.com/Juribiyan/0chan-utilities.git"
   },
   "license": "ISC",
   "devDependencies": {
