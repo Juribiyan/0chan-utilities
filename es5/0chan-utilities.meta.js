@@ -10,6 +10,7 @@
 // @include      https://0chan.xyz/*
 // @include      https://ochan.ru/*
 // @include      http://ochan.ru/*
+// @include      http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion/*
 // @grant        none
 // @icon         https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/icon.png
 // ==/UserScript==
