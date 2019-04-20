@@ -5,7 +5,7 @@ if (!isset($_GET['post']) || !preg_match('/^[0-9]+$/', $_GET['post']))
   exitWithError('Wrong post ID');
 if (!isset($_GET['attachment']) || !preg_match_all('/^[0-9]+$/', $_GET['attachment']))
   exitWithError('Wrong attachment ID');
-if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/(p.)?((nullchan7msxi257|nullchpl673e6jo3|nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid)\.onion|0chan\.(hk|xyz|pl)|ochan\.ru)/', $_GET['domain'], $matches))
+if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/(p.)?((nullchan7msxi257|nullchpl673e6jo3|nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid)\.onion|0chan\.(hk|xyz|pl)|ochan\.ru|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', $_GET['domain'], $matches))
   exitWithError('Wrong domain');
 $https = $matches[1];
 
