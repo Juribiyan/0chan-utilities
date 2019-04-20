@@ -1,7 +1,7 @@
 # 0chan Utilities
-*v.2.2.3*
+*v.2.2.4*
 
-[<b><a href="https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=2.2.3">Install</a></b>] 
+[<b><a href="https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=2.2.4">Install</a></b>] 
 
 [<a href="https://0chan.pl/userjs">Доска</a>][<a href="https://0chan.pl/0x88d27947">ЛС</a>]
 
