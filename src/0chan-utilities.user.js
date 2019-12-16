@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.2.7
+// @version      2.2.8
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -1535,7 +1535,9 @@ function addThreadControls(threadDOM, threadVue) {
   if (!controlsContainer || controlsContainer.classList.contains('ZU-thread-controls')) return;
   let href = controlsContainer.querySelector('a').getAttribute('href')
   if (threadVue.skippedPosts) {
-    controlsContainer.querySelector('span').classList.add('ZU-delete-on-threadexpand')
+    if (controlsContainer.querySelector('span')) {
+      controlsContainer.querySelector('span').classList.add('ZU-delete-on-threadexpand')
+    }
     controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-expand-thread-container ZU-delete-on-threadexpand"> | <a href="${href}" onclick="return false" class="ZU-expand-thread">Развернуть</a></span>`)
   }
   controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-update-thread-container"> | <a href="${href}" onclick="return false" class="ZU-update-thread">Обновить</a></span>`)
@@ -1590,20 +1592,20 @@ var settingsPanel = {
     {
       type: 'checkbox',
       id: 'momInRoom',
-      title: "Мамка в комнате",
+      title: "Мамка в комнате",
       description: "Маскировать все картинки"
     },
     {
       type: 'checkbox',
       id: 'unmaskOnHover',
-      title: "Раскрывать по наведению",
-      description: "Раскрывать замаскированные картинки по наведению"
+      title: "Раскрывать по наведению",
+      description: "Раскрывать замаскированные картинки по наведению"
     },
     {
       type: 'checkbox',
       id: 'thumbNoScroll',
-      title: "Разворот без скролла",
-      description: "Не скроллить при разворачивании картинок"
+      title: "Разворот без скролла",
+      description: "Не скроллить при разворачивании картинок"
     },
     {
       type: 'slider',
@@ -2593,3 +2595,4 @@ injector.inject('ZU-global', `
     background: linear-gradient(to bottom, transparent 2.999px, #000 3px, #000 3.999px, #777 4px, #777 4.999px, transparent 5px)
   }
 `)
+
