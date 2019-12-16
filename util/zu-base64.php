@@ -1,17 +1,27 @@
 <?php
+$proxy = "socks5h://127.0.0.1:9050";
+
 header('Access-Control-Allow-Origin: '.$_GET['domain']);
 
 if (!isset($_GET['post']) || !preg_match('/^[0-9]+$/', $_GET['post']))
   exitWithError('Wrong post ID');
 if (!isset($_GET['attachment']) || !preg_match_all('/^[0-9]+$/', $_GET['attachment']))
   exitWithError('Wrong attachment ID');
-if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/((www|p|0).)?((nullchan7msxi257|nullchpl673e6jo3|nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid)\.onion|0chan\.(hk|xyz|pl|club)|1chan\.pl|ochan\.ru|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', $_GET['domain'], $matches))
+if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/((www|p|0).)?((nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid)\.onion|0chan\.(pl|club)|1chan\.pl|ochan\.ru|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', $_GET['domain'], $matches))
   exitWithError('Wrong domain');
+
+// force use Tor mirror for 0chan.pl and its non-Tor mirrors in case of Tor proxy enabled
+if (preg_match('/^(9050|9150)/', $proxy, $matches)) {
+  $domain = preg_replace('/^(https?:)\/\/((www|p|0).)?((0chan\.(pl|club)|1chan\.pl|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', 'http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion', $_GET['domain']);
+} else {
+  $domain = $_GET['domain'];
+}
+
 $https = $matches[1];
 
-// fetch($_GET['domain'].'/api/session');
+// fetch($domain.'/api/session');
 
-$post = json_decode(fetch($_GET['domain'].'/api/post?post='.$_GET['post']), true);
+$post = json_decode(fetch($domain.'/api/post?post='.$_GET['post']), true);
 if (!$post)
   exitWithError("API returned corrupted JSON");
 if ($post['error'])
@@ -62,6 +72,7 @@ else {
 
 function fetch($url) {
   $ch = curl_init();
+  if ($proxy) curl_setopt($ch, CURLOPT_PROXY, $proxy);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
   // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
