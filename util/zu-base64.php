@@ -5,7 +5,7 @@ if (!isset($_GET['post']) || !preg_match('/^[0-9]+$/', $_GET['post']))
   exitWithError('Wrong post ID');
 if (!isset($_GET['attachment']) || !preg_match_all('/^[0-9]+$/', $_GET['attachment']))
   exitWithError('Wrong attachment ID');
-if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/(p.)?((nullchan7msxi257|nullchpl673e6jo3|nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid)\.onion|0chan\.(hk|xyz|pl)|ochan\.ru|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', $_GET['domain'], $matches))
+if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/((www|p|0).)?((nullchan7msxi257|nullchpl673e6jo3|nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid)\.onion|0chan\.(hk|xyz|pl|club)|1chan\.pl|ochan\.ru|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', $_GET['domain'], $matches))
   exitWithError('Wrong domain');
 $https = $matches[1];
 
@@ -69,7 +69,7 @@ function fetch($url) {
   // curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
   // curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
   // curl_setopt ($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
-  curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+  curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0');
   curl_setopt($ch, CURLOPT_TIMEOUT, 10);
   curl_setopt($ch, CURLOPT_URL, $url);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array("Cookie: disclaimer=1"));
