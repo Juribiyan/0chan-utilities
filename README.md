@@ -1,5 +1,5 @@
 # 0chan Utilities
-*v.2.2.6*
+*v.2.2.7*
 
 [<b><a href="https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js?v=2.2.6">Установка для современных браузеров (Chrome, Firefox >60)</a></b>]
 
