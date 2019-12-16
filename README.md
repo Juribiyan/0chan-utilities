@@ -1,10 +1,11 @@
 # 0chan Utilities
 *v.2.2.6*
 
-[<b><a href="https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=2.2.6">Install</a></b>] 
+[<b><a href="https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js?v=2.2.6">Установка для современных браузеров (Chrome, Firefox >60)</a></b>]
 
-[<a href="https://0chan.pl/userjs">Доска</a>][<a href="https://0chan.pl/0x88d27947">ЛС</a>]
+[<b><a href="https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js?v=2.2.6">Установка для менее современных браузеров с плохой поддержкой ES6 (Pale Moon)</a></b>] 
 
+[<a href="https://www.0chan.pl/sudo/">Доска</a>]
 ## Фичи
 * Скрытие досок
 * Кнопка упоминания

@@ -4,7 +4,7 @@
   "description": "Userscript for 0chan",
   "main": "index.js",
   "scripts": {
-    "build": "babel src --out-dir es5"
+    "build": "babel src --out-dir es5; sed -i 's|raw/master/src|raw/master/es5|' es5/0chan-utilities.user.js"
   },
   "keywords": [
     "0chan"
