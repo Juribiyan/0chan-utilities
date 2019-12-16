@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.1
+// @version      2.3.2
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -126,6 +126,7 @@ const share = {
     'overnullch': {
       name: "Овернульч",
       link: "https://0chan.one/live/api.php",
+      method: 'POST',
       options: (url, description) => `url=${url}&description=${description}`,
       icon: {
         type: 'svg',
