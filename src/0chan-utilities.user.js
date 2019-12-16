@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.2
+// @version      2.3.3
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -179,6 +179,7 @@ const share = {
       xhr.send();
     } else {
       xhr.open(site.method, site.link, true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       xhr.send(site.options(link.dataset.url, description));
     }
     nativeAlert('info', 'Запрос на добавление ссылки отправлен');
