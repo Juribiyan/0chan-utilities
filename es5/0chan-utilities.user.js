@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.2.6
+// @version      2.2.7
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -258,6 +258,9 @@ const catalog = {
     .ZU-thread-controls {
       display: none;
     }
+    .threadwrap {
+      max-width: inherit !important;
+    }
     .thread-separator {
       display: none;
     }
@@ -317,13 +320,10 @@ const catalog = {
       z-index: 3;
     }
     .ZU-noko-label {
-      display: none
-    }
-    .threads-scroll-spy + div {
-      margin-top: 15px;
+      display: none;
     }
     .threads-scroll-spy {
-      z-index: 3;
+      display: none;
     }
   `,
   get isApplicable() {
