@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.3
+// @version      2.3.4
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -2302,6 +2302,10 @@ injector.inject('ZU-global', `
   .post-img .post-embed .post-embed-play-btn {
     z-index: 2
   }
+  .post-img .post-img-buttons {
+    margin-top: -36px;
+    max-height: 18px;
+  }
   .post .ZU-hide-board-by-op-container {
     padding-left: 6px;
   }
@@ -2478,7 +2482,7 @@ injector.inject('ZU-global', `
     font-family: Roboto;
     text-align: center;
     font-size: 0;
-    display: inline-block;
+    display: block;
     vertical-align: -7px;
     user-select: none;
     position: absolute;
