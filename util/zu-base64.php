@@ -12,7 +12,7 @@ if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/((www|p|0).)?((nullpl
 
 // force use Tor mirror for 0chan.pl and its non-Tor mirrors in case of Tor proxy enabled
 if (preg_match('/^(9050|9150)/', $proxy, $matches)) {
-  $domain = preg_replace('/^(https?:)\/\/((www|p|0).)?((0chan\.(pl|club)|1chan\.pl|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', 'http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion', $_GET['domain']);
+  $domain = preg_replace('/^(https?:)\/\/((www|p|0|ygg).)?(((0chan\.(pl|club)|1chan\.pl|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)|\[202\:7668\:15bf\:63df\:d7ee\:aab7\:ece\:fbbb\])/', 'http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion', $_GET['domain']);
 } else {
   $domain = $_GET['domain'];
 }
