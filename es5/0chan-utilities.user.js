@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.6
+// @version      2.3.7
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -101,6 +101,20 @@ var momInRoom = {
   }
 };
 
+var unhideSpoilers = {
+  mainCSS: `mark, .spoiler {
+      color: inherit;
+      background: rgba(204, 204, 204, 0.25);
+    }}`,
+  toggle: function (val) {
+    if (val) {
+      injector.inject('ZU-unhide-spoilers', this.mainCSS);
+    } else {
+      injector.remove('ZU-unhide-spoilers');
+    }
+  }
+};
+
 const share = {
   sites: {
     '1chanca': {
@@ -146,6 +160,19 @@ const share = {
         name: 'hirudotron',
         color: '#292929'
       }
+    },
+    telegram: {
+      name: 'Telegram',
+      link: "https://telegram.me/share/url",
+      method: 'POPUP',
+      options: (url, description) => `url=${url}&text=${description}`,
+      icon: {
+        type: 'fa',
+        name: 'telegram',
+        color: '#2ca5e0'
+      },
+      width: 600,
+      height: 600
     }
   },
   dropdown: function (url, description) {
@@ -169,15 +196,19 @@ const share = {
 
     let xhr = new XMLHttpRequest();
     // fucking js does not want to send GET requests with data defined in send()
-    if (site.method == "GET") {
-      xhr.open(site.method, `${site.link}?${site.options(link.dataset.url, description)}`, true);
-      xhr.send();
-    } else {
-      xhr.open(site.method, site.link, true);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.send(site.options(link.dataset.url, description));
+    switch (site.method) {
+      case "GET":
+        xhr.open(site.method, `${site.link}?${site.options(link.dataset.url, description)}`, true);
+        xhr.send();
+        nativeAlert('info', 'Запрос на добавление ссылки отправлен');
+      case "POST":
+        xhr.open(site.method, site.link, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(site.options(link.dataset.url, description));
+        nativeAlert('info', 'Запрос на добавление ссылки отправлен');
+      case "POPUP":
+        window.open(site.link + '?' + site.options(link.dataset.url, description), 'targetWindow', `toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${site.width || 666},height=${site.height || 555}`);
     }
-    nativeAlert('info', 'Запрос на добавление ссылки отправлен');
   }
 };
 
@@ -650,6 +681,7 @@ var settings = {
   defaults: {
     thumbNoScroll: true,
     momInRoom: false,
+    unhideSpoilers: false,
     unmaskOnHover: true,
     hideSidebar: false,
     hiddenBoards: [],
@@ -668,6 +700,7 @@ var settings = {
   _: {},
   hooks: {
     momInRoom: momInRoom.toggle.bind(momInRoom),
+    unhideSpoilers: unhideSpoilers.toggle.bind(unhideSpoilers),
     unmaskOnHover: momInRoom.toggleHover.bind(momInRoom),
     hideSidebar: sideBar.toggle.bind(sideBar),
     updateInterval: refresher.reset.bind(refresher),
@@ -1467,8 +1500,13 @@ var settingsPanel = {
     description: "Маскировать все картинки"
   }, {
     type: 'checkbox',
+    id: 'unhideSpoilers',
+    title: "Раскрыть все спойлеры",
+    description: "Раскрыть все спойлеры, чтобы видеть их содержимое без наведения"
+  }, {
+    type: 'checkbox',
     id: 'unmaskOnHover',
-    title: "Раскрывать по наведению",
+    title: "Раскрывать NSFW по наведению",
     description: "Раскрывать замаскированные картинки по наведению"
   }, {
     type: 'checkbox',
