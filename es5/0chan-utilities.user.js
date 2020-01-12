@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.7
+// @version      2.3.8
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -677,6 +677,12 @@ var NullRestyler = {
   }
 };
 
+var desnower = {
+  toggle: function (on) {
+    document.querySelector('#content').classList.toggle('content-ny', !on);
+  }
+};
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -695,7 +701,8 @@ var settings = {
       sat: 100,
       bri: 100,
       con: 100
-    }
+    },
+    turnOffSnow: false
   },
   _: {},
   hooks: {
@@ -707,7 +714,8 @@ var settings = {
     catalogMode: catalog.toggle.bind(catalog),
     autohide: autohide.init.bind(autohide),
     autohideAtt: autohideAtt.init.bind(autohideAtt),
-    nullColor: NullRestyler.setValues.bind(NullRestyler)
+    nullColor: NullRestyler.setValues.bind(NullRestyler),
+    turnOffSnow: desnower.toggle.bind(desnower)
   },
   save: function () {
     this._.hiddenBoards = this.hiddenBoards;
@@ -1529,6 +1537,11 @@ var settingsPanel = {
     title: "Режим каталога",
     description: "Отображать треды в виде каталога",
     condition: () => catalog.isApplicable
+  }, {
+    type: 'checkbox',
+    id: 'turnOffSnow',
+    title: "Убрать снег",
+    description: "Не использовать анимацию в качестве фона"
   }],
   install: function () {
     let controls = this.controls.filter(control => !control.condition || control.condition());
