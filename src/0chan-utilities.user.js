@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.8
+// @version      2.3.9
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -730,7 +730,15 @@ var NullRestyler = {
 
 var desnower = {
   toggle: function(on) {
-    document.querySelector('#content').classList.toggle('content-ny', !on)
+    if (settings.turnOffSnow != (window.localStorage.getItem('disableSnow') == null)) {
+        if (window.localStorage.getItem('disableSnow') == null) {
+            window.localStorage.setItem('disableSnow', true);
+            nativeAlert('success', 'Перезагрузите страницу для отключения снега');
+        } else if (window.localStorage.getItem('disableSnow') != null) {
+            window.localStorage.removeItem('disableSnow');
+            nativeAlert('success', 'Перезагрузите страницу для включения снега');
+        }
+    }
   }
 }
 
