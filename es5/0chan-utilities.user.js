@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.9
+// @version      2.3.10
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -1544,7 +1544,7 @@ var settingsPanel = {
   }, {
     type: 'checkbox',
     id: 'turnOffSnow',
-    title: "Включить/отключить снег",
+    title: "Убрать снег",
     description: "Не использовать анимацию в качестве фона. Имеет смысл только в период нового года (~15 декабря - ~14 января)"
   }],
   install: function () {
