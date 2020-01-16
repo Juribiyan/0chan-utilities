@@ -679,14 +679,10 @@ var NullRestyler = {
 
 var desnower = {
   toggle: function (on) {
-    if (settings.turnOffSnow != (window.localStorage.getItem('disableSnow') == null)) {
-      if (window.localStorage.getItem('disableSnow') == null) {
-        window.localStorage.setItem('disableSnow', true);
-        nativeAlert('success', 'Перезагрузите страницу для отключения снега');
-      } else if (window.localStorage.getItem('disableSnow') != null) {
-        window.localStorage.removeItem('disableSnow');
-        nativeAlert('success', 'Перезагрузите страницу для включения снега');
-      }
+    if (settings.turnOffSnow) {
+      window.localStorage.setItem('disableSnow', true);
+    } else {
+      window.localStorage.removeItem('disableSnow');
     }
   }
 };
