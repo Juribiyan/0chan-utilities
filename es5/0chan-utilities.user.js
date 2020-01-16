@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.10
+// @version      2.3.9
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -465,7 +465,7 @@ var autohideAtt = {
   add: function (figVue) {
     let att = figVue.attachment;
     if (settings.autohideAtt.find(entry => entry.aid == att.id)) {
-      return nativeAlert('info', `${att.embed ? 'Видео' : 'Картинка'} уже присутствует в списке крываемых.`);
+      return nativeAlert('info', `${att.embed ? 'Видео' : 'Картинка'} уже присутствует в списке скрываемых.`);
     }
     let entry = {
       pid: +figVue.$parent.post.id,
@@ -710,7 +710,7 @@ var settings = {
       bri: 100,
       con: 100
     },
-    turnOffSnow: false
+    turnOffSnow: window.localStorage.getItem('disableSnow') == null ? false : true
   },
   _: {},
   hooks: {
@@ -1548,8 +1548,8 @@ var settingsPanel = {
   }, {
     type: 'checkbox',
     id: 'turnOffSnow',
-    title: "Убрать снег",
-    description: "Не использовать анимацию в качестве фона"
+    title: "Включить/отключить снег",
+    description: "Не использовать анимацию в качестве фона. Имеет смысл только в период нового года (~15 декабря - ~14 января)"
   }],
   install: function () {
     let controls = this.controls.filter(control => !control.condition || control.condition());
