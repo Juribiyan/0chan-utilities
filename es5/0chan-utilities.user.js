@@ -58,9 +58,9 @@ var appObserver,
     version = GM_info.script.version;
 
 if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[202:7668:15bf:63df:d7ee:aab7:ece:fbbb]", "0chan.ygg"].includes(location.host)) {
-  const IS_OCHKO = true;
+  var IS_OCHKO = true;
 } else {
-  const IS_OCHKO = false;
+  var IS_OCHKO = false;
 }
 
 const THUMB_API = 'https://0chan.one/zu-base64.php';

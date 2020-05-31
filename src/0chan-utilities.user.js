@@ -64,9 +64,9 @@ if (
     "[202:7668:15bf:63df:d7ee:aab7:ece:fbbb]",
     "0chan.ygg"
    ].includes(location.host)) {
-    const IS_OCHKO = true
+    var IS_OCHKO = true
 } else {
-    const IS_OCHKO = false
+    var IS_OCHKO = false
 }
 
 const THUMB_API = 'https://0chan.one/zu-base64.php'
