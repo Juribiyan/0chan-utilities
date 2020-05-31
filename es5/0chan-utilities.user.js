@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.10
+// @version      2.3.11
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -14,6 +14,7 @@
 // @include      http://0pl.i2p/*
 // @include      http://gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p/*
 // @include      http://[202:7668:15bf:63df:d7ee:aab7:ece:fbbb]/*
+// @include      http://0chan.ygg/*
 // @include      https://ochan.ru/*
 // @grant        none
 // @icon         https://raw.githubusercontent.com/devarped/0chan-utilities/master/icon.png
@@ -55,6 +56,12 @@ var appObserver,
   initialized: false
 },
     version = GM_info.script.version;
+
+if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[202:7668:15bf:63df:d7ee:aab7:ece:fbbb]", "0chan.ygg"].includes(location.host)) {
+  const IS_OCHKO = true;
+} else {
+  const IS_OCHKO = false;
+}
 
 const THUMB_API = 'https://0chan.one/zu-base64.php';
 
@@ -963,12 +970,14 @@ var eventDispatcher = {
   },
   change: function (e) {
     // Noko
-    let noko = e.path.find(el => el.classList && el.classList.contains('ZU-noko'));
-    if (noko) {
-      settings.noko = noko.checked;
-      Array.prototype.forEach.call(document.querySelectorAll('.ZU-noko'), otherNoko => {
-        if (otherNoko !== noko) otherNoko.checked = noko.checked;
-      });
+    if (!IS_OCHKO) {
+      let noko = e.path.find(el => el.classList && el.classList.contains('ZU-noko'));
+      if (noko) {
+        settings.noko = noko.checked;
+        Array.prototype.forEach.call(document.querySelectorAll('.ZU-noko'), otherNoko => {
+          if (otherNoko !== noko) otherNoko.checked = noko.checked;
+        });
+      }
     }
   },
   mouseenter: function (e) {
@@ -1125,7 +1134,7 @@ const router = {
     app.$router.push = (route, e, n) => {
       let thread, threadID, postID;
       if (doDebug) console.log('ROUTE:', route);
-      if (!settings.noko && state.type !== "thread" && route.hasOwnProperty('name') && route.name === "thread" && route.hasOwnProperty('hash') && (postID = route.hash.split('#')[1]) && route.hasOwnProperty('params') && (threadID = route.params.threadId) && !settings.catalogMode) {
+      if (!IS_OCHKO && !settings.noko && state.type !== "thread" && route.hasOwnProperty('name') && route.name === "thread" && route.hasOwnProperty('hash') && (postID = route.hash.split('#')[1]) && route.hasOwnProperty('params') && (threadID = route.params.threadId) && !settings.catalogMode) {
         // Quick reply case
         let threadVue = contentVue.threads.find(thr => thr.thread.id == threadID);
         if (threadVue // Thread exists on page
@@ -1228,8 +1237,10 @@ function fuckCF(response, alertToClose, alertCloserContext) {
 
 function handleReplyForm(form) {
   // Add noko button
-  form.querySelector('.reply-form-message + div .pull-right').insertAdjacentHTML('beforeBegin', `
-    <label class="ZU-noko-label" title="После отправки сообщения переместиться к треду"><input class="ZU-noko" type="checkbox"${settings.noko ? 'checked' : ''}> Noko</label>`);
+  if (!IS_OCHKO) {
+    form.querySelector('.reply-form-message + div .pull-right').insertAdjacentHTML('beforeBegin', `
+      <label class="ZU-noko-label" title="После отправки сообщения переместиться к треду"><input class="ZU-noko" type="checkbox"${settings.noko ? 'checked' : ''}> Noko</label>`);
+  }
   // Add quote from selection
   if (postQuotation) {
     let textarea = form.querySelector('textarea');
@@ -1451,17 +1462,19 @@ function getPostDataFromDOM(post) {
 }
 
 function addThreadControls(threadDOM, threadVue) {
-  let controlsContainer = Array.prototype.find.call(threadDOM.querySelectorAll(':scope > div > div:not(.thread-tree)'), div => !div.querySelector('.post-op'));
-  if (!controlsContainer || controlsContainer.classList.contains('ZU-thread-controls')) return;
-  let href = controlsContainer.querySelector('a').getAttribute('href');
-  if (threadVue.skippedPosts) {
-    if (controlsContainer.querySelector('span')) {
-      controlsContainer.querySelector('span').classList.add('ZU-delete-on-threadexpand');
+  if (!IS_OCHKO) {
+    let controlsContainer = Array.prototype.find.call(threadDOM.querySelectorAll(':scope > div > div:not(.thread-tree)'), div => !div.querySelector('.post-op'));
+    if (!controlsContainer || controlsContainer.classList.contains('ZU-thread-controls')) return;
+    let href = controlsContainer.querySelector('a').getAttribute('href');
+    if (threadVue.skippedPosts) {
+      if (controlsContainer.querySelector('span')) {
+        controlsContainer.querySelector('span').classList.add('ZU-delete-on-threadexpand');
+      }
+      controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-expand-thread-container ZU-delete-on-threadexpand"> | <a href="${href}" onclick="return false" class="ZU-expand-thread">Развернуть</a></span>`);
     }
-    controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-expand-thread-container ZU-delete-on-threadexpand"> | <a href="${href}" onclick="return false" class="ZU-expand-thread">Развернуть</a></span>`);
+    controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-update-thread-container"> | <a href="${href}" onclick="return false" class="ZU-update-thread">Обновить</a></span>`);
+    controlsContainer.classList.add('ZU-thread-controls');
   }
-  controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-update-thread-container"> | <a href="${href}" onclick="return false" class="ZU-update-thread">Обновить</a></span>`);
-  controlsContainer.classList.add('ZU-thread-controls');
 
   let op = threadDOM.querySelector('.post-op'),
       opPostID = op.querySelector('.post-id');
@@ -1718,6 +1731,59 @@ function externallyResolvingPromise() {
     resolve: promiseResolve,
     reject: promiseReject
   };
+}
+
+// Array.prototype.includes() polyfill
+// https://github.com/kevlatus/polyfill-array-includes/blob/master/array-includes.js
+if (!Array.prototype.includes) {
+  Object.defineProperty(Array.prototype, 'includes', {
+    value: function (searchElement, fromIndex) {
+
+      // 1. Let O be ? ToObject(this value).
+      if (this == null) {
+        throw new TypeError('"this" is null or not defined');
+      }
+
+      var o = Object(this);
+
+      // 2. Let len be ? ToLength(? Get(O, "length")).
+      var len = o.length >>> 0;
+
+      // 3. If len is 0, return false.
+      if (len === 0) {
+        return false;
+      }
+
+      // 4. Let n be ? ToInteger(fromIndex).
+      //    (If fromIndex is undefined, this step produces the value 0.)
+      var n = fromIndex | 0;
+
+      // 5. If n ≥ 0, then
+      //  a. Let k be n.
+      // 6. Else n < 0,
+      //  a. Let k be len + n.
+      //  b. If k < 0, let k be 0.
+      var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+      function sameValueZero(x, y) {
+        return x === y || typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y);
+      }
+
+      // 7. Repeat, while k < len
+      while (k < len) {
+        // a. Let elementK be the result of ? Get(O, ! ToString(k)).
+        // b. If SameValueZero(searchElement, elementK) is true, return true.
+        // c. Increase k by 1.
+        if (sameValueZero(o[k], searchElement)) {
+          return true;
+        }
+        k++;
+      }
+
+      // 8. Return false
+      return false;
+    }
+  });
 }
 
 // Element.matches() polyfill
@@ -2044,7 +2110,7 @@ injector.inject('ZU-global', `
     vertical-align: middle;
   }
   .reply-form-limit-counter {
-    min-width: 60px;
+    /* min-width: 60px; */
     display: inline-block;
   }
   .ZU-noko {
@@ -2268,13 +2334,6 @@ injector.inject('ZU-global', `
   .threads-scroll-spy .threads-scroll-toggler {
     left: -20px;
     right: unset;
-  }
-  .sage-label {
-    height: auto;
-    margin-right: 6px;
-  }
-  .sage {
-    vertical-align: -1px!important;
   }
   .dialog-view textarea {
     min-height: 100px;
