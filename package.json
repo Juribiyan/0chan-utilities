@@ -1,10 +1,11 @@
 {
   "name": "0chan-utilities",
-  "version": "2.3.11.1",
+  "version": "2.3.12",
   "description": "Userscript for 0chan",
   "main": "index.js",
   "scripts": {
-    "build": "babel src --out-dir es5; sed -i 's|raw/master/src|raw/master/es5|' es5/0chan-utilities.user.js"
+    "build": "babel src --out-dir es5; sed -i 's|raw/master/src|raw/master/es5|' es5/0chan-utilities.user.js",
+    "simplebuild": "babel src --out-dir es5"
   },
   "keywords": [
     "0chan"

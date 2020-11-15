@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.11.1
+// @version      2.3.12
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -713,7 +713,8 @@ var settings = {
       bri: 100,
       con: 100
     },
-    turnOffSnow: window.localStorage.getItem('disableSnow') == null ? false : true
+    turnOffSnow: window.localStorage.getItem('disableSnow') == null ? false : true,
+    selectedBoard: 'b'
   },
   _: {},
   hooks: {
@@ -1964,6 +1965,8 @@ function onFreshContent() {
   ZURouter.handleRoute(state.type);
 
   refresher.init();
+
+  if (state.type == 'home') formOnZeroPage.init();
 }
 
 function freezeSize(el) {
@@ -2058,6 +2061,54 @@ function fancyResizeXfade(container, hide, show) {
     }, resizeDelay + resizeDuration + fadeInDelay + fadeInDuration);
   }, 0);
 }
+
+var formOnZeroPage = {
+  defaultBoard: 'b',
+  init: function () {
+    let buttonsRight = document.querySelector('.headmenu-buttons-right');
+    buttonsRight.insertAdjacentHTML('afterbegin', `
+      <div class="headmenu-buttons headmenu-buttons-right">
+      <div class="btn-group">
+        <button type="button" class="btn btn-primary ZU-toggleNewThreadForm"><i class="fa fa-pencil-square-o"></i> 
+          <span class="btn-caption hidden-xs">Создать тред</span>
+        </button>
+      </div>
+      </div>`);
+    buttonsRight.querySelector('.ZU-toggleNewThreadForm').onclick = () => this.toggleNewThreadForm();
+    // prevent title replacement
+    let title = document.querySelector('.headmenu-title'),
+        tSpan = title.querySelector('span'),
+        staticTitle = tSpan.outerHTML;
+    tSpan.style.display = 'none';
+    title.insertAdjacentHTML('beforeEnd', staticTitle);
+    // board selector
+    let sel = `<i class="fa fa-arrow-right"></i><select class="form-control ZU-boardlist-select">`,
+        opts = '',
+        optSel = '',
+        optDefault = '';
+    document.querySelector('#sidebar').__vue__.boardList.sort((a, b) => a.dir < b.dir ? -1 : 1).forEach(board => {
+      let name = board.name.length > 40 ? board.name.slice(0, 40 - 3) + '...' : board.name,
+          opt = `<option value="${board.dir}">${board.dir} — ${name}</option>`;
+      if (board.dir == settings.selectedBoard && settings.selectedBoard != this.defaultBoard) optSel = opt;else if (board.dir == this.defaultBoard) optDefault = opt;else opts += opt;
+    });
+    sel += optSel + optDefault + opts + '</select>';
+    document.querySelector('.new-thread-form .post-options').insertAdjacentHTML('afterBegin', sel);
+    document.querySelector('.ZU-boardlist-select').addEventListener('change', function () {
+      document.querySelector('.new-thread-form').parentElement.__vue__.board.dir = this.value;
+      settings.selectedBoard = this.value;
+      settings.save();
+    });
+  },
+  toggleNewThreadForm: function () {
+    let form = document.querySelector('.new-thread-form');
+    form.parentElement.__vue__.board.dir = document.querySelector('.ZU-boardlist-select').value;
+    if (form.style.display == 'none') {
+      form.style.display = null;
+    } else {
+      form.style.display = 'none';
+    }
+  }
+};
 
 injector.inject('ZU-global', `
   .btn-open-sidebar {
@@ -2534,5 +2585,13 @@ injector.inject('ZU-global', `
   }
   .ZU-range::-ms-fill-lower, .ZU-range::-ms-fill-upper {
     background: linear-gradient(to bottom, transparent 2.999px, #000 3px, #000 3.999px, #777 4px, #777 4.999px, transparent 5px)
+  }
+  .ZU-boardlist-select {
+  	display: inline-block;
+  	width: 140px;
+  	padding: 0px;
+  	height: 25px;
+  	vertical-align: middle;
+  	margin: 0 4px;
   }
 `);
