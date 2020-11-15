@@ -1,21 +1,23 @@
 // ==UserScript==
 // @name         0chan Utilities
-// @namespace    http://0chan.hk/userjs
-// @version      2.2.5
+// @namespace    https://www.0chan.pl/userjs/
+// @version      2.3.11.1
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/Juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
-// @author       Snivy [0x88d27947]
+// @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
+// @author       Snivy & devarped
+// @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
-// @include      https://0chan.pl/*
-// @include      http://nullchpl673e6jo3.onion/*
-// @include      https://0chan.xyz/*
-// @include      https://ochan.ru/*
-// @include      http://ochan.ru/*
+// @include      https://0.1chan.pl/*
+// @include      https://ygg.0chan.pl/*
+// @include      https://www.0chan.club/*
 // @include      http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion/*
 // @include      http://0pl.i2p/*
 // @include      http://gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p/*
+// @include      http://[225:55:9ebf:1709:7b1f:a315:1119:6eff]/*
+// @include      http://0chan.ygg/*
+// @include      https://ochan.ru/*
 // @grant        none
-// @icon         https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/icon.png
+// @icon         https://raw.githubusercontent.com/devarped/0chan-utilities/master/icon.png
 // ==/UserScript==
 
 const icons =
@@ -29,6 +31,9 @@ const icons =
   </symbol>
   <symbol id="i-spinner" viewBox="0 0 32 32">
   <path d="M23.957 20.347c-0.113-0.066-0.198-0.113-0.31-0.18-1.528-0.735-2.461-2.367-2.447-4.088 0.005-1.767 1.030-3.354 2.608-4.209 1.143-0.617 2.105-1.639 2.61-3.037 0.765-2.116 0.13-4.592-1.571-6.066-2.712-2.324-6.729-1.531-8.432 1.434-0.569 0.987-0.794 2.097-0.727 3.153 0.118 1.684-0.763 3.281-2.209 4.1l-0.059 0.040c-1.521 0.886-3.382 0.86-4.852-0.104-0.35-0.239-0.758-0.439-1.172-0.567-2.135-0.784-4.618-0.118-6.075 1.634-2.286 2.738-1.479 6.741 1.443 8.437 1.856 1.075 4.074 0.931 5.766-0.12 1.439-0.935 3.262-1.044 4.752-0.18l0.224 0.13c1.49 0.862 2.279 2.487 2.22 4.221-0.106 2.008 0.924 3.996 2.778 5.071 2.7 1.566 6.146 0.59 7.648-2.152 1.318-2.622 0.387-6.021-2.197-7.518zM4.28 18.198c-1.153-0.669-1.573-2.154-0.89-3.338 0.666-1.157 2.145-1.58 3.326-0.895s1.573 2.154 0.89 3.338c-0.695 1.141-2.173 1.564-3.326 0.895zM14.783 18.115c-1.153-0.669-1.573-2.152-0.89-3.338 0.68-1.186 2.145-1.58 3.326-0.895 1.179 0.685 1.571 2.154 0.89 3.338-0.683 1.186-2.173 1.564-3.326 0.895zM19.977 9.085c-1.153-0.669-1.573-2.152-0.893-3.338 0.683-1.186 2.145-1.58 3.326-0.895s1.573 2.154 0.89 3.338c-0.68 1.186-2.173 1.564-3.323 0.895zM19.963 27.289c-1.153-0.669-1.571-2.154-0.89-3.34 0.666-1.155 2.145-1.578 3.326-0.893 1.153 0.669 1.573 2.152 0.89 3.338-0.666 1.157-2.145 1.578-3.326 0.895z"></path>
+  </symbol>
+  <symbol id="i-hirudotron" viewBox="0 0 32 32">
+  <path d="M22.555 13.689c0.63-1.298 0.591-2.453 0.934-3.528 0.317-0.997 1.451-2.906 2.639-1.72 0.637 0.637 0.48 1.715 0.758 2.011h0c0.021 0.027 0.047 0.053 0.076 0.078 0.913 0.763 4.118 0.537 4.020-0.559-0.012-0.136-0.079-0.284-0.218-0.425h0l-0.002-0.001c-0.041-0.041-0.087-0.082-0.14-0.12-0.188-0.156-0.439-0.364-0.829-0.796-0.644-0.712-0.869-2.26-1.597-3.048-1.556-1.689-3.855-1.648-5.417-0.086-0.913 0.913-1.23 2.13-3.011 3.911-0.209 0.21-0.445 0.387-0.692 0.539v0c-1.178 0.719-2.611 0.828-2.611 0.828s1.424-0.229 2.538-1.049c-0.473-1.363-1.316-2.152-1.834-3.155-0.48-0.929-1.029-3.081 0.65-3.081 0.901 0 1.552 0.874 1.957 0.886l0-0c0.035 0.005 0.070 0.005 0.108 0.002 1.185-0.106 3.291-2.533 2.447-3.237-0.105-0.087-0.258-0.145-0.454-0.146v-0l-0.002 0c-0.058-0-0.119 0.004-0.184 0.015-0.244 0.022-0.567 0.052-1.149 0.024-0.959-0.048-2.212-0.983-3.284-1.026-2.294-0.093-3.891 1.561-3.891 3.769 0 1.292 0.636 2.376 0.636 4.895 0 0.296-0.041 0.588-0.11 0.87-0.325 1.342-1.26 2.431-1.26 2.431s0.844-1.169 1.053-2.537c-1.298-0.63-2.453-0.591-3.528-0.934-0.997-0.318-2.906-1.452-1.72-2.639 0.637-0.637 1.715-0.479 2.011-0.758v-0c0.027-0.021 0.053-0.046 0.078-0.075 0.763-0.913 0.537-4.118-0.559-4.020-0.136 0.012-0.284 0.079-0.425 0.218v-0l-0.001 0.002c-0.041 0.040-0.082 0.087-0.12 0.141-0.156 0.188-0.364 0.438-0.796 0.829-0.712 0.644-2.26 0.869-3.048 1.597-1.689 1.557-1.648 3.855-0.086 5.417 0.913 0.913 2.13 1.23 3.911 3.011 0.21 0.21 0.387 0.445 0.539 0.692v0c0.719 1.178 0.828 2.611 0.828 2.611s-0.229-1.424-1.049-2.539c-1.363 0.473-2.152 1.316-3.155 1.834-0.929 0.48-3.081 1.028-3.081-0.65 0-0.901 0.874-1.552 0.886-1.957l-0-0.001c0.005-0.034 0.005-0.070 0.002-0.108-0.106-1.185-2.533-3.291-3.237-2.447-0.087 0.104-0.145 0.258-0.146 0.454h-0l0 0.002c-0 0.057 0.004 0.12 0.015 0.184 0.022 0.243 0.052 0.568 0.024 1.149-0.048 0.959-0.983 2.213-1.026 3.284-0.093 2.294 1.561 3.891 3.769 3.891 1.292 0 2.376-0.636 4.895-0.636 0.296 0 0.588 0.041 0.87 0.11 1.342 0.325 2.431 1.26 2.431 1.26s-1.169-0.844-2.537-1.053c-0.63 1.298-0.591 2.453-0.934 3.528-0.318 0.997-1.452 2.907-2.639 1.719-0.637-0.637-0.479-1.715-0.758-2.011h-0c-0.021-0.027-0.046-0.053-0.075-0.078-0.913-0.763-4.118-0.537-4.020 0.558 0.012 0.136 0.079 0.285 0.218 0.424h-0l0.002 0c0.040 0.041 0.087 0.081 0.141 0.119 0.188 0.157 0.438 0.363 0.829 0.796 0.644 0.712 0.869 2.259 1.597 3.048 1.557 1.689 3.855 1.648 5.417 0.086 0.913-0.913 1.23-2.13 3.011-3.911 0.21-0.209 0.445-0.387 0.692-0.538v0c1.178-0.719 2.611-0.828 2.611-0.828s-1.424 0.23-2.539 1.049c0.473 1.363 1.316 2.152 1.834 3.155 0.48 0.93 1.028 3.081-0.65 3.081-0.901 0-1.552-0.874-1.957-0.886l-0.001 0c-0.034-0.005-0.070-0.005-0.108-0.002-1.185 0.107-3.291 2.532-2.447 3.237 0.104 0.087 0.258 0.145 0.454 0.146v0l0.002-0c0.057 0 0.12-0.005 0.184-0.015 0.243-0.023 0.568-0.052 1.149-0.023 0.959 0.049 2.213 0.983 3.284 1.026 2.294 0.094 3.891-1.561 3.891-3.769 0-1.291-0.636-2.375-0.636-4.895 0-0.296 0.041-0.588 0.11-0.87 0.325-1.342 1.26-2.431 1.26-2.431s-0.844 1.169-1.053 2.538c1.298 0.63 2.453 0.591 3.528 0.934 0.997 0.317 2.907 1.451 1.72 2.639-0.637 0.637-1.715 0.48-2.011 0.758v0c-0.027 0.021-0.053 0.047-0.078 0.076-0.763 0.913-0.537 4.118 0.558 4.020 0.136-0.012 0.285-0.079 0.424-0.218v0l0-0.002c0.041-0.041 0.081-0.087 0.119-0.14 0.157-0.188 0.363-0.439 0.796-0.829 0.712-0.644 2.259-0.869 3.048-1.597 1.689-1.557 1.648-3.855 0.086-5.417-0.913-0.913-2.13-1.23-3.911-3.011-0.209-0.209-0.387-0.445-0.538-0.692v0c-0.719-1.178-0.828-2.611-0.828-2.611s0.23 1.424 1.049 2.538c1.363-0.473 2.152-1.316 3.155-1.834 0.93-0.48 3.081-1.029 3.081 0.65 0 0.901-0.874 1.552-0.886 1.957l0 0c-0.005 0.035-0.005 0.070-0.002 0.108 0.107 1.185 2.532 3.291 3.237 2.447 0.087-0.105 0.145-0.258 0.146-0.454h0l-0-0.002c0-0.058-0.005-0.119-0.015-0.184-0.023-0.244-0.052-0.567-0.023-1.149 0.049-0.959 0.983-2.212 1.026-3.284 0.094-2.294-1.561-3.891-3.769-3.891-1.291 0-2.375 0.636-4.895 0.636-0.296 0-0.588-0.041-0.87-0.11-1.342-0.325-2.431-1.26-2.431-1.26s1.169 0.844 2.538 1.053zM9.095 3.256c-0.041-1.477 0.476-2.006 0.861-2.041 0.995-0.089 1.201 2.825 0.508 3.655-0.396 0.473-1.328-0.138-1.369-1.615zM20.122 2.11c1.015-1.073 1.755-1.082 2.052-0.834 0.767 0.64-1.148 2.846-2.226 2.944-0.614 0.056-0.841-1.036 0.174-2.11zM29.877 20.124c1.073 1.015 1.082 1.755 0.834 2.052-0.64 0.767-2.846-1.148-2.944-2.226-0.055-0.614 1.036-0.841 2.11 0.174zM22.889 28.733c0.041 1.477-0.477 2.006-0.861 2.041-0.995 0.090-1.201-2.825-0.508-3.655 0.395-0.474 1.328 0.137 1.369 1.615zM11.862 29.878c-1.015 1.073-1.755 1.082-2.051 0.834-0.767-0.64 1.148-2.846 2.226-2.944 0.614-0.055 0.841 1.036-0.175 2.11zM3.253 22.891c-1.477 0.041-2.006-0.477-2.041-0.861-0.089-0.995 2.825-1.201 3.655-0.508 0.473 0.395-0.138 1.328-1.615 1.369zM2.108 11.864c-1.073-1.015-1.082-1.755-0.834-2.052 0.64-0.767 2.846 1.148 2.943 2.226 0.056 0.614-1.036 0.841-2.11-0.175zM28.73 9.098c1.477-0.041 2.006 0.476 2.041 0.861 0.090 0.995-2.825 1.201-3.655 0.508-0.474-0.396 0.137-1.328 1.615-1.369z"></path>
   </symbol>
   </defs>
   </svg>`
@@ -46,6 +51,23 @@ lastActiveTextarea
   initialized: false
 }
 , version = GM_info.script.version
+
+if (
+    ["www.0chan.pl",
+    "p.0chan.pl",
+    "0.1chan.pl",
+    "ygg.0chan.pl",
+    "www.0chan.club",
+    "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion",
+    "0pl.i2p",
+    "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p",
+    "[225:55:9ebf:1709:7b1f:a315:1119:6eff]",
+    "0chan.ygg"
+   ].includes(location.host)) {
+    var IS_OCHKO = true
+} else {
+    var IS_OCHKO = false
+}
 
 const THUMB_API = 'https://0chan.one/zu-base64.php'
 
@@ -97,22 +119,73 @@ var momInRoom = {
   }
 }
 
+var unhideSpoilers = {
+  mainCSS:
+    `mark, .spoiler {
+      color: inherit;
+      background: rgba(204, 204, 204, 0.25);
+    }}`,
+  toggle: function(val) {
+    if (val) {
+      injector.inject('ZU-unhide-spoilers', this.mainCSS)
+    }
+    else {
+      injector.remove('ZU-unhide-spoilers')
+    }
+  }
+}
+
 const share = {
   sites: {
-    '1chan': {
+    '1chanca': {
       name: "1chan.ca",
-      link: (url, description) => `https://1chan.ca/live/addXS?link=${url}&description=${description}`,
+      link: "https://1chan.ca/live/addXS",
+      method: 'GET',
+      options: (url, description) => `link=${url}&description=${description}`,
       icon: {
         type: 'svg',
         name: '1chan',
         color: '#E42727'
-      },
-      width: 150,
-      height: 50
+      }
+    },
+    '1chanpl': {
+      name: "1chan.pl",
+      link: "https://1chan.pl/live/addXS",
+      method: 'GET',
+      options: (url, description) => `link=${url}&description=${description}`,
+      icon: {
+        type: 'svg',
+        name: '1chan',
+        color: '#dc143c'
+      }
+    },
+    'overnullch': {
+      name: "Овернульч",
+      link: "https://0chan.one/live/api.php",
+      method: 'POST',
+      options: (url, description) => `url=${url}&description=${description}`,
+      icon: {
+        type: 'svg',
+        name: 'hirudotron',
+        color: '#2c333d'
+      }
+    },
+    'metator': {
+      name: "Метатор",
+      link: "http://metatorjq65tshfy.onion/live/api.php",
+      method: 'POST',
+      options: (url, description) => `url=${url}&description=${description}`,
+      icon: {
+        type: 'svg',
+        name: 'hirudotron',
+        color: '#292929'
+      }
     },
     telegram: {
       name: 'Telegram',
-      link: (url, description) => `https://telegram.me/share/url?url=${url}&text=${description}`,
+      link: "https://telegram.me/share/url",
+      method: 'POPUP',
+      options: (url, description) => `url=${url}&text=${description}`,
       icon: {
         type: 'fa',
         name: 'telegram',
@@ -120,17 +193,6 @@ const share = {
       },
       width: 600,
       height: 600
-    },
-    '1chanpl': {
-      name: "1chan.pl",
-      link: (url, description) => `https://1chan.pl/live/addXS?link=${url}&description=${description}`,
-      icon: {
-        type: 'svg',
-        name: '1chan',
-        color: '#dc143c'
-      },
-      width: 150,
-      height: 50
     },
   },
   dropdown: function(url, description) {
@@ -157,10 +219,23 @@ const share = {
   handleClick: function(link) {
     let selectedText = postQuotation
     , description = encodeURIComponent(selectedText ? selectedText.replace(/\n/g, ' ') : link.dataset.description)
-    , site = this.sites[link.dataset.site]
-    window.open(site.link(link.dataset.url, description),
-      'targetWindow',
-      `toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${site.width || 666},height=${site.height || 555}`)
+    , site = this.sites[link.dataset.site];
+
+    let xhr = new XMLHttpRequest();
+    // fucking js does not want to send GET requests with data defined in send()
+    switch (site.method) {
+      case "GET":
+        xhr.open(site.method, `${site.link}?${site.options(link.dataset.url, description)}`, true);
+        xhr.send();
+        nativeAlert('info', 'Запрос на добавление ссылки отправлен');
+      case "POST":
+        xhr.open(site.method, site.link, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(site.options(link.dataset.url, description));
+        nativeAlert('info', 'Запрос на добавление ссылки отправлен');
+      case "POPUP":
+        window.open(site.link + '?' + site.options(link.dataset.url, description), 'targetWindow', `toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=${site.width || 666},height=${site.height || 555}`);
+     }
   }
 }
 
@@ -272,6 +347,9 @@ const catalog = {
     .ZU-thread-controls {
       display: none;
     }
+    .threadwrap {
+      max-width: inherit !important;
+    }
     .thread-separator {
       display: none;
     }
@@ -331,13 +409,10 @@ const catalog = {
       z-index: 3;
     }
     .ZU-noko-label {
-      display: none
-    }
-    .threads-scroll-spy + div {
-      margin-top: 15px;
+      display: none;
     }
     .threads-scroll-spy {
-      z-index: 3;
+      display: none;
     }
   `,
   get isApplicable() {
@@ -435,7 +510,7 @@ var autohideAtt = {
   add: function(figVue) {
     let att = figVue.attachment
     if (settings.autohideAtt.find(entry => entry.aid == att.id)) {
-      return nativeAlert('info', `${att.embed ? 'Видео' : 'Картинка'} уже присутствует в списке крываемых.`)
+      return nativeAlert('info', `${att.embed ? 'Видео' : 'Картинка'} уже присутствует в списке скрываемых.`)
     }
     let entry = {
       pid: +figVue.$parent.post.id,
@@ -671,10 +746,21 @@ var NullRestyler = {
   }
 }
 
+var desnower = {
+  toggle: function(on) {
+    if (settings.turnOffSnow) {
+        window.localStorage.setItem('disableSnow', true);
+    } else {
+        window.localStorage.removeItem('disableSnow');
+    }
+  }
+}
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
     momInRoom: false,
+    unhideSpoilers: false,
     unmaskOnHover: true,
     hideSidebar: false,
     hiddenBoards: [],
@@ -688,18 +774,21 @@ var settings = {
       sat: 100,
       bri: 100,
       con: 100
-    }
+    },
+    turnOffSnow: (window.localStorage.getItem('disableSnow') == null) ? false : true
   },
   _: {},
   hooks: {
     momInRoom: momInRoom.toggle.bind(momInRoom),
+    unhideSpoilers: unhideSpoilers.toggle.bind(unhideSpoilers),
     unmaskOnHover: momInRoom.toggleHover.bind(momInRoom),
     hideSidebar: sideBar.toggle.bind(sideBar),
     updateInterval: refresher.reset.bind(refresher),
     catalogMode: catalog.toggle.bind(catalog),
     autohide: autohide.init.bind(autohide),
     autohideAtt: autohideAtt.init.bind(autohideAtt),
-    nullColor: NullRestyler.setValues.bind(NullRestyler)
+    nullColor: NullRestyler.setValues.bind(NullRestyler),
+    turnOffSnow: desnower.toggle.bind(desnower)
   },
   save: function() {
     this._.hiddenBoards = this.hiddenBoards
@@ -961,14 +1050,15 @@ var eventDispatcher = {
   },
   change: function(e) {
     // Noko
-    let noko = e.path.find(el => el.classList && el.classList.contains('ZU-noko'))
-    if (noko) {
-      settings.noko = noko.checked
-      Array.prototype.forEach.call(document.querySelectorAll('.ZU-noko'), otherNoko => {
-        if (otherNoko !== noko)
-          otherNoko.checked = noko.checked
-      })
-
+    if (!IS_OCHKO) {
+      let noko = e.path.find(el => el.classList && el.classList.contains('ZU-noko'))
+      if (noko) {
+        settings.noko = noko.checked
+        Array.prototype.forEach.call(document.querySelectorAll('.ZU-noko'), otherNoko => {
+          if (otherNoko !== noko)
+            otherNoko.checked = noko.checked
+        })
+      }
     }
   },
   mouseenter: function(e) {
@@ -1151,7 +1241,8 @@ const router = {
       if (doDebug)
         console.log('ROUTE:', route)
       if (
-        !settings.noko
+        !IS_OCHKO
+        && !settings.noko
         && state.type !== "thread"
         && route.hasOwnProperty('name')
         && route.name === "thread"
@@ -1275,8 +1366,10 @@ function fuckCF(response, alertToClose, alertCloserContext) {
 
 function handleReplyForm(form) {
   // Add noko button
-  form.querySelector('.reply-form-message + div .pull-right').insertAdjacentHTML('beforeBegin', `
-    <label class="ZU-noko-label" title="После отправки сообщения переместиться к треду"><input class="ZU-noko" type="checkbox"${settings.noko ? 'checked' : '' }> Noko</label>`)
+  if (!IS_OCHKO) {
+    form.querySelector('.reply-form-message + div .pull-right').insertAdjacentHTML('beforeBegin', `
+      <label class="ZU-noko-label" title="После отправки сообщения переместиться к треду"><input class="ZU-noko" type="checkbox"${settings.noko ? 'checked' : '' }> Noko</label>`)
+  }
   // Add quote from selection
   if (postQuotation) {
     let textarea = form.querySelector('textarea')
@@ -1529,16 +1622,20 @@ function getPostDataFromDOM(post) {
 }
 
 function addThreadControls(threadDOM, threadVue) {
-  let controlsContainer = Array.prototype.find.call(threadDOM.querySelectorAll(':scope > div > div:not(.thread-tree)'), div => !div.querySelector('.post-op'))
-  if (!controlsContainer || controlsContainer.classList.contains('ZU-thread-controls')) return;
-  let href = controlsContainer.querySelector('a').getAttribute('href')
-  if (threadVue.skippedPosts) {
-    controlsContainer.querySelector('span').classList.add('ZU-delete-on-threadexpand')
-    controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-expand-thread-container ZU-delete-on-threadexpand"> | <a href="${href}" onclick="return false" class="ZU-expand-thread">Развернуть</a></span>`)
+  if (!IS_OCHKO) {
+    let controlsContainer = Array.prototype.find.call(threadDOM.querySelectorAll(':scope > div > div:not(.thread-tree)'), div => !div.querySelector('.post-op'))
+    if (!controlsContainer || controlsContainer.classList.contains('ZU-thread-controls')) return;
+    let href = controlsContainer.querySelector('a').getAttribute('href')
+    if (threadVue.skippedPosts) {
+      if (controlsContainer.querySelector('span')) {
+        controlsContainer.querySelector('span').classList.add('ZU-delete-on-threadexpand')
+      }
+      controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-expand-thread-container ZU-delete-on-threadexpand"> | <a href="${href}" onclick="return false" class="ZU-expand-thread">Развернуть</a></span>`)
+    }
+    controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-update-thread-container"> | <a href="${href}" onclick="return false" class="ZU-update-thread">Обновить</a></span>`)
+    controlsContainer.classList.add('ZU-thread-controls')
   }
-  controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-update-thread-container"> | <a href="${href}" onclick="return false" class="ZU-update-thread">Обновить</a></span>`)
-  controlsContainer.classList.add('ZU-thread-controls')
-
+  
   let op = threadDOM.querySelector('.post-op')
   , opPostID = op.querySelector('.post-id')
   op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container')
@@ -1588,20 +1685,26 @@ var settingsPanel = {
     {
       type: 'checkbox',
       id: 'momInRoom',
-      title: "Мамка в комнате",
+      title: "Мамка в комнате",
       description: "Маскировать все картинки"
     },
     {
       type: 'checkbox',
+      id: 'unhideSpoilers',
+      title: "Раскрыть все спойлеры",
+      description: "Раскрыть все спойлеры, чтобы видеть их содержимое без наведения"
+    },
+    {
+      type: 'checkbox',
       id: 'unmaskOnHover',
-      title: "Раскрывать по наведению",
-      description: "Раскрывать замаскированные картинки по наведению"
+      title: "Раскрывать NSFW по наведению",
+      description: "Раскрывать замаскированные картинки по наведению"
     },
     {
       type: 'checkbox',
       id: 'thumbNoScroll',
-      title: "Разворот без скролла",
-      description: "Не скроллить при разворачивании картинок"
+      title: "Разворот без скролла",
+      description: "Не скроллить при разворачивании картинок"
     },
     {
       type: 'slider',
@@ -1620,6 +1723,12 @@ var settingsPanel = {
       title: "Режим каталога",
       description: "Отображать треды в виде каталога",
       condition: () => catalog.isApplicable,
+    },
+    {
+      type: 'checkbox',
+      id: 'turnOffSnow',
+      title: "Убрать снег",
+      description: "Не использовать анимацию в качестве фона. Имеет смысл только в период нового года (~15 декабря - ~14 января)"
     },
   ],
   install: function() {
@@ -1803,6 +1912,59 @@ function externallyResolvingPromise() {
     resolve: promiseResolve,
     reject: promiseReject
   }
+}
+
+// Array.prototype.includes() polyfill
+// https://github.com/kevlatus/polyfill-array-includes/blob/master/array-includes.js
+if (!Array.prototype.includes) {
+  Object.defineProperty(Array.prototype, 'includes', {
+    value: function (searchElement, fromIndex) {
+
+      // 1. Let O be ? ToObject(this value).
+      if (this == null) {
+        throw new TypeError('"this" is null or not defined');
+      }
+
+      var o = Object(this);
+
+      // 2. Let len be ? ToLength(? Get(O, "length")).
+      var len = o.length >>> 0;
+
+      // 3. If len is 0, return false.
+      if (len === 0) {
+        return false;
+      }
+
+      // 4. Let n be ? ToInteger(fromIndex).
+      //    (If fromIndex is undefined, this step produces the value 0.)
+      var n = fromIndex | 0;
+
+      // 5. If n ≥ 0, then
+      //  a. Let k be n.
+      // 6. Else n < 0,
+      //  a. Let k be len + n.
+      //  b. If k < 0, let k be 0.
+      var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+      function sameValueZero(x, y) {
+        return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
+      }
+
+      // 7. Repeat, while k < len
+      while (k < len) {
+        // a. Let elementK be the result of ? Get(O, ! ToString(k)).
+        // b. If SameValueZero(searchElement, elementK) is true, return true.
+        // c. Increase k by 1.
+        if (sameValueZero(o[k], searchElement)) {
+          return true;
+        }
+        k++;
+      }
+
+      // 8. Return false
+      return false;
+    }
+  });
 }
 
 // Element.matches() polyfill
@@ -2162,7 +2324,7 @@ injector.inject('ZU-global', `
     vertical-align: middle;
   }
   .reply-form-limit-counter {
-    min-width: 60px;
+    /* min-width: 60px; */
     display: inline-block;
   }
   .ZU-noko {
@@ -2278,6 +2440,10 @@ injector.inject('ZU-global', `
   .post-img .post-embed .post-embed-play-btn {
     z-index: 2
   }
+  .post-img .post-img-buttons {
+    margin-top: -36px;
+    max-height: 18px;
+  }
   .post .ZU-hide-board-by-op-container {
     padding-left: 6px;
   }
@@ -2382,13 +2548,6 @@ injector.inject('ZU-global', `
   .threads-scroll-spy .threads-scroll-toggler {
     left: -20px;
     right: unset;
-  }
-  .sage-label {
-    height: auto;
-    margin-right: 6px;
-  }
-  .sage {
-    vertical-align: -1px!important;
   }
   .dialog-view textarea {
     min-height: 100px;
@@ -2495,7 +2654,7 @@ injector.inject('ZU-global', `
   .ZU-nulltwk-range-container {
     transition: color .2s;
     margin: 0;
-    display: inline-block;
+    display: block;
     margin-top: -2px;
     margin-bottom: 3px;
   }

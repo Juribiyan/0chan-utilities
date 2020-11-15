@@ -1,18 +1,18 @@
 {
   "name": "0chan-utilities",
-  "version": "2.2.5",
+  "version": "2.3.11.1",
   "description": "Userscript for 0chan",
   "main": "index.js",
   "scripts": {
-    "build": "babel src --out-dir es5"
+    "build": "babel src --out-dir es5; sed -i 's|raw/master/src|raw/master/es5|' es5/0chan-utilities.user.js"
   },
   "keywords": [
     "0chan"
   ],
-  "author": "Snivy",
+  "author": "Snivy & devarped",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Juribiyan/0chan-utilities.git"
+    "url": "https://github.com/devarped/0chan-utilities.git"
   },
   "license": "ISC",
   "devDependencies": {

@@ -1,17 +1,27 @@
 <?php
+$proxy = "socks5h://127.0.0.1:9050";
+
 header('Access-Control-Allow-Origin: '.$_GET['domain']);
 
 if (!isset($_GET['post']) || !preg_match('/^[0-9]+$/', $_GET['post']))
   exitWithError('Wrong post ID');
 if (!isset($_GET['attachment']) || !preg_match_all('/^[0-9]+$/', $_GET['attachment']))
   exitWithError('Wrong attachment ID');
-if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/(p.)?((nullchan7msxi257|nullchpl673e6jo3|nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid)\.onion|0chan\.(hk|xyz|pl)|ochan\.ru|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', $_GET['domain'], $matches))
+if (!isset($_GET['domain']) || !preg_match('/^(https?:)\/\/((www|p|0).)?((nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid)\.onion|0chan\.(pl|club|ygg)|1chan\.pl|ochan\.ru|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)/', $_GET['domain'], $matches))
   exitWithError('Wrong domain');
+
+// force use Tor mirror for 0chan.pl and its non-Tor mirrors in case of Tor proxy enabled
+if (preg_match('/^(9050|9150)/', $proxy, $matches)) {
+  $domain = preg_replace('/^(https?:)\/\/((www|p|0|ygg).)?(((0chan\.(pl|club|ygg)|1chan\.pl|(0pl|gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua\.b32)\.i2p)|\[202\:7668\:15bf\:63df\:d7ee\:aab7\:ece\:fbbb\])/', 'http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion', $_GET['domain']);
+} else {
+  $domain = $_GET['domain'];
+}
+
 $https = $matches[1];
 
-// fetch($_GET['domain'].'/api/session');
+// fetch($domain.'/api/session');
 
-$post = json_decode(fetch($_GET['domain'].'/api/post?post='.$_GET['post']), true);
+$post = json_decode(fetch($domain.'/api/post?post='.$_GET['post']), true);
 if (!$post)
   exitWithError("API returned corrupted JSON");
 if ($post['error'])
@@ -62,6 +72,7 @@ else {
 
 function fetch($url) {
   $ch = curl_init();
+  if ($proxy) curl_setopt($ch, CURLOPT_PROXY, $proxy);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
   // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -69,7 +80,7 @@ function fetch($url) {
   // curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
   // curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
   // curl_setopt ($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
-  curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+  curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0');
   curl_setopt($ch, CURLOPT_TIMEOUT, 10);
   curl_setopt($ch, CURLOPT_URL, $url);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array("Cookie: disclaimer=1"));
