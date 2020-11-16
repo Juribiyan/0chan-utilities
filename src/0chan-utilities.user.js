@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.12.1
+// @version      2.3.12.2
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -2320,6 +2320,7 @@ var formOnZeroPage = {
   },
   toggleNewThreadForm: function() {
     let form = document.querySelector('.new-thread-form')
+    form.classList.add('ZU-zeropage-newthreadform')
     form.parentElement.__vue__.board.dir = document.querySelector('.ZU-boardlist-select').value
     if (form.style.display == 'none') {
       form.style.display = null
@@ -2813,5 +2814,9 @@ injector.inject('ZU-global', `
   	height: 25px;
   	vertical-align: middle;
   	margin: 0 4px;
+  }
+  .ZU-zeropage-newthreadform {
+  	z-index: 2;
+  	position: relative;
   }
 `)
