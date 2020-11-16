@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.12
+// @version      2.3.12.1
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/devarped/0chan-utilities/raw/master/es5/0chan-utilities.user.js
+// @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
@@ -2086,7 +2086,7 @@ var formOnZeroPage = {
         opts = '',
         optSel = '',
         optDefault = '';
-    document.querySelector('#sidebar').__vue__.boardList.sort((a, b) => a.dir < b.dir ? -1 : 1).forEach(board => {
+    document.querySelector('#sidebar').__vue__.boardList.slice().sort((a, b) => a.dir < b.dir ? -1 : 1).forEach(board => {
       let name = board.name.length > 40 ? board.name.slice(0, 40 - 3) + '...' : board.name,
           opt = `<option value="${board.dir}">${board.dir} — ${name}</option>`;
       if (board.dir == settings.selectedBoard && settings.selectedBoard != this.defaultBoard) optSel = opt;else if (board.dir == this.defaultBoard) optDefault = opt;else opts += opt;
