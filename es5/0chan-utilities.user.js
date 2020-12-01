@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.3.12.2
+// @version      2.4.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -943,7 +943,7 @@ var eventDispatcher = {
     if (nrs) {
       NullRestyler.save();
     }
-    //Resetting the Null
+    // Resetting the Null
     let nrr = e.path.find(el => el.classList && el.classList.contains('ZU-nulltwk-revert'));
     if (nrr) {
       let res = NullRestyler.setValues(settings.defaults.nullColor);
@@ -951,6 +951,15 @@ var eventDispatcher = {
       delete res.css;
       settings.nullColor = res;
       settings.save();
+    }
+    // Hiding/unhiding selection in stegospoiler
+    let shs = e.path.find(el => el.classList && el.classList.contains('ZU-hide-selection'));
+    if (shs) {
+      textSteganography.hideSelection(shs.findParent('.reply-form').querySelector('textarea'));
+    }
+    let srs = e.path.find(el => el.classList && el.classList.contains('ZU-remove-spoilers'));
+    if (srs) {
+      textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'));
     }
   },
   mousedown: function (e) {
@@ -1037,15 +1046,19 @@ function mentionPost(post) {
       text = '\n' + text;
     }
     textarea.value += text;
-    textarea.dispatchEvent(new Event('input', {
-      'bubbles': true,
-      'cancelable': true
-    }));
-    textarea.focus();
+    touchTextarea(textarea);
   } else {
     setClipboard(text);
     nativeAlert('success', `Номер поста ${text.match(/[^>0-9\s]/g) ? 'и цитата скопированы' : 'скопирован'} в буфер обмена`);
   }
+}
+
+function touchTextarea(textarea) {
+  textarea.dispatchEvent(new Event('input', {
+    'bubbles': true,
+    'cancelable': true
+  }));
+  textarea.focus();
 }
 
 function getSelection() {
@@ -1253,6 +1266,9 @@ function handleReplyForm(form) {
     }));
     textarea.focus();
   }
+  // Add stegospoiler button
+  form.querySelector('.reply-form-limit-counter').insertAdjacentHTML('beforeBegin', `<button class="btn btn-xs btn-default ZU-hide-selection" title="Спрятать выделенный текст"><i class="fa fa-eye-slash"></i></button>
+  	 <button class="btn btn-xs btn-default ZU-remove-spoilers" title="Убрать спойлеры"><i class="fa fa-eye"></i></button> `);
 }
 
 function addSettingsButtons() {
@@ -1372,6 +1388,10 @@ function handlePost(post) {
 
   // Autohide posts
   autohidePost(postData, post);
+
+  // Stegospoilers
+  let msg = post.querySelector('.post-body-message');
+  msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true /* ← safe */);
 }
 
 function autohidePost(postData, postDOM) {
@@ -2082,7 +2102,7 @@ var formOnZeroPage = {
     tSpan.style.display = 'none';
     title.insertAdjacentHTML('beforeEnd', staticTitle);
     // board selector
-    let sel = `<i class="fa fa-arrow-right"></i><select class="form-control ZU-boardlist-select">`,
+    let sel = ` <i class="fa fa-arrow-right"></i><select class="form-control ZU-boardlist-select">`,
         opts = '',
         optSel = '',
         optDefault = '';
@@ -2092,7 +2112,7 @@ var formOnZeroPage = {
       if (board.dir == settings.selectedBoard && settings.selectedBoard != this.defaultBoard) optSel = opt;else if (board.dir == this.defaultBoard) optDefault = opt;else opts += opt;
     });
     sel += optSel + optDefault + opts + '</select>';
-    document.querySelector('.new-thread-form .post-options').insertAdjacentHTML('afterBegin', sel);
+    document.querySelector('.new-thread-form .btn-primary').insertAdjacentHTML('afterEnd', sel);
     document.querySelector('.ZU-boardlist-select').addEventListener('change', function () {
       document.querySelector('.new-thread-form').parentElement.__vue__.board.dir = this.value;
       settings.selectedBoard = this.value;
@@ -2110,6 +2130,34 @@ var formOnZeroPage = {
     }
   }
 };
+
+var textSteganography = {
+  charMap: [0x200b, 0x200c, 0x200d, 0x200e, 0x200f].map(n => String.fromCharCode(n)),
+  encode: function (txt) {
+    return txt.split('').map(char => char.charCodeAt(0).toString(4).split('').map(digit => this.charMap[digit]).join('')).join(this.charMap[4]);
+  }, //startTag='<mark class="ZU-SSS">', endTag='</mark>'
+  decode: function (htm, startTag = '', endTag = '', safe = false) {
+    return htm.replace(/[\u200b\u200c\u200d\u200e\u200f]+/g, match => {
+      let decoded = match.split(this.charMap[4]).map(chars => String.fromCharCode(parseInt(chars.split('').map(char => this.charMap.indexOf(char)).join(''), 4))).join('');
+      if (safe) {
+        decoded = safe_tags(decoded);
+      }
+      return startTag + decoded + endTag;
+    });
+  },
+  hideSelection: function (area) {
+    area.value = area.value.slice(0, area.selectionStart) + this.encode(this.decode(area.value.slice(area.selectionStart, area.selectionEnd))) + area.value.slice(area.selectionEnd);
+    touchTextarea(area);
+  },
+  removeSpoilers: function (area) {
+    area.value = this.decode(area.value);
+    touchTextarea(area);
+  }
+};
+
+function safe_tags(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
 injector.inject('ZU-global', `
   .btn-open-sidebar {
@@ -2598,5 +2646,8 @@ injector.inject('ZU-global', `
   .ZU-zeropage-newthreadform {
   	z-index: 2;
   	position: relative;
+  }
+  .ZU-SSS, .ZU-SSS:hover {
+  	background: #dcc1ff;
   }
 `);
