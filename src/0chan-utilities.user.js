@@ -1038,6 +1038,11 @@ var eventDispatcher = {
     if (srs) {
     	textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'))
     }
+    // Collapsed references uncollapsing
+    let expRef = e.path.find(el => el.classList && el.classList.contains('ZU-expand-refs'))
+    if (expRef) {
+      referenceCollapsing.expand(expRef.findParent('.post'))
+    }
   },
   mousedown: function(e) {
     // Quote on reply
@@ -1534,6 +1539,11 @@ function handlePost(post) {
       </div>`)
   }
 
+  // Collapse floody mentions
+  if (postData.references.length >= referenceCollapsing.minPostsToCollapse) {
+  	referenceCollapsing.handlePost(postData, post)
+  }
+
   // Autohide posts
   autohidePost(postData, post)
 
@@ -1561,6 +1571,32 @@ function autohidePost(postData, postDOM) { // TODO: prevent hiding thread inside
     postData.postVue.isAutoHidden = false
     postData.postVue.$emit('hidden', false)
   }
+}
+
+referenceCollapsing = {
+	minPostsToCollapse: 5,
+	postsToDisplay: 3,
+	handlePost: function(postData, postDOM) {
+		let badRefBlock = postDOM.querySelector('.post-referenced-by')
+		, goodRefBlock = badRefBlock.cloneNode(true)
+		badRefBlock.parentElement.appendChild(goodRefBlock)
+		badRefBlock.hidden = true
+		badRefBlock.classList.add('ZU-bad-ref-block')
+		goodRefBlock.classList.add('ZU-good-ref-block')
+		let links = goodRefBlock.children
+		while (links.length > this.postsToDisplay) {
+			goodRefBlock.lastChild.remove()
+		}
+		goodRefBlock.lastChild.insertAdjacentHTML('beforeend', `<a class="ZU-expand-refs"> и ещё ${postData.references.length - this.postsToDisplay}...</a>`)
+	},
+	expand: function(post) {
+		post.querySelector('.ZU-good-ref-block').remove()
+		post.querySelector('.ZU-bad-ref-block').hidden = false
+	}
+}
+
+function collapseReferences(postData, postDOM) {
+	
 }
 
 function handleAttachment(att) {
@@ -1618,7 +1654,8 @@ function getPostDataFromDOM(post) {
         isPopup: false,
         postVue: postVue,
         message: postVue.post.message,
-        attachments: postVue.post.attachments
+        attachments: postVue.post.attachments,
+        references: postVue.post.referencedByIds
       }
     }
     else if (postVue.$el.classList.contains('post-popup')) {
@@ -1632,7 +1669,8 @@ function getPostDataFromDOM(post) {
         popupVue: popupVue,
         postVue: postVue,
         message: popupVue.message,
-        attachments: popupVue.attachments
+        attachments: popupVue.attachments,
+        references: popupVue.referencedByIds
       }
     }
     else return null
@@ -2364,7 +2402,7 @@ var textSteganography = {
 			.map(digit => this.charMap[digit])
 			.join('')
 		).join(this.charMap[4])
-	}, //startTag='<mark class="ZU-SSS">', endTag='</mark>'
+	},
 	decode: function(htm, startTag='', endTag='', safe=false) {
 		return htm.replace(/[\u200b\u200c\u200d\u200e\u200f]+/g, match => {
 			let decoded = match
@@ -2889,5 +2927,8 @@ injector.inject('ZU-global', `
   }
   .ZU-SSS, .ZU-SSS:hover {
   	background: #dcc1ff;
+  }
+  .ZU-expand-refs:not(:hover) {
+  	color: inherit;
   }
 `)
