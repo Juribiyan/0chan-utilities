@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.5.0
+// @version      2.5.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -1402,11 +1402,6 @@ function handlePost(post) {
       </div>`);
   }
 
-  // Collapse floody mentions
-  if (postData.references.length >= referenceCollapsing.minPostsToCollapse) {
-    referenceCollapsing.handlePost(postData, post);
-  }
-
   // Autohide posts
   autohidePost(postData, post);
 
@@ -1431,19 +1426,6 @@ function autohidePost(postData, postDOM) {
 referenceCollapsing = {
   minPostsToCollapse: 5,
   postsToDisplay: 3,
-  handlePost: function (postData, postDOM) {
-    let badRefBlock = postDOM.querySelector('.post-referenced-by'),
-        goodRefBlock = badRefBlock.cloneNode(true);
-    badRefBlock.parentElement.appendChild(goodRefBlock);
-    badRefBlock.hidden = true;
-    badRefBlock.classList.add('ZU-bad-ref-block');
-    goodRefBlock.classList.add('ZU-good-ref-block');
-    let links = goodRefBlock.children;
-    while (links.length > this.postsToDisplay) {
-      goodRefBlock.lastChild.remove();
-    }
-    goodRefBlock.lastChild.insertAdjacentHTML('beforeend', `<a class="ZU-expand-refs"> и ещё ${postData.references.length - this.postsToDisplay}...</a>`);
-  },
   expand: function (post) {
     post.querySelector('.ZU-good-ref-block').remove();
     post.querySelector('.ZU-bad-ref-block').hidden = false;
@@ -1993,6 +1975,25 @@ function start() {
       selector: '#content > div',
       fn: onFreshContent
     }], document.querySelector('#content'));
+
+    forAllNodes([{
+      selector: '.post-referenced-by',
+      fn: badRefBlock => {
+        console.log(badRefBlock);
+        let links = badRefBlock.children;
+        if (links.length >= referenceCollapsing.minPostsToCollapse) {
+          goodRefBlock = badRefBlock.cloneNode(true);
+          badRefBlock.hidden = true;
+          badRefBlock.classList.add('ZU-bad-ref-block');
+          goodRefBlock.classList.add('ZU-good-ref-block');
+          while (goodRefBlock.children.length > referenceCollapsing.postsToDisplay) {
+            goodRefBlock.lastChild.remove();
+          }
+          goodRefBlock.lastChild.insertAdjacentHTML('beforeend', `<a class="ZU-expand-refs"> и ещё ${links.length - referenceCollapsing.postsToDisplay}...</a>`);
+          badRefBlock.parentElement.appendChild(goodRefBlock);
+        }
+      }
+    }], document.querySelector('#content'), { subtree: true, queryChildren: true });
   });
   appObserver = forAllNodes([{
     selector: '#sidebar',
