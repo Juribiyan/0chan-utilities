@@ -1560,7 +1560,8 @@ function handlePost(post) {
 
   // Stegospoilers
   let msg = post.querySelector('.post-body-message')
-  msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true/* ← safe */)
+  if (msg)
+  	msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true/* ← safe */)
 }
 
 function autohidePost(postData, postDOM) { // TODO: prevent hiding thread inside the thread; Force unhide thread
