@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.4.0
+// @version      2.5.0
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/devarped/0chan-utilities/raw/master/src/0chan-utilities.user.js
+// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
@@ -17,7 +17,7 @@
 // @include      http://0chan.ygg/*
 // @include      https://ochan.ru/*
 // @grant        none
-// @icon         https://raw.githubusercontent.com/devarped/0chan-utilities/master/icon.png
+// @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
 // ==/UserScript==
 
 const icons = `<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -413,6 +413,13 @@ var autohide = {
   check: function (str) {
     return !!this.expressions.find(exp => str.match(exp));
   },
+  checkReferenceCount: function (postVue) {
+    return this.referenceLimit > 0 && postVue.post && postVue.post.referencesToIds.length >= this.referenceLimit;
+  },
+  updateReferenceLimit: function (val) {
+    this.referenceLimit = val;
+    reAutohidePosts();
+  },
   expressions: [],
   awaitInstall: function () {
     let panelWaiter = forAllNodes([{
@@ -453,8 +460,10 @@ var autohideAtt = {
     spells.forEach(spell => (spell.eid ? embeds : images).push(spell));
     this.images = images;
     this.embeds = embeds;
+    this.initialized = true;
     // settings.save()
   },
+  initialized: false,
   check: function (att) {
     return !!this[att.embed ? 'embeds' : 'images'].find(spell => att.embed ? att.embed.service == spell.svc && att.embed.embedId == spell.eid : att.images.original.width == spell.w && att.images.original.height == spell.h && Math.abs(att.images.thumb_400px.size_kb - spell.kb) < this.treshold);
   },
@@ -704,6 +713,7 @@ var settings = {
     hiddenBoards: [],
     noko: true,
     updateInterval: 10,
+    referenceLimit: 20,
     catalogMode: false,
     autohide: [],
     autohideAtt: [],
@@ -723,6 +733,7 @@ var settings = {
     unmaskOnHover: momInRoom.toggleHover.bind(momInRoom),
     hideSidebar: sideBar.toggle.bind(sideBar),
     updateInterval: refresher.reset.bind(refresher),
+    referenceLimit: autohide.updateReferenceLimit.bind(autohide),
     catalogMode: catalog.toggle.bind(catalog),
     autohide: autohide.init.bind(autohide),
     autohideAtt: autohideAtt.init.bind(autohideAtt),
@@ -960,6 +971,11 @@ var eventDispatcher = {
     let srs = e.path.find(el => el.classList && el.classList.contains('ZU-remove-spoilers'));
     if (srs) {
       textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'));
+    }
+    // Collapsed references uncollapsing
+    let expRef = e.path.find(el => el.classList && el.classList.contains('ZU-expand-refs'));
+    if (expRef) {
+      referenceCollapsing.expand(expRef.findParent('.post'));
     }
   },
   mousedown: function (e) {
@@ -1386,17 +1402,22 @@ function handlePost(post) {
       </div>`);
   }
 
+  // Collapse floody mentions
+  if (postData.references.length >= referenceCollapsing.minPostsToCollapse) {
+    referenceCollapsing.handlePost(postData, post);
+  }
+
   // Autohide posts
   autohidePost(postData, post);
 
   // Stegospoilers
   let msg = post.querySelector('.post-body-message');
-  msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true /* ← safe */);
+  if (msg) msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true /* ← safe */);
 }
 
 function autohidePost(postData, postDOM) {
   // TODO: prevent hiding thread inside the thread; Force unhide thread
-  if (!postData.postVue.isPopup && (postData.attachments.find(att => autohideAtt.check(att)) || postData.message && autohide.check(postData.message))) {
+  if (!postData.postVue.isPopup && (autohideAtt.initialized && postData.attachments.find(att => autohideAtt.check(att)) || postData.message && autohide.check(postData.message) || autohide.checkReferenceCount(postData.postVue))) {
     postData.postVue.isHidden = true;
     postData.postVue.isAutoHidden = true;
     postData.postVue.$emit('hidden', true);
@@ -1406,6 +1427,30 @@ function autohidePost(postData, postDOM) {
     postData.postVue.$emit('hidden', false);
   }
 }
+
+referenceCollapsing = {
+  minPostsToCollapse: 5,
+  postsToDisplay: 3,
+  handlePost: function (postData, postDOM) {
+    let badRefBlock = postDOM.querySelector('.post-referenced-by'),
+        goodRefBlock = badRefBlock.cloneNode(true);
+    badRefBlock.parentElement.appendChild(goodRefBlock);
+    badRefBlock.hidden = true;
+    badRefBlock.classList.add('ZU-bad-ref-block');
+    goodRefBlock.classList.add('ZU-good-ref-block');
+    let links = goodRefBlock.children;
+    while (links.length > this.postsToDisplay) {
+      goodRefBlock.lastChild.remove();
+    }
+    goodRefBlock.lastChild.insertAdjacentHTML('beforeend', `<a class="ZU-expand-refs"> и ещё ${postData.references.length - this.postsToDisplay}...</a>`);
+  },
+  expand: function (post) {
+    post.querySelector('.ZU-good-ref-block').remove();
+    post.querySelector('.ZU-bad-ref-block').hidden = false;
+  }
+};
+
+function collapseReferences(postData, postDOM) {}
 
 function handleAttachment(att) {
   autohideAtt.addButton(att);
@@ -1460,7 +1505,8 @@ function getPostDataFromDOM(post) {
         isPopup: false,
         postVue: postVue,
         message: postVue.post.message,
-        attachments: postVue.post.attachments
+        attachments: postVue.post.attachments,
+        references: postVue.post.referencedByIds
       };
     } else if (postVue.$el.classList.contains('post-popup')) {
       let popupVue = postVue.$parent.popupPost;
@@ -1473,7 +1519,8 @@ function getPostDataFromDOM(post) {
         popupVue: popupVue,
         postVue: postVue,
         message: popupVue.message,
-        attachments: popupVue.attachments
+        attachments: popupVue.attachments,
+        references: popupVue.referencedByIds
       };
     } else return null;
   } catch (e) {
@@ -1562,13 +1609,21 @@ var settingsPanel = {
   }, {
     type: 'slider',
     id: 'updateInterval',
-    title: "Период обновления",
     title: "Период обновления треда",
     min: 0,
     step: 5,
     max: 60,
     condition: () => state.type === "thread",
     displayValue: val => val ? `${val} с` : "Выкл."
+  }, {
+    type: 'slider',
+    id: 'referenceLimit',
+    title: "Скрывать флуд ссылками",
+    description: "Скрывать посты, ссылающимися на большое количество постов",
+    min: 0,
+    step: 1,
+    max: 50,
+    displayValue: val => val ? `>= ${val}` : "Выкл."
   }, {
     type: 'checkbox',
     id: 'catalogMode',
@@ -2135,7 +2190,7 @@ var textSteganography = {
   charMap: [0x200b, 0x200c, 0x200d, 0x200e, 0x200f].map(n => String.fromCharCode(n)),
   encode: function (txt) {
     return txt.split('').map(char => char.charCodeAt(0).toString(4).split('').map(digit => this.charMap[digit]).join('')).join(this.charMap[4]);
-  }, //startTag='<mark class="ZU-SSS">', endTag='</mark>'
+  },
   decode: function (htm, startTag = '', endTag = '', safe = false) {
     return htm.replace(/[\u200b\u200c\u200d\u200e\u200f]+/g, match => {
       let decoded = match.split(this.charMap[4]).map(chars => String.fromCharCode(parseInt(chars.split('').map(char => this.charMap.indexOf(char)).join(''), 4))).join('');
@@ -2649,5 +2704,11 @@ injector.inject('ZU-global', `
   }
   .ZU-SSS, .ZU-SSS:hover {
   	background: #dcc1ff;
+  }
+  .ZU-expand-refs:not(:hover) {
+  	color: inherit;
+  }
+  .sidemenu-board-title {
+  	word-break: break-word;
   }
 `);

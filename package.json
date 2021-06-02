@@ -1,6 +1,6 @@
 {
   "name": "0chan-utilities",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Userscript for 0chan",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "author": "Snivy & devarped",
   "repository": {
     "type": "git",
-    "url": "https://github.com/devarped/0chan-utilities.git"
+    "url": "https://github.com/juribiyan/0chan-utilities.git"
   },
   "license": "ISC",
   "devDependencies": {
