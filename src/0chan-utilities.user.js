@@ -437,6 +437,13 @@ var autohide = {
   check: function(str) {
     return !!this.expressions.find(exp => str.match(exp))
   },
+  checkReferenceCount: function(postVue) {
+  	return (this.referenceLimit > 0 && postVue.post && postVue.post.referencesToIds.length >= this.referenceLimit)
+  },
+  updateReferenceLimit: function(val) {
+  	this.referenceLimit = val
+  	reAutohidePosts()
+  },
   expressions: [],
   awaitInstall: function() {
     let panelWaiter = forAllNodes([{
@@ -477,8 +484,10 @@ var autohideAtt = {
     spells.forEach(spell => (spell.eid ? embeds : images).push(spell))
     this.images = images
     this.embeds = embeds
+    this.initialized = true
     // settings.save()
   },
+  initialized: false,
   check: function(att) {
     return !!this[att.embed ? 'embeds' : 'images']
     .find(spell => att.embed
@@ -766,6 +775,7 @@ var settings = {
     hiddenBoards: [],
     noko: true,
     updateInterval: 10,
+    referenceLimit: 20,
     catalogMode: false,
     autohide: [],
     autohideAtt: [],
@@ -785,6 +795,7 @@ var settings = {
     unmaskOnHover: momInRoom.toggleHover.bind(momInRoom),
     hideSidebar: sideBar.toggle.bind(sideBar),
     updateInterval: refresher.reset.bind(refresher),
+    referenceLimit: autohide.updateReferenceLimit.bind(autohide),
     catalogMode: catalog.toggle.bind(catalog),
     autohide: autohide.init.bind(autohide),
     autohideAtt: autohideAtt.init.bind(autohideAtt),
@@ -1557,9 +1568,11 @@ function autohidePost(postData, postDOM) { // TODO: prevent hiding thread inside
     !postData.postVue.isPopup
     &&
     (
-      postData.attachments.find(att => autohideAtt.check(att))
+      (autohideAtt.initialized && postData.attachments.find(att => autohideAtt.check(att)))
       ||
       (postData.message && autohide.check(postData.message))
+      ||
+      autohide.checkReferenceCount(postData.postVue)
     )
   ) {
     postData.postVue.isHidden = true
@@ -1769,13 +1782,22 @@ var settingsPanel = {
     {
       type: 'slider',
       id: 'updateInterval',
-      title: "Период обновления",
       title: "Период обновления треда",
       min: 0,
       step: 5,
       max: 60,
       condition: () => state.type==="thread",
       displayValue: val => val ? `${val} с` : "Выкл."
+    },
+    {
+      type: 'slider',
+      id: 'referenceLimit',
+      title: "Скрывать флуд ссылками",
+      description: "Скрывать посты, ссылающимися на большое количество постов",
+      min: 0,
+      step: 1,
+      max: 50,
+      displayValue: val => val ? `>= ${val}` : "Выкл."
     },
     {
       type: 'checkbox',
