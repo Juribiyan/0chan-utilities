@@ -2954,4 +2954,7 @@ injector.inject('ZU-global', `
   .ZU-expand-refs:not(:hover) {
   	color: inherit;
   }
+  .sidemenu-board-title {
+  	word-break: break-word;
+  }
 `)
