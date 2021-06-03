@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.6.0
+// @version      2.6.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -2957,7 +2957,7 @@ injector.inject('ZU-global', `
   .ZU-expand-refs:not(:hover) {
   	color: inherit;
   }
-  .sidemenu-board-title {
+  .sidemenu-board-title, .post-id > span {
   	word-break: break-word;
   }
 `)
