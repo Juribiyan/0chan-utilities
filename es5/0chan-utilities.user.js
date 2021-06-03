@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.5.1
+// @version      2.6.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -1208,6 +1208,8 @@ function setupAlertInterceptor() {
       };
       this.alerts.unshift(anusAlert);
       fuckCF(e, anusAlert, s);
+    } else if (n.type === 'error' && n.text.indexOf('api/attachment/embed?url=youtube.com') !== -1) {
+      document.querySelector('textarea:focus').findParent('.reply-form').__vue__.uploading = 0;
     } else {
       this.alerts.unshift(n), setTimeout(function () {
         s.closeAlert(n);
@@ -1979,7 +1981,6 @@ function start() {
     forAllNodes([{
       selector: '.post-referenced-by',
       fn: badRefBlock => {
-        console.log(badRefBlock);
         let links = badRefBlock.children;
         if (links.length >= referenceCollapsing.minPostsToCollapse) {
           goodRefBlock = badRefBlock.cloneNode(true);
