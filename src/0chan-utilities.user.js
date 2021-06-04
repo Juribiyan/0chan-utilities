@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.6.1
+// @version      2.6.2
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -38,6 +38,28 @@ const icons =
   </defs>
   </svg>`
 document.body.insertAdjacentHTML('afterBegin', `<div style="display:none">${icons}</div>`)
+
+const INVIDIOUS_INSTANCES = [
+  "https://yewtu.be/",
+  "https://invidious.snopyta.org/",
+  "https://invidious.kavin.rocks/",
+  "https://vid.puffyan.us/",
+  "https://invidious.048596.xyz/",
+  "https://invidious.exonip.de/",
+  "https://ytprivate.com/",
+  "https://invidious.silkky.cloud/",
+  "https://inv.riverside.rocks/",
+  "https://notyoutube.org/",
+  "https://invidious-us.kavin.rocks/",
+  "https://invidious.moomoo.me/",
+  "https://invidious.namazso.eu/",
+  "https://invidious.blamefran.net/",
+  "http://c7hqkpkpemu6e7emz5b4vyz7idjgdvgaaa3dyimmeojqbgpea3xqjoid.onion/",
+  "http://w6ijuptxiku4xpnnaetxvnkc5vqcdu7mgns2u77qefoixi63vbvnpnqd.onion/",
+  "http://kbjggqkzv65ivcqj6bumvp337z6264huv5kpkwuv6gu5yjiskvan7fad.onion/",
+  "http://grwp24hodrefzvjjuccrkw3mjq4tzhaaq32amf33dzpmuxe7ilepcmad.onion/",
+  "http://hpniueoejy4opn7bc4ftgazyqjoeqwlvh2uiku2xqku6zpoa4bf5ruid.onion/"
+];
 
 var appObserver, contentObserver,
 content, contentVue,
@@ -1554,11 +1576,86 @@ function handlePost(post) {
 
   // Autohide posts
   autohidePost(postData, post)
-
-  // Stegospoilers
+  
+  // Handling the message text  
   let msg = post.querySelector('.post-body-message')
-  if (msg)
+  if (msg) {
+    // Stegospoilers
   	msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true/* ← safe */)
+    // Add Youtube thumbnail
+    youtubeStuff.addThumbs(msg, postData.postVue.post)
+  }
+}
+
+var youtubeStuff = {
+  init: function() {
+    let domainsRxEscaped = []
+    INVIDIOUS_INSTANCES.forEach(url => {
+      let domain = url.replace(/^https?:\/\//, '').replace(/\/$/, '')
+      this.instances.push({
+        domain: domain,
+        url: url
+      })
+      domainsRxEscaped.push(domain.replace(/\./g, '\\.'))
+    })
+    this.jumboRegExp = new RegExp(`(youtu(?:\\.be|be\\.com)|${domainsRxEscaped.join('|')})\\/(?:.*v(?:\\/|=)|(?:.*\\/)?)([\\w'-]+)`)
+    console.log(this)
+  },
+  instances: [
+    {
+      domain: 'youtube.com',
+      url: 'https://www.youtube.com/'
+    }
+  ],
+  addThumbs: function(msg, post) {
+    // console.log(post)
+    msg.querySelectorAll('a').forEach(a => {
+      var match = a.href.match(this.jumboRegExp)
+      if (match) {
+        let code = match[2]
+        // TODO: check if valid video!
+        post.attachments.push({
+          embed: {
+            embedId: code,
+            // TODO: let user choose what instance to embed!
+            html: `<div class="embed" aspect="16:9"><iframe src="https://www.youtube.com/embed/${code}?autoplay=1" frameborder="0" scrolling="no" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`,
+            service: "youtube",
+            title: ""
+          },
+          images: {
+            thumb_100px: {
+              url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+              height: `150`,
+              width: `200`,
+              name: `youtube-${code}-200.jpg` // vendor script demands it
+            },
+            thumb_200px: {
+              url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+              height: `150`,
+              width: `200`,
+              name: `youtube-${code}-200.jpg` // vendor script demands it
+            },
+            thumb_400px: {
+              url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+              height: `150`,
+              width: `200`,
+              name: `youtube-${code}-200.jpg` // vendor script demands it
+            },
+            original: {
+              url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+              height: `150`,
+              width: `200`,
+              name: `youtube-${code}-200.jpg` // vendor script demands it
+            }
+          },
+          id: `youtube-${code}`,
+          isDeleted: false,
+          isNsfw: false,
+          isPublished: true
+        })
+      }
+    })
+  }
 }
 
 function autohidePost(postData, postDOM) { // TODO: prevent hiding thread inside the thread; Force unhide thread
@@ -2213,6 +2310,8 @@ function start() {
   Object.keys(eventDispatcher).forEach(evType => {
     document.addEventListener(evType, eventDispatcher[evType], true)
   })
+
+  youtubeStuff.init()
 }
 start()
 
