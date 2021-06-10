@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.6.1
+// @version      2.6.3
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -37,6 +37,8 @@ const icons = `<svg style="position: absolute; width: 0; height: 0; overflow: hi
   </defs>
   </svg>`;
 document.body.insertAdjacentHTML('afterBegin', `<div style="display:none">${icons}</div>`);
+
+const INVIDIOUS_INSTANCES = ["https://yewtu.be/", "https://invidious.snopyta.org/", "https://invidious.kavin.rocks/", "https://vid.puffyan.us/", "https://invidious.048596.xyz/", "https://invidious.exonip.de/", "https://ytprivate.com/", "https://invidious.silkky.cloud/", "https://inv.riverside.rocks/", "https://notyoutube.org/", "https://invidious-us.kavin.rocks/", "https://invidious.moomoo.me/", "https://invidious.namazso.eu/", "https://invidious.blamefran.net/", "http://c7hqkpkpemu6e7emz5b4vyz7idjgdvgaaa3dyimmeojqbgpea3xqjoid.onion/", "http://w6ijuptxiku4xpnnaetxvnkc5vqcdu7mgns2u77qefoixi63vbvnpnqd.onion/", "http://kbjggqkzv65ivcqj6bumvp337z6264huv5kpkwuv6gu5yjiskvan7fad.onion/", "http://grwp24hodrefzvjjuccrkw3mjq4tzhaaq32amf33dzpmuxe7ilepcmad.onion/", "http://hpniueoejy4opn7bc4ftgazyqjoeqwlvh2uiku2xqku6zpoa4bf5ruid.onion/"];
 
 var appObserver,
     contentObserver,
@@ -428,7 +430,7 @@ var autohide = {
         app.$nextTick(() => panelWaiter.stop());
         this.install(container);
       }
-    }], content, { sutree: true, queryChildren: true });
+    }], content, { queryChildren: true });
   },
   save: function () {
     let autohideTextarea = document.querySelector('#ZU-autohide-text'),
@@ -703,6 +705,104 @@ var desnower = {
   }
 };
 
+var youtubeStuff = {
+  init: function () {
+    let domainsRxEscaped = [];
+    this.optionsHTML = '';
+    INVIDIOUS_INSTANCES.forEach((url, ix) => {
+      let domain = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+      this.instances.push({
+        domain: domain,
+        url: url,
+        embedCode: ``
+      });
+      domainsRxEscaped.push(domain.replace(/\./g, '\\.'));
+    });
+    this.jumboRegExp = new RegExp(`(youtu(?:\\.be|be(?:-nocookie)?\\.com)|${domainsRxEscaped.join('|')})\\/(?:.*v(?:\\/|=)|(?:.*\\/)?)([\\w'-]{11})`);
+    this.initialized = true;
+  },
+  installSelect: function () {
+    let optionsHTML = '';
+    this.instances.forEach((ins, ix) => {
+      optionsHTML += `<option value="${ix}" ${ix == this.selectedInstance ? `selected="selected"` : ''}>${ins.domain}</option>`;
+    });
+    document.querySelector('#ZU-settings-main .ZU-settings-list').insertAdjacentHTML('beforeEnd', `<li>
+        <label for="ZU-invidious-instance">Сервис Youtube:</label>
+        <select name="ZU-invidious-instance" id="ZU-invidious-instance" class="form-control">${optionsHTML}</select>
+      </li>`);
+  },
+  selectedInstance: 0,
+  initialized: false,
+  instances: [{
+    domain: 'youtube.com',
+    url: 'https://www.youtube.com/'
+  }],
+  changeInstance: function (instance) {
+    this.selectedInstance = +instance;
+    if (this.initialized) nativeAlert('success', 'Изменение вступит в силу после перезагрузки страницы');else this.init();
+  },
+  addThumbs: function (msg, post) {
+    let existingCodes = [];
+    msg.querySelectorAll('a').forEach(a => {
+      let match = a.href.match(this.jumboRegExp),
+          svc = this.instances[this.selectedInstance];
+      if (match) {
+        let code = match[2];
+        if (!~existingCodes.indexOf(code)) {
+          // TODO: check if valid video!
+          post.attachments.push({
+            embed: {
+              embedId: code,
+              // TODO: let user choose what instance to embed!
+              html: `<div class="embed" aspect="16:9"><iframe src="${svc.url}embed/${code}?autoplay=1" frameborder="0" scrolling="no" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`,
+              service: "youtube",
+              title: ""
+            },
+            images: {
+              thumb_100px: {
+                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                height: `150`,
+                width: `200`,
+                name: `youtube-${code}-200.jpg` // vendor script demands it
+              },
+              thumb_200px: {
+                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                height: `150`,
+                width: `200`,
+                name: `youtube-${code}-200.jpg` // vendor script demands it
+              },
+              thumb_400px: {
+                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                height: `150`,
+                width: `200`,
+                name: `youtube-${code}-200.jpg` // vendor script demands it
+              },
+              original: {
+                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                height: `150`,
+                width: `200`,
+                name: `youtube-${code}-200.jpg` // vendor script demands it
+              }
+            },
+            id: `youtube-${code}`,
+            isDeleted: false,
+            isNsfw: false,
+            isPublished: true
+          });
+          existingCodes.push(code);
+        }
+      }
+    });
+  }
+};
+
+function UrlExists(url) {
+  var http = new XMLHttpRequest();
+  http.open('HEAD', url, false);
+  http.send();
+  return http.status;
+}
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -724,7 +824,8 @@ var settings = {
       con: 100
     },
     turnOffSnow: window.localStorage.getItem('disableSnow') == null ? false : true,
-    selectedBoard: 'b'
+    selectedBoard: 'b',
+    selectedInstance: 0
   },
   _: {},
   hooks: {
@@ -738,7 +839,8 @@ var settings = {
     autohide: autohide.init.bind(autohide),
     autohideAtt: autohideAtt.init.bind(autohideAtt),
     nullColor: NullRestyler.setValues.bind(NullRestyler),
-    turnOffSnow: desnower.toggle.bind(desnower)
+    turnOffSnow: desnower.toggle.bind(desnower),
+    selectedInstance: youtubeStuff.changeInstance.bind(youtubeStuff)
   },
   save: function () {
     this._.hiddenBoards = this.hiddenBoards;
@@ -1004,6 +1106,11 @@ var eventDispatcher = {
           if (otherNoko !== noko) otherNoko.checked = noko.checked;
         });
       }
+    }
+    let instance = e.path.find(el => el.name == 'ZU-invidious-instance');
+    if (instance) {
+      settings.selectedInstance = e.target.value;
+      settings.save();
     }
   },
   mouseenter: function (e) {
@@ -1407,9 +1514,14 @@ function handlePost(post) {
   // Autohide posts
   autohidePost(postData, post);
 
-  // Stegospoilers
+  // Handling the message text  
   let msg = post.querySelector('.post-body-message');
-  if (msg) msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true /* ← safe */);
+  if (msg) {
+    // Stegospoilers
+    msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true /* ← safe */);
+    // Add Youtube thumbnail
+    youtubeStuff.addThumbs(msg, postData.postVue.post);
+  }
 }
 
 function autohidePost(postData, postDOM) {
@@ -2012,6 +2124,8 @@ function start() {
   Object.keys(eventDispatcher).forEach(evType => {
     document.addEventListener(evType, eventDispatcher[evType], true);
   });
+
+  // youtubeStuff.init()
 }
 start();
 
@@ -2038,6 +2152,7 @@ function onFreshContent() {
   addSettingsButtons();
 
   settingsPanel.install();
+  youtubeStuff.installSelect();
 
   ZURouter.handleRoute(state.type);
 
@@ -2712,5 +2827,8 @@ injector.inject('ZU-global', `
   }
   .sidemenu-board-title, .post-id > span {
   	word-break: break-word;
+  }
+  #ZU-invidious-instance {
+    max-width: 240px;
   }
 `);

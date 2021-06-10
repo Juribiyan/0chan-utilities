@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.6.2
+// @version      2.6.3
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -474,7 +474,7 @@ var autohide = {
         app.$nextTick(()=>panelWaiter.stop())
         this.install(container)
       }
-    }], content, {sutree: true, queryChildren: true})
+    }], content, {queryChildren: true})
   },
   save: function() {
     let autohideTextarea = document.querySelector('#ZU-autohide-text')
@@ -787,6 +787,110 @@ var desnower = {
   }
 }
 
+var youtubeStuff = {
+  init: function() {
+    let domainsRxEscaped = []
+    this.optionsHTML = ''
+    INVIDIOUS_INSTANCES.forEach((url, ix) => {
+      let domain = url.replace(/^https?:\/\//, '').replace(/\/$/, '')
+      this.instances.push({
+        domain: domain,
+        url: url,
+        embedCode: ``
+      })
+      domainsRxEscaped.push(domain.replace(/\./g, '\\.'))
+    })
+    this.jumboRegExp = new RegExp(`(youtu(?:\\.be|be(?:-nocookie)?\\.com)|${domainsRxEscaped.join('|')})\\/(?:.*v(?:\\/|=)|(?:.*\\/)?)([\\w'-]{11})`)
+    this.initialized = true
+  },
+  installSelect: function() {
+    let optionsHTML = ''
+    this.instances.forEach((ins, ix) => {
+      optionsHTML += `<option value="${ix}" ${ix==this.selectedInstance ? `selected="selected"` : ''}>${ins.domain}</option>`
+    })
+    document.querySelector('#ZU-settings-main .ZU-settings-list').insertAdjacentHTML('beforeEnd', 
+      `<li>
+        <label for="ZU-invidious-instance">Сервис Youtube:</label>
+        <select name="ZU-invidious-instance" id="ZU-invidious-instance" class="form-control">${optionsHTML}</select>
+      </li>`)
+  },
+  selectedInstance: 0,
+  initialized: false,
+  instances: [
+    {
+      domain: 'youtube.com',
+      url: 'https://www.youtube.com/'
+    }
+  ],
+  changeInstance: function(instance) {
+    this.selectedInstance = +instance
+    if (this.initialized)
+      nativeAlert('success', 'Изменение вступит в силу после перезагрузки страницы')
+    else
+      this.init()
+  },
+  addThumbs: function(msg, post) {
+    let existingCodes = []
+    msg.querySelectorAll('a').forEach(a => {
+      let match = a.href.match(this.jumboRegExp)
+      , svc = this.instances[this.selectedInstance]
+      if (match) {
+        let code = match[2]
+        if (!~existingCodes.indexOf(code)) {
+          // TODO: check if valid video!
+          post.attachments.push({
+            embed: {
+              embedId: code,
+              // TODO: let user choose what instance to embed!
+              html: `<div class="embed" aspect="16:9"><iframe src="${svc.url}embed/${code}?autoplay=1" frameborder="0" scrolling="no" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`,
+              service: "youtube",
+              title: ""
+            },
+            images: {
+              thumb_100px: {
+                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                height: `150`,
+                width: `200`,
+                name: `youtube-${code}-200.jpg` // vendor script demands it
+              },
+              thumb_200px: {
+                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                height: `150`,
+                width: `200`,
+                name: `youtube-${code}-200.jpg` // vendor script demands it
+              },
+              thumb_400px: {
+                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                height: `150`,
+                width: `200`,
+                name: `youtube-${code}-200.jpg` // vendor script demands it
+              },
+              original: {
+                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                height: `150`,
+                width: `200`,
+                name: `youtube-${code}-200.jpg` // vendor script demands it
+              }
+            },
+            id: `youtube-${code}`,
+            isDeleted: false,
+            isNsfw: false,
+            isPublished: true
+          })
+          existingCodes.push(code)
+        }
+      }
+    })
+  }
+}
+
+function UrlExists(url) {
+  var http = new XMLHttpRequest()
+  http.open('HEAD', url, false)
+  http.send()
+  return http.status
+}
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -808,7 +912,8 @@ var settings = {
       con: 100
     },
     turnOffSnow: (window.localStorage.getItem('disableSnow') == null) ? false : true,
-    selectedBoard: 'b'
+    selectedBoard: 'b',
+    selectedInstance: 0
   },
   _: {},
   hooks: {
@@ -822,7 +927,8 @@ var settings = {
     autohide: autohide.init.bind(autohide),
     autohideAtt: autohideAtt.init.bind(autohideAtt),
     nullColor: NullRestyler.setValues.bind(NullRestyler),
-    turnOffSnow: desnower.toggle.bind(desnower)
+    turnOffSnow: desnower.toggle.bind(desnower),
+    selectedInstance: youtubeStuff.changeInstance.bind(youtubeStuff)
   },
   save: function() {
     this._.hiddenBoards = this.hiddenBoards
@@ -1107,6 +1213,11 @@ var eventDispatcher = {
             otherNoko.checked = noko.checked
         })
       }
+    }
+    let instance = e.path.find(el => el.name=='ZU-invidious-instance') 
+    if (instance) {
+      settings.selectedInstance = e.target.value
+      settings.save()
     }
   },
   mouseenter: function(e) {
@@ -1587,76 +1698,6 @@ function handlePost(post) {
   }
 }
 
-var youtubeStuff = {
-  init: function() {
-    let domainsRxEscaped = []
-    INVIDIOUS_INSTANCES.forEach(url => {
-      let domain = url.replace(/^https?:\/\//, '').replace(/\/$/, '')
-      this.instances.push({
-        domain: domain,
-        url: url
-      })
-      domainsRxEscaped.push(domain.replace(/\./g, '\\.'))
-    })
-    this.jumboRegExp = new RegExp(`(youtu(?:\\.be|be\\.com)|${domainsRxEscaped.join('|')})\\/(?:.*v(?:\\/|=)|(?:.*\\/)?)([\\w'-]+)`)
-    console.log(this)
-  },
-  instances: [
-    {
-      domain: 'youtube.com',
-      url: 'https://www.youtube.com/'
-    }
-  ],
-  addThumbs: function(msg, post) {
-    // console.log(post)
-    msg.querySelectorAll('a').forEach(a => {
-      var match = a.href.match(this.jumboRegExp)
-      if (match) {
-        let code = match[2]
-        // TODO: check if valid video!
-        post.attachments.push({
-          embed: {
-            embedId: code,
-            // TODO: let user choose what instance to embed!
-            html: `<div class="embed" aspect="16:9"><iframe src="https://www.youtube.com/embed/${code}?autoplay=1" frameborder="0" scrolling="no" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`,
-            service: "youtube",
-            title: ""
-          },
-          images: {
-            thumb_100px: {
-              url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
-              height: `150`,
-              width: `200`,
-              name: `youtube-${code}-200.jpg` // vendor script demands it
-            },
-            thumb_200px: {
-              url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
-              height: `150`,
-              width: `200`,
-              name: `youtube-${code}-200.jpg` // vendor script demands it
-            },
-            thumb_400px: {
-              url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
-              height: `150`,
-              width: `200`,
-              name: `youtube-${code}-200.jpg` // vendor script demands it
-            },
-            original: {
-              url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
-              height: `150`,
-              width: `200`,
-              name: `youtube-${code}-200.jpg` // vendor script demands it
-            }
-          },
-          id: `youtube-${code}`,
-          isDeleted: false,
-          isNsfw: false,
-          isPublished: true
-        })
-      }
-    })
-  }
-}
 
 function autohidePost(postData, postDOM) { // TODO: prevent hiding thread inside the thread; Force unhide thread
   if (
@@ -1796,9 +1837,6 @@ function addThreadControls(threadDOM, threadVue) {
   op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container')
   opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
 }
-
-
-
 
 var settingsPanel = {
   modules: {
@@ -2311,7 +2349,7 @@ function start() {
     document.addEventListener(evType, eventDispatcher[evType], true)
   })
 
-  youtubeStuff.init()
+  // youtubeStuff.init()
 }
 start()
 
@@ -2342,6 +2380,7 @@ function onFreshContent() {
   addSettingsButtons()
 
   settingsPanel.install()
+  youtubeStuff.installSelect()
 
   ZURouter.handleRoute(state.type)
 
@@ -3058,5 +3097,8 @@ injector.inject('ZU-global', `
   }
   .sidemenu-board-title, .post-id > span {
   	word-break: break-word;
+  }
+  #ZU-invidious-instance {
+    max-width: 240px;
   }
 `)
