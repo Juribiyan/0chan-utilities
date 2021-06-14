@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.6.3
+// @version      2.6.4
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -748,7 +748,7 @@ var youtubeStuff = {
           svc = this.instances[this.selectedInstance];
       if (match) {
         let code = match[2];
-        if (!~existingCodes.indexOf(code)) {
+        if (existingCodes.length <= 5 && !~existingCodes.indexOf(code)) {
           // TODO: check if valid video!
           post.attachments.push({
             embed: {
