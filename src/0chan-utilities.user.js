@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.6.5
+// @version      2.6.6
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -17,6 +17,7 @@
 // @include      http://0chan.ygg/*
 // @include      https://ochan.ru/*
 // @include      https://foxhound.cc/*
+// @include      https://0chan.life/*
 // @grant        none
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
 // ==/UserScript==
