@@ -14,7 +14,7 @@ div[board-id] {
 .post-button {
   padding: 0 4px;
 }
-.ZU-thread-controls {
+.ZU-thread-controls, .thread > div > div ~ div {
   display: none;
 }
 .threadwrap {
