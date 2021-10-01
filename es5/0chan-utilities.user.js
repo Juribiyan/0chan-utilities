@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.0.3
+// @version      3.0.5
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/resource-distribution/src/0chan-utilities.user.js
+// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/resource-distribution/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
@@ -22,6 +22,7 @@
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/resource-distribution/icon.png
 // @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/base.css
 // @resource     darkCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/dark.css
+// @resource     catalogCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/catalog.css
 // ==/UserScript==
 
 const icons = `<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -63,7 +64,7 @@ var appObserver,
 },
     version = GM_info.script.version;
 
-if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "https://foxhound.cc"].includes(location.host)) {
+if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "https://foxhound.cc"].includes(location.host)) {
   var IS_OCHKO = true;
 } else {
   var IS_OCHKO = false;
@@ -309,94 +310,7 @@ const catalog = {
       injector.remove('ZU-catalog-mode');
     }
   },
-  css: `
-    .thread-tree {
-      display: none;
-    }
-    div[board-id] {
-      width: 250px;
-      min-width: 250px;
-      display: inline-block;
-      height: 300px;
-      max-height: 300px;
-      min-height: 300px;
-      vertical-align: top;
-      margin: 4px !important;
-    }
-    .post-button {
-      padding: 0 4px;
-    }
-    .ZU-thread-controls {
-      display: none;
-    }
-    .threadwrap {
-      max-width: inherit !important;
-    }
-    .thread-separator {
-      display: none;
-    }
-    .thread/*, .thread > div, .thread > div > div*/ {
-      height: 100%;
-    }
-    :not(.post-popup) > .post {
-      margin: 0;
-      width: 100%;
-      min-width: 0;
-      max-height: 300px;
-      min-height: 100%;
-    }
-    :not(.post-popup) > .post > .post-body {
-      max-height: 257px;
-      height: 257px;
-      overflow: auto;
-      min-height: 100%;
-    }
-    :not(.post-popup) > .post > .post-footer {
-      margin-top: 0;
-    }
-    .post-id > span:not(.ZU-hide-board-by-op) {
-      display: none;
-    }
-    .post-header .pull-right {
-      float: none !important;
-      position: absolute;
-      right: 0;
-      top: 0;
-      padding: 2px 10px;
-      background: linear-gradient(to right, rgba(255, 35, 35, 0) 0px, white 18px 100%);
-    }
-    .post-header .pull-right:hover {
-      z-index: 2;
-    }
-    .post-header {
-      padding: 0 !important;
-    }
-    .post-id {
-      background: linear-gradient(to left, rgba(255, 35, 35, 0) 0px, white 18px, white 100%);
-      z-index: 2;
-      position: relative;
-      padding: 2px 6px;
-      display: inline-block;
-      padding-right: 20px;
-    }
-    .post-body-message {
-      overflow: hidden !important;
-      max-height: none !important;
-    }
-    .post-popup {
-      z-index: 3;
-    }
-    .reply-form {
-      max-width: none;
-      z-index: 3;
-    }
-    .ZU-noko-label {
-      display: none;
-    }
-    .threads-scroll-spy {
-      display: none;
-    }
-  `,
+  css: GM_getResourceText("catalogCSS"),
   get isApplicable() {
     return this.enabledOn.indexOf(state.type) !== -1;
   }
@@ -807,6 +721,72 @@ function UrlExists(url) {
   return http.status;
 }
 
+// CSS injector
+var injector = {
+  inject: function (alias, css, position = "beforeend") {
+    var id = `injector:${alias}`;
+    var existing = document.getElementById(id);
+    if (existing) {
+      existing.innerHTML = css;
+      return;
+    }
+    var head = document.head || document.getElementsByTagName('head')[0];
+    /*, style = document.createElement('style');
+    style.type = 'text/css'
+    style.id = id
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css
+    } else {
+      style.appendChild(document.createTextNode(css))
+    }*/
+    head.insertAdjacentHTML(position, `<style type="text/css" id="${id}">${css}</style>`);
+    // head.appendChild(style)
+  },
+  remove: function (alias) {
+    var id = `injector:${alias}`;
+    var style = document.getElementById(id);
+    if (style) {
+      var head = document.head || document.getElementsByTagName('head')[0];
+      if (head) head.removeChild(document.getElementById(id));
+    }
+  }
+};
+
+var darkMode = {
+  get enabledByDefault() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  },
+  init: function () {
+    //make sure to inject the base CSS first
+    var baseCSS = GM_getResourceText("baseCSS");
+    injector.inject('ZU-global', baseCSS);
+
+    this.css = GM_getResourceText("darkCSS");
+    let settings = LSfetchJSON('ZU-settings'),
+        on = settings.darkMode === undefined ? this.enabledByDefault : settings.darkMode;
+    if (on) {
+      this.toggle(on, false);
+    }
+  },
+  addButton: function () {
+    let buttonsRight = document.querySelector('.headmenu-buttons-right');
+    buttonsRight.insertAdjacentHTML('afterbegin', `
+      <div class="btn-group">
+        <button title="Переключить тему" class="btn btn-link ZU-btn-link ZU-toggle-dark-mode"><i class="fa fa-adjust"></i></button>
+      </div>`);
+    buttonsRight.querySelector('.ZU-toggle-dark-mode').onclick = () => this.toggle();
+  },
+  toggle: function (on = !this._on, byUser = true) {
+    if (on) injector.inject('ZU-dark', this.css);else injector.remove('ZU-dark');
+    this._on = on;
+    if (byUser) {
+      settings.darkMode = !!on;
+      settings.save;
+    }
+  }
+};
+darkMode.init(); // must be called ahead of time to prevent flashes
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -829,7 +809,8 @@ var settings = {
     },
     turnOffSnow: window.localStorage.getItem('disableSnow') == null ? false : true,
     selectedBoard: 'b',
-    selectedInstance: 0
+    selectedInstance: 0,
+    darkMode: darkMode.enabledByDefault
   },
   _: {},
   hooks: {
@@ -1815,35 +1796,6 @@ var ZURouter = {
     }
     this.currentRoute = type;
   }
-
-  // CSS injector
-};var injector = {
-  inject: function (alias, css) {
-    var id = `injector:${alias}`;
-    var existing = document.getElementById(id);
-    if (existing) {
-      existing.innerHTML = css;
-      return;
-    }
-    var head = document.head || document.getElementsByTagName('head')[0],
-        style = document.createElement('style');
-    style.type = 'text/css';
-    style.id = id;
-    if (style.styleSheet) {
-      style.styleSheet.cssText = css;
-    } else {
-      style.appendChild(document.createTextNode(css));
-    }
-    head.appendChild(style);
-  },
-  remove: function (alias) {
-    var id = `injector:${alias}`;
-    var style = document.getElementById(id);
-    if (style) {
-      var head = document.head || document.getElementsByTagName('head')[0];
-      if (head) head.removeChild(document.getElementById(id));
-    }
-  }
 };
 
 function forAllNodes(selFnMap, parent = document.body, options = {}) {
@@ -2163,6 +2115,8 @@ function onFreshContent() {
   refresher.init();
 
   if (state.type == 'home') formOnZeroPage.init();
+
+  darkMode.addButton();
 }
 
 function freezeSize(el) {
@@ -2263,12 +2217,10 @@ var formOnZeroPage = {
   init: function () {
     let buttonsRight = document.querySelector('.headmenu-buttons-right');
     buttonsRight.insertAdjacentHTML('afterbegin', `
-      <div class="headmenu-buttons headmenu-buttons-right">
       <div class="btn-group">
         <button type="button" class="btn btn-primary ZU-toggleNewThreadForm"><i class="fa fa-pencil-square-o"></i> 
           <span class="btn-caption hidden-xs">Создать тред</span>
         </button>
-      </div>
       </div>`);
     buttonsRight.querySelector('.ZU-toggleNewThreadForm').onclick = () => this.toggleNewThreadForm();
     // prevent title replacement
@@ -2334,10 +2286,3 @@ var textSteganography = {
 function safe_tags(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
-
-var baseCSS = GM_getResourceText("baseCSS");
-injector.inject('ZU-global', baseCSS);
-
-// this is for test only, will add UI later
-var darkCSS = GM_getResourceText("darkCSS");
-injector.inject('ZU-dark', darkCSS);

@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.0.3
+// @version      3.0.5
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/resource-distribution/src/0chan-utilities.user.js
+// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/resource-distribution/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
@@ -22,4 +22,5 @@
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/resource-distribution/icon.png
 // @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/base.css
 // @resource     darkCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/dark.css
+// @resource     catalogCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/catalog.css
 // ==/UserScript==

@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.0.4
+// @version      3.0.5
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/resource-distribution/src/0chan-utilities.user.js
+// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/resource-distribution/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
@@ -85,6 +85,8 @@ if (
     "0.1chan.pl",
     "ygg.0chan.pl",
     "www.0chan.club",
+    "0chan.life",
+    "www.0chan.life",
     "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion",
     "0pl.i2p",
     "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p",
@@ -699,9 +701,9 @@ var NullRestyler = {
 var desnower = {
   toggle: function(on) {
     if (settings.turnOffSnow) {
-        window.localStorage.setItem('disableSnow', true);
+      window.localStorage.setItem('disableSnow', true);
     } else {
-        window.localStorage.removeItem('disableSnow');
+      window.localStorage.removeItem('disableSnow');
     }
   }
 }
@@ -810,6 +812,77 @@ function UrlExists(url) {
   return http.status
 }
 
+// CSS injector
+var injector = {
+  inject: function(alias, css, position="beforeend") {
+    var id = `injector:${alias}`
+    var existing = document.getElementById(id)
+    if(existing) {
+      existing.innerHTML = css
+      return
+    }
+    var head = document.head || document.getElementsByTagName('head')[0]
+    /*, style = document.createElement('style');
+    style.type = 'text/css'
+    style.id = id
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css
+    } else {
+      style.appendChild(document.createTextNode(css))
+    }*/
+    head.insertAdjacentHTML(position, `<style type="text/css" id="${id}">${css}</style>`)
+    // head.appendChild(style)
+  },
+  remove: function(alias) {
+    var id = `injector:${alias}`
+    var style = document.getElementById(id)
+    if(style) {
+      var head = document.head || document.getElementsByTagName('head')[0]
+      if(head)
+        head.removeChild(document.getElementById(id))
+    }
+  }
+}
+
+var darkMode = {
+  get enabledByDefault() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  },
+  init: function() {
+    //make sure to inject the base CSS first
+    var baseCSS = GM_getResourceText("baseCSS")
+    injector.inject('ZU-global', baseCSS)
+
+    this.css = GM_getResourceText("darkCSS")
+    let settings = LSfetchJSON('ZU-settings')
+    , on = (settings.darkMode === undefined) ? this.enabledByDefault : settings.darkMode
+    if (on) {
+      this.toggle(on, false)
+    }
+  },
+  addButton: function() {
+    let buttonsRight = document.querySelector('.headmenu-buttons-right')
+    buttonsRight.insertAdjacentHTML('afterbegin', `
+      <div class="btn-group">
+        <button title="Переключить тему" class="btn btn-link ZU-btn-link ZU-toggle-dark-mode"><i class="fa fa-adjust"></i></button>
+      </div>`
+    )
+    buttonsRight.querySelector('.ZU-toggle-dark-mode').onclick = () => this.toggle()
+  },
+  toggle: function(on=!this._on, byUser=true) {
+    if (on) 
+      injector.inject('ZU-dark', this.css)
+    else
+      injector.remove('ZU-dark')
+    this._on = on
+    if (byUser) {
+      settings.darkMode = !!on
+      settings.save
+    }
+  }
+}
+darkMode.init() // must be called ahead of time to prevent flashes
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -832,7 +905,8 @@ var settings = {
     },
     turnOffSnow: (window.localStorage.getItem('disableSnow') == null) ? false : true,
     selectedBoard: 'b',
-    selectedInstance: 0
+    selectedInstance: 0,
+    darkMode: darkMode.enabledByDefault
   },
   _: {},
   hooks: {
@@ -1938,40 +2012,6 @@ var ZURouter = {
   }
 }
 
-
-
-// CSS injector
-var injector = {
-  inject: function(alias, css) {
-    var id = `injector:${alias}`
-    var existing = document.getElementById(id)
-    if(existing) {
-      existing.innerHTML = css
-      return
-    }
-    var head = document.head || document.getElementsByTagName('head')[0]
-    , style = document.createElement('style');
-    style.type = 'text/css'
-    style.id = id
-    if (style.styleSheet) {
-      style.styleSheet.cssText = css
-    } else {
-      style.appendChild(document.createTextNode(css))
-    }
-    head.appendChild(style)
-  },
-  remove: function(alias) {
-    var id = `injector:${alias}`
-    var style = document.getElementById(id)
-    if(style) {
-      var head = document.head || document.getElementsByTagName('head')[0]
-      if(head)
-        head.removeChild(document.getElementById(id))
-    }
-  }
-}
-
-
 function forAllNodes(selFnMap, parent=document.body, options={}) {
   let config = Object.assign({
     autoStart: true, // whether or not observer shall start observing immediately
@@ -2307,6 +2347,8 @@ function onFreshContent() {
 
   if (state.type == 'home')
     formOnZeroPage.init()
+
+  darkMode.addButton()
 }
 
 function freezeSize(el) {
@@ -2423,12 +2465,10 @@ var formOnZeroPage = {
   init: function() {
     let buttonsRight = document.querySelector('.headmenu-buttons-right')
     buttonsRight.insertAdjacentHTML('afterbegin', `
-      <div class="headmenu-buttons headmenu-buttons-right">
       <div class="btn-group">
         <button type="button" class="btn btn-primary ZU-toggleNewThreadForm"><i class="fa fa-pencil-square-o"></i> 
           <span class="btn-caption hidden-xs">Создать тред</span>
         </button>
-      </div>
       </div>`
     )
     buttonsRight.querySelector('.ZU-toggleNewThreadForm').onclick = () => this.toggleNewThreadForm()
@@ -2519,10 +2559,3 @@ var textSteganography = {
 function safe_tags(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
 }
-
-var baseCSS = GM_getResourceText("baseCSS")
-injector.inject('ZU-global', baseCSS)
-
-// this is for test only, will add UI later
-var darkCSS = GM_getResourceText("darkCSS")
-injector.inject('ZU-dark', darkCSS)

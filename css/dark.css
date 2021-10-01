@@ -2,7 +2,7 @@ body {
   color: #ccc;
 }
 html, body {
-  background-color: #303640;
+  background-color: #303640!important;
 }
 a:hover, a:focus {
   color: #1abc9c;
