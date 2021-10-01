@@ -243,6 +243,10 @@ pre {
 .post-highlighted {
   box-shadow: 0 0 20px #3ccd9d inset, 0 1px 4px #3ccd9d !important;
 }
+.threads-scroll-spy:hover {
+  background: rgb(27 31 37 / 70%);
+  box-shadow: 0 1px 4px #000;
+}
 /* scrollbar styling: webkit */
 ::-webkit-scrollbar {
   width: 12px;
