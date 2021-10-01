@@ -1,0 +1,84 @@
+.thread-tree {
+  display: none;
+}
+div[board-id] {
+  width: 250px;
+  min-width: 250px;
+  display: inline-block;
+  height: 300px;
+  max-height: 300px;
+  min-height: 300px;
+  vertical-align: top;
+  margin: 4px !important;
+}
+.post-button {
+  padding: 0 4px;
+}
+.ZU-thread-controls {
+  display: none;
+}
+.threadwrap {
+  max-width: inherit !important;
+}
+.thread-separator {
+  display: none;
+}
+.thread {
+  height: 100%;
+}
+:not(.post-popup) > .post {
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+  max-height: 300px;
+  min-height: 100%;
+}
+:not(.post-popup) > .post > .post-body {
+  max-height: 257px;
+  height: 257px;
+  overflow: auto;
+  min-height: 100%;
+}
+:not(.post-popup) > .post > .post-footer {
+  margin-top: 0;
+}
+.post-id > span:not(.ZU-hide-board-by-op) {
+  display: none;
+}
+.post-header .pull-right {
+  float: none !important;
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 2px 10px;
+}
+.post-header .pull-right:hover {
+  z-index: 2;
+}
+.post-header {
+  padding: 0 !important;
+}
+.post-id {
+  z-index: 2;
+  position: relative;
+  padding: 2px 6px;
+  display: inline-block;
+  padding-right: 20px;
+}
+.post-body-message {
+  overflow: hidden !important;
+  max-height: none !important;
+}
+.post-popup {
+  z-index: 3;
+}
+.reply-form {
+  max-width: none;
+  z-index: 3;
+}
+.ZU-noko-label {
+  display: none;
+}
+.threads-scroll-spy {
+  display: none;
+}

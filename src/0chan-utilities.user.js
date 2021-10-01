@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.0.3
+// @version      3.0.4
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/resource-distribution/src/0chan-utilities.user.js
 // @author       Snivy & devarped
@@ -22,6 +22,7 @@
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/resource-distribution/icon.png
 // @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/base.css
 // @resource     darkCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/dark.css
+// @resource     catalogCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/catalog.css
 // ==/UserScript==
 
 const icons =
@@ -354,94 +355,7 @@ const catalog = {
       injector.remove('ZU-catalog-mode')
     }
   },
-  css: `
-    .thread-tree {
-      display: none;
-    }
-    div[board-id] {
-      width: 250px;
-      min-width: 250px;
-      display: inline-block;
-      height: 300px;
-      max-height: 300px;
-      min-height: 300px;
-      vertical-align: top;
-      margin: 4px !important;
-    }
-    .post-button {
-      padding: 0 4px;
-    }
-    .ZU-thread-controls {
-      display: none;
-    }
-    .threadwrap {
-      max-width: inherit !important;
-    }
-    .thread-separator {
-      display: none;
-    }
-    .thread/*, .thread > div, .thread > div > div*/ {
-      height: 100%;
-    }
-    :not(.post-popup) > .post {
-      margin: 0;
-      width: 100%;
-      min-width: 0;
-      max-height: 300px;
-      min-height: 100%;
-    }
-    :not(.post-popup) > .post > .post-body {
-      max-height: 257px;
-      height: 257px;
-      overflow: auto;
-      min-height: 100%;
-    }
-    :not(.post-popup) > .post > .post-footer {
-      margin-top: 0;
-    }
-    .post-id > span:not(.ZU-hide-board-by-op) {
-      display: none;
-    }
-    .post-header .pull-right {
-      float: none !important;
-      position: absolute;
-      right: 0;
-      top: 0;
-      padding: 2px 10px;
-      background: linear-gradient(to right, rgba(255, 35, 35, 0) 0px, white 18px 100%);
-    }
-    .post-header .pull-right:hover {
-      z-index: 2;
-    }
-    .post-header {
-      padding: 0 !important;
-    }
-    .post-id {
-      background: linear-gradient(to left, rgba(255, 35, 35, 0) 0px, white 18px, white 100%);
-      z-index: 2;
-      position: relative;
-      padding: 2px 6px;
-      display: inline-block;
-      padding-right: 20px;
-    }
-    .post-body-message {
-      overflow: hidden !important;
-      max-height: none !important;
-    }
-    .post-popup {
-      z-index: 3;
-    }
-    .reply-form {
-      max-width: none;
-      z-index: 3;
-    }
-    .ZU-noko-label {
-      display: none;
-    }
-    .threads-scroll-spy {
-      display: none;
-    }
-  `,
+  css: GM_getResourceText("catalogCSS"),
   get isApplicable() {
     return this.enabledOn.indexOf(state.type) !== -1
   }
