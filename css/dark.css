@@ -243,3 +243,24 @@ pre {
 .post-highlighted {
   box-shadow: 0 0 20px #3ccd9d inset, 0 1px 4px #3ccd9d !important;
 }
+/* scrollbar styling: webkit */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+::-webkit-scrollbar-track:hover {
+  background: rgba(0, 0, 0, .1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+/* scrollbar styling: firefox */
+html {
+  scrollbar-color: rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.1);
+}
