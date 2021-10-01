@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      2.6.6
+// @version      3.0.5
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
+// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/resource-distribution/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
@@ -18,8 +18,11 @@
 // @include      https://ochan.ru/*
 // @include      https://foxhound.cc/*
 // @include      https://0chan.life/*
-// @grant        none
-// @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
+// @grant        GM_getResourceText
+// @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/resource-distribution/icon.png
+// @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/base.css
+// @resource     darkCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/dark.css
+// @resource     catalogCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/resource-distribution/css/catalog.css
 // ==/UserScript==
 
 const icons = `<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -61,7 +64,7 @@ var appObserver,
 },
     version = GM_info.script.version;
 
-if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "https://foxhound.cc"].includes(location.host)) {
+if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "https://foxhound.cc"].includes(location.host)) {
   var IS_OCHKO = true;
 } else {
   var IS_OCHKO = false;
@@ -307,94 +310,7 @@ const catalog = {
       injector.remove('ZU-catalog-mode');
     }
   },
-  css: `
-    .thread-tree {
-      display: none;
-    }
-    div[board-id] {
-      width: 250px;
-      min-width: 250px;
-      display: inline-block;
-      height: 300px;
-      max-height: 300px;
-      min-height: 300px;
-      vertical-align: top;
-      margin: 4px !important;
-    }
-    .post-button {
-      padding: 0 4px;
-    }
-    .ZU-thread-controls {
-      display: none;
-    }
-    .threadwrap {
-      max-width: inherit !important;
-    }
-    .thread-separator {
-      display: none;
-    }
-    .thread/*, .thread > div, .thread > div > div*/ {
-      height: 100%;
-    }
-    :not(.post-popup) > .post {
-      margin: 0;
-      width: 100%;
-      min-width: 0;
-      max-height: 300px;
-      min-height: 100%;
-    }
-    :not(.post-popup) > .post > .post-body {
-      max-height: 257px;
-      height: 257px;
-      overflow: auto;
-      min-height: 100%;
-    }
-    :not(.post-popup) > .post > .post-footer {
-      margin-top: 0;
-    }
-    .post-id > span:not(.ZU-hide-board-by-op) {
-      display: none;
-    }
-    .post-header .pull-right {
-      float: none !important;
-      position: absolute;
-      right: 0;
-      top: 0;
-      padding: 2px 10px;
-      background: linear-gradient(to right, rgba(255, 35, 35, 0) 0px, white 18px 100%);
-    }
-    .post-header .pull-right:hover {
-      z-index: 2;
-    }
-    .post-header {
-      padding: 0 !important;
-    }
-    .post-id {
-      background: linear-gradient(to left, rgba(255, 35, 35, 0) 0px, white 18px, white 100%);
-      z-index: 2;
-      position: relative;
-      padding: 2px 6px;
-      display: inline-block;
-      padding-right: 20px;
-    }
-    .post-body-message {
-      overflow: hidden !important;
-      max-height: none !important;
-    }
-    .post-popup {
-      z-index: 3;
-    }
-    .reply-form {
-      max-width: none;
-      z-index: 3;
-    }
-    .ZU-noko-label {
-      display: none;
-    }
-    .threads-scroll-spy {
-      display: none;
-    }
-  `,
+  css: GM_getResourceText("catalogCSS"),
   get isApplicable() {
     return this.enabledOn.indexOf(state.type) !== -1;
   }
@@ -805,6 +721,72 @@ function UrlExists(url) {
   return http.status;
 }
 
+// CSS injector
+var injector = {
+  inject: function (alias, css, position = "beforeend") {
+    var id = `injector:${alias}`;
+    var existing = document.getElementById(id);
+    if (existing) {
+      existing.innerHTML = css;
+      return;
+    }
+    var head = document.head || document.getElementsByTagName('head')[0];
+    /*, style = document.createElement('style');
+    style.type = 'text/css'
+    style.id = id
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css
+    } else {
+      style.appendChild(document.createTextNode(css))
+    }*/
+    head.insertAdjacentHTML(position, `<style type="text/css" id="${id}">${css}</style>`);
+    // head.appendChild(style)
+  },
+  remove: function (alias) {
+    var id = `injector:${alias}`;
+    var style = document.getElementById(id);
+    if (style) {
+      var head = document.head || document.getElementsByTagName('head')[0];
+      if (head) head.removeChild(document.getElementById(id));
+    }
+  }
+};
+
+var darkMode = {
+  get enabledByDefault() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  },
+  init: function () {
+    //make sure to inject the base CSS first
+    var baseCSS = GM_getResourceText("baseCSS");
+    injector.inject('ZU-global', baseCSS);
+
+    this.css = GM_getResourceText("darkCSS");
+    let settings = LSfetchJSON('ZU-settings'),
+        on = settings.darkMode === undefined ? this.enabledByDefault : settings.darkMode;
+    if (on) {
+      this.toggle(on, false);
+    }
+  },
+  addButton: function () {
+    let buttonsRight = document.querySelector('.headmenu-buttons-right');
+    buttonsRight.insertAdjacentHTML('afterbegin', `
+      <div class="btn-group">
+        <button title="Переключить тему" class="btn btn-link ZU-btn-link ZU-toggle-dark-mode"><i class="fa fa-adjust"></i></button>
+      </div>`);
+    buttonsRight.querySelector('.ZU-toggle-dark-mode').onclick = () => this.toggle();
+  },
+  toggle: function (on = !this._on, byUser = true) {
+    if (on) injector.inject('ZU-dark', this.css);else injector.remove('ZU-dark');
+    this._on = on;
+    if (byUser) {
+      settings.darkMode = !!on;
+      settings.save;
+    }
+  }
+};
+darkMode.init(); // must be called ahead of time to prevent flashes
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -827,7 +809,8 @@ var settings = {
     },
     turnOffSnow: window.localStorage.getItem('disableSnow') == null ? false : true,
     selectedBoard: 'b',
-    selectedInstance: 0
+    selectedInstance: 0,
+    darkMode: darkMode.enabledByDefault
   },
   _: {},
   hooks: {
@@ -1813,35 +1796,6 @@ var ZURouter = {
     }
     this.currentRoute = type;
   }
-
-  // CSS injector
-};var injector = {
-  inject: function (alias, css) {
-    var id = `injector:${alias}`;
-    var existing = document.getElementById(id);
-    if (existing) {
-      existing.innerHTML = css;
-      return;
-    }
-    var head = document.head || document.getElementsByTagName('head')[0],
-        style = document.createElement('style');
-    style.type = 'text/css';
-    style.id = id;
-    if (style.styleSheet) {
-      style.styleSheet.cssText = css;
-    } else {
-      style.appendChild(document.createTextNode(css));
-    }
-    head.appendChild(style);
-  },
-  remove: function (alias) {
-    var id = `injector:${alias}`;
-    var style = document.getElementById(id);
-    if (style) {
-      var head = document.head || document.getElementsByTagName('head')[0];
-      if (head) head.removeChild(document.getElementById(id));
-    }
-  }
 };
 
 function forAllNodes(selFnMap, parent = document.body, options = {}) {
@@ -2161,6 +2115,8 @@ function onFreshContent() {
   refresher.init();
 
   if (state.type == 'home') formOnZeroPage.init();
+
+  darkMode.addButton();
 }
 
 function freezeSize(el) {
@@ -2261,12 +2217,10 @@ var formOnZeroPage = {
   init: function () {
     let buttonsRight = document.querySelector('.headmenu-buttons-right');
     buttonsRight.insertAdjacentHTML('afterbegin', `
-      <div class="headmenu-buttons headmenu-buttons-right">
       <div class="btn-group">
         <button type="button" class="btn btn-primary ZU-toggleNewThreadForm"><i class="fa fa-pencil-square-o"></i> 
           <span class="btn-caption hidden-xs">Создать тред</span>
         </button>
-      </div>
       </div>`);
     buttonsRight.querySelector('.ZU-toggleNewThreadForm').onclick = () => this.toggleNewThreadForm();
     // prevent title replacement
@@ -2332,505 +2286,3 @@ var textSteganography = {
 function safe_tags(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
-
-injector.inject('ZU-global', `
-  .btn-open-sidebar {
-    display: inline-block !important;
-  }
-  .headmenu-title {
-    white-space: nowrap;
-  }
-  .sidebar, #content {
-    transition: margin-left 0.3s cubic-bezier(0, 0.85, 0.72, 0.99);
-    will-change: margin-left;
-  }
-  .ZU-sidebar-hidden .sidebar {
-    margin-left: -250px;
-  }
-  .ZU-sidebar-hidden #content {
-    margin-left: 0;
-  }
-  .headmenu.ZU-sidemenu-animation-allowed {
-    transition: left 0.3s cubic-bezier(0, 0.85, 0.72, 0.99)
-  }
-  .ZU-sidebar-hidden .headmenu {
-    left: 0;
-  }
-  .ZU-settings-dropdown {
-    margin: 4px;
-    top: 30px;
-    padding: 6px 14px;
-  }
-  .ZU-dropdown {
-    display: block;
-    transform: translate(0px, 10px);
-    transition: transform 0.2s, opacity 0.2s, visibility 0s 0.2s;
-    opacity: 0;
-    user-select: none;
-    visibility: hidden;
-  }
-  .ZU-dropdown-show {
-    transform: translate(0px, 0);
-    opacity: 1;
-    visibility: visible;
-    transition: transform 0.2s, opacity 0.2s;
-  }
-  .ZU-settings-dropdown label,
-  .ZU-noko-label {
-    font-weight: normal;
-    margin-bottom: 0;
-  }
-  .ZU-noko-label {
-    vertical-align: middle;
-  }
-  .reply-form-limit-counter {
-    /* min-width: 60px; */
-    display: inline-block;
-  }
-  .ZU-noko {
-    margin: 0;
-    vertical-align: -1px;
-  }
-  .ZU-settings-dropdown input[type="radio"],
-  .ZU-settings-dropdown input[type="checkbox"] {
-    margin: 3px 0 0;
-    line-height: normal;
-    vertical-align: top;
-  }
-  .ZU-settings-dropdown li {
-    margin: 4px 0;
-  }
-
-  .ZU-svg-container-btn {
-    font-size: 0;
-    padding: 0;
-    line-height: 0;
-  }
-  .ZU-svg {
-    fill: currentColor;
-  }
-  .ZU-svg-32 {
-    height: 32px;
-    width: 32px;
-  }
-  .ZU-svg-16 {
-    height: 16px;
-    width: 16px;
-  }
-  .dropdown-menu .ZU-svg-16 {
-    margin-right: 5px;
-  }
-  .ZU-share-dropdown {
-    left: 74px;
-  }
-  .ZU-boardhideunhide {
-    position: absolute;
-    left: 0;
-    opacity: 0;
-    transition: opacity 0.2s, color 0.2s;
-  }
-  .ZU-boardhideunhide:hover {
-    color: #3ccd9d;
-  }
-  .sidemenu-board-item:hover .ZU-boardhideunhide {
-    opacity: 1
-  }
-  .ZU-board-unhide-icon {
-    display: none;
-  }
-  body > textarea {
-    position:fixed;
-  }
-  .ZU-show {
-    display:block;
-  }
-  .ZU-refresh-progressbar,
-  .ZU-refreshbtn-shadow-overlay {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-  }
-  .ZU-refreshbtn-shadow-overlay {
-    width: 100%;
-  }
-  .ZU-refresh-btn {
-    box-shadow: none!important;
-    overflow: hidden;
-  }
-  .ZU-refresh-btn:active .ZU-refreshbtn-shadow-overlay {
-    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  }
-  .ZU-refresh-progressbar {
-    background: linear-gradient(to bottom, transparent 0%, rgba(22, 160, 133, 0.48) 100%);
-    width: 0%;
-    opacity: 0;
-    transition: width 0s 0.4s, opacity 0.4s;
-  }
-  .ZU-refresh-btn i,
-  .ZU-refresh-btn span {
-    position: relative;
-  }
-  .ZU-nomargin-btn-group {
-    margin-left: -1px;
-    float: right;
-  }
-  .ZU-panel-btn {
-    width: 40px;
-  }
-  .ZU-onactive-show,
-  .active .ZU-onactive-hide {
-    display: none;
-  }
-  .active .ZU-onactive-show {
-    display: block;
-  }
-  .ZU-btn-link {
-    color: #333333 !important;
-    text-decoration: none !important;
-  }
-  .ZU-btn-link.active {
-    color: #333;
-    background-color: #e6e6e6;
-    border: 1px solid #adadad;
-    outline: none !important;
-    background-image: none;
-    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  }
-  .post-img .post-embed .post-embed-play-btn {
-    z-index: 2
-  }
-  .post-img .post-img-buttons {
-    margin-top: -36px;
-    max-height: 18px;
-  }
-  .post .ZU-hide-board-by-op-container {
-    padding-left: 6px;
-  }
-  span.ZU-hide-board-by-op {
-    padding: 0;
-  }
-  .ZU-settingspage-icon {
-    vertical-align: middle;
-    margin: -8px;
-    margin-right: 0;
-  }
-  .ZU-settings-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  .fancy-fadeout {
-    transition-duration: 0.2s;
-    transition-property: opacity;
-  }
-  .fancy-resize {
-    transition-duration: 0.4s;
-    transition-property: height, width;
-    transition-delay: 0s;
-    overflow: hidden;
-  }
-  .fancy-fadeout {
-    opacity: 0;
-  }
-  .fancy-fadein {
-    animation: fancyfadein 0.2s;
-  }
-  @keyframes fancyfadein {
-    from {opacity: 0;}
-    to {opacity: 1;}
-  }
-  #ZU-top-autohide {
-    padding: 6px 0;
-  }
-  .ZU-enter-autohide-top {
-    margin-top: 4px;
-    width: 100%;
-  }
-  #ZU-settings-main {
-    padding-bottom: 5px;
-  }
-  .ZU-autohide-type-switch {
-    float: right;
-  }
-  .ZU-autohide-content {
-    margin-top: 8px;
-    min-width: 217px;
-    min-height: 70px;
-  }
-  .ZU-xbtn {
-    padding: 0px;
-    height: 16px;
-    width: 16px;
-    line-height: 16px;
-    border: none;
-    border-radius: 100px;
-  }
-  .ZU-autohide-attachemnt-entry{
-    background-color: #efefef;
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    border-radius: 100px;
-    box-sizing: border-box;
-    border: 1px solid #dadada;
-    margin: 4px;
-    background-size: cover;
-    background-position: center center;
-    transition: transform 0.3s;
-  }
-  .ZU-autohide-attachemnt-entry .ZU-xbtn {
-    transform: scale(0);
-    transition: transform 0.2s;
-    float: right;
-  }
-  .ZU-autohide-attachemnt-entry:hover .ZU-xbtn {
-    transform: scale(1);
-  }
-  #ZU-autohide-images > div {
-    font-size: 0;
-  }
-  #ZU-autohide-images {
-    overflow: auto;
-    resize: both;
-    /*margin: 4px -4px -4px;*/
-    max-width: 600px;
-  }
-  .ZU-away {
-    transform: scale(0);
-  }
-  .threads-scroll-spy {
-    width: auto;
-  }
-  .threads-scroll-spy > ul {
-    width: 400px;
-  }
-  .threads-scroll-spy .threads-scroll-toggler {
-    left: -20px;
-    right: unset;
-  }
-  .dialog-view textarea {
-    min-height: 100px;
-    resize: vertical;
-    max-height: calc(100vh - 230px);
-  }
-  .dialog-view .dialog-footer.panel-footer {
-    height: auto;
-  }
-  .dialog.panel.panel-default {
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: column;
-  }
-  .dialog-footer.panel-footer {
-    position: relative;
-  }
-  .dialog-body.panel-body {
-    margin-bottom: 40px;
-    position: relative;
-  }
-  .dialog-footer.panel-footer .input-group {
-    display: flex;
-  }
-  .dialog-footer.panel-footer .input-group-btn {
-    width: auto;
-  }
-  .dialog-footer.panel-footer .input-group-btn button {
-    height: 100%;
-  }
-` + `
-  .sidebar-logo {
-    transition: transform .2s;
-  }
-  .edit-null .sidebar-logo {
-    transform: translateX(-75px);
-  }
-  .ZU-sidebar-btn {
-    background: none;
-    border: none;
-    color: #666;
-    outline: none;
-    transition: color .2s;
-    font-size: 14px;
-  }
-  .ZU-sidebar-btn:hover {
-    color: #1abc9c;
-  }
-  .ZU-restyle-null {
-    position: absolute;
-    opacity: 0;
-    transition: color .2s, opacity .2s;
-  }
-  #sidebar:not(.edit-null) .sidebar-logo:hover .ZU-restyle-null {
-    opacity: 1;
-  }
-  .ZU-nulltwk-container  {
-    opacity: 0;
-    pointer-events: none;
-    width: 137px;
-    height: 106px;
-    color: #999;
-    font-family: Roboto;
-    text-align: center;
-    font-size: 0;
-    display: inline-block;
-    vertical-align: -7px;
-    user-select: none;
-    position: absolute;
-    right: 20px;
-    transform: translate(10px);
-    top: 8px;
-    z-index: 2;
-    transition: opacity .2s, transform .2s;
-  }
-  .edit-null
-  .ZU-nulltwk-container {
-    opacity: 1;
-    pointer-events: all;
-    transform: none;
-  }
-  .ZU-nulltwk-range-container label,
-  .ZU-nulltwk-range-container output {
-    font-size: 11px;
-    margin-bottom: -1px;
-  }
-  .ZU-nulltwk-range-container label {
-    float: left;
-  }
-  .ZU-nulltwk-range-container output {
-    float: right;
-    padding: 0;
-    line-height: normal;
-    color: inherit;
-  }
-  .ZU-nulltwk-save, .ZU-nulltwk-revert {
-    padding: 0;
-    margin: 0 8px;
-    color: #999;
-  }
-  .ZU-nulltwk-btn:hover {
-    color: #3c9;
-  }
-  .ZU-nulltwk-range-container {
-    transition: color .2s;
-    margin: 0;
-    display: block;
-    margin-top: -2px;
-    margin-bottom: 3px;
-  }
-  .ZU-nulltwk-range-container:hover {
-    color: #3c9;
-  }
-  .ZU-range {
-    width: 100%;
-    margin: 0;
-    -webkit-appearance: none;
-    background: transparent;
-  }
-  .ZU-range::-ms-track {
-    width: 100%;
-    cursor: pointer;
-    background: transparent; 
-    border-color: transparent;
-    color: transparent;
-  }
-  .ZU-range:focus {
-    outline: none;
-  }
-  .ZU-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 8px;
-    width: 8px;
-    background-color: #b7b7b7;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 2px 3px black;
-    transition: transform .2s, background-color .2s;
-  }
-  .ZU-range::-moz-range-thumb {
-    height: 8px;
-    width: 8px;
-    background-color: #b7b7b7;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 2px 3px black;
-    transition: transform .2s, background-color .2s;
-  }
-  .ZU-range::-ms-thumb {
-    height: 8px;
-    width: 8px;
-    background-color: #b7b7b7;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 2px 3px black;
-    transition: transform .2s, background-color .2s;
-  }
-  .ZU-range::-webkit-slider-thumb:hover {
-    transform: scale(1.25);
-  }
-  .ZU-nulltwk-range-container:hover .ZU-range::-webkit-slider-thumb {
-    background-color:#3c9;
-  }
-  .ZU-range::-moz-range-thumb:hover {
-    transform: scale(1.25);
-  }
-  .ZU-nulltwk-range-container:hover .ZU-range::-moz-range-thumb {
-    background-color:#3c9;
-  }
-  .ZU-range::-ms-thumb:hover {
-    transform: scale(1.25);
-  }
-  .ZU-nulltwk-range-container:hover .ZU-range::-ms-thumb {
-    background-color:#3c9;
-  }
-  .ZU-range::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 8px;
-    box-sizing: border-box;
-    cursor: pointer;
-    background: linear-gradient(to bottom, transparent 2.999px, #000 3px, #000 3.999px, #777 4px, #777 4.999px, transparent 5px)
-  }
-  .ZU-range::-moz-range-track {
-    width: 100%;
-    height: 8px;
-    box-sizing: border-box;
-    cursor: pointer;
-    color: transparent;
-    border: none;
-    background: linear-gradient(to bottom, transparent 2.999px, #000 3px, #000 3.999px, #777 4px, #777 4.999px, transparent 5px)
-  }
-  .ZU-range::-ms-track {
-    width: 100%;
-    height: 8px;
-    box-sizing: border-box;
-    cursor: pointer;
-    background: transparent;
-  }
-  .ZU-range::-ms-fill-lower, .ZU-range::-ms-fill-upper {
-    background: linear-gradient(to bottom, transparent 2.999px, #000 3px, #000 3.999px, #777 4px, #777 4.999px, transparent 5px)
-  }
-  .ZU-boardlist-select {
-  	display: inline-block;
-  	width: 140px;
-  	padding: 0px;
-  	height: 25px;
-  	vertical-align: middle;
-  	margin: 0 4px;
-  }
-  .ZU-zeropage-newthreadform {
-  	z-index: 2;
-  	position: relative;
-  }
-  .ZU-SSS, .ZU-SSS:hover {
-  	background: #dcc1ff;
-  }
-  .ZU-expand-refs:not(:hover) {
-  	color: inherit;
-  }
-  .sidemenu-board-title, .post-id > span {
-  	word-break: break-word;
-  }
-  #ZU-invidious-instance {
-    max-width: 240px;
-  }
-`);

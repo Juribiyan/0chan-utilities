@@ -1,0 +1,270 @@
+body {
+  color: #ccc;
+}
+html, body {
+  background-color: #303640!important;
+}
+a:hover, a:focus {
+  color: #1abc9c;
+}
+#content {
+  background: #303640;
+}
+.block,
+.panel {
+  border-color: #252a32;
+  box-shadow: 0 1px 4px #252a32;
+  background: #393f4a;
+}
+.post .post-footer {
+  border-top: 1px solid #434a56;
+  box-shadow: 0 -1px 0 #2c323a;
+}
+.post-button {
+  color: #777;
+}
+.post .post-body .post-referenced-by, 
+.post .post-body .post-replied-by,
+.post .post-header .white,
+.login-form ul li,
+.text-muted,
+a.list-group-item, button.list-group-item,
+.dialog .message-date {
+  color: #999;
+}
+.post-popup .post {
+  box-shadow: 0 2px 6px #252a32;
+}
+.post-img .post-img-buttons,
+.post-img figcaption {
+  background: #000;
+}
+.separator {
+  border-bottom: 1px solid #505763;
+  border-top: 1px solid #13161d;
+}
+.thread-reply-chain {
+  border-color: #1f1f1f;
+}
+.thread-reply-chain:hover {
+  border-color: #101010;
+}
+.headmenu {
+  background: #393f4a;
+  border-bottom: #252a32 1px solid;
+}
+.headmenu-title span, 
+.headmenu-title a,
+.btn-open-sidebar,
+.ZU-btn-link {
+  color: #bbb !important;
+}
+.dropdown-menu {
+  background-color: #393f4a;
+  border: 1px solid #252a32;
+  box-shadow: 0 6px 12px #16181d;
+}
+.dropdown-menu > li > a {
+  color: #ccc;
+}
+.dropdown-menu > li > a:hover, 
+.dropdown-menu > li > a:focus {
+  color: #ccc;
+  background-color: #4b515d;
+}
+.reply-form .reply-form-message {
+  border: 1px solid #252a32;
+  background: #2b313a;
+}
+.reply-form .reply-form-message textarea {
+  background: #2b313a;
+  color: #ccc;
+}
+input[type="radio"], 
+input[type="checkbox"] {
+  filter: invert(1);
+}
+.btn-default {
+  color: #ccc;
+  background-color: #444d5f;
+  border-color: #5d636f;
+}
+.btn-default:hover,
+.btn-default:active:hover, .btn-default:active:focus, .btn-default:active.focus, .btn-default.active:hover, .btn-default.active:focus, .btn-default.active.focus, .open > .btn-default.dropdown-toggle:hover, .open > .btn-default.dropdown-toggle:focus, .open > .btn-default.dropdown-toggle.focus,
+.btn-default:active, .btn-default.active, .open > .btn-default.dropdown-toggle,
+.btn-default:focus, .btn-default.focus {
+  color: #eee;
+  background-color: #5d636f;
+  border-color: #5d636f;
+}
+.form-control {
+  color: #ccc;
+  background-color: #2b313a;
+  border: 1px solid #252a32;
+}
+.ZU-thread-controls {
+  color: #b5b5b5;
+}
+.ZU-btn-link.active {
+  color: #ccc!important;
+  background-color: #225851;
+  border: 1px solid #2a2d33;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.49);
+}
+.alerts-item {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.alert-success {
+  background-color: #3c763d;
+  color: #dff0d8;
+  border-color: #366b37;
+}
+.alert-info {
+  border-color: #24566f;
+  color: #d9edf7;
+  background-color: #31708f;
+}
+.alert-danger {
+  border-color: #803533;
+  color: #f2dede;
+  background-color: #a94442;
+}
+.alert-warning {
+  border-color: #564528;
+  color: #fcf8e3;
+  background-color: #8a6d3b;
+}
+.login-form input,
+.captcha-form input {
+  background: #262b33;
+  color: #ccc;
+  border-color: #15181d;
+}
+.captcha-form-wrapper {
+  background: rgba(0, 0, 0, 0.4);
+}
+.captcha-form {
+  border-color: black;
+  background: #222;
+}
+.captcha-form img {
+  filter: invert(1) contrast(.735);
+}
+.captcha-form input {
+  background: #191919;
+  color: #ccc;
+  border-color: #000000;
+}
+.captcha-form separator {
+  border-bottom-color: #313131;
+}
+.panel-default > .panel-heading {
+  border-color: #2c3138;
+  background: #404752;
+  color: #ccc;
+}
+.im-box .dialog-view {
+  background: #303640;
+}
+.add-identity:hover {
+  color: #ccc;
+}
+.table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td {
+  border-top-color: #252a32;
+}
+.close {
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+  filter: alpha(opacity=50);
+  opacity: 0.5;
+}
+.close:hover, .close:focus {
+  opacity: 0.7;
+}
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+  background-color: #313740;
+  color: #666;
+}
+.list-group-item {
+  background-color: #404752;
+  border: 1px solid #2c313a;
+}
+a.list-group-item .list-group-item-heading, button.list-group-item .list-group-item-heading {
+  color: #ccc;
+}
+a.list-group-item:hover, a.list-group-item:focus, button.list-group-item:hover, button.list-group-item:focus,
+.im-box .dialog-list .dialog-list-items a:focus {
+  color: #ccc;
+  background-color: #4b515d;
+}
+.panel-footer {
+  background-color: #404752;
+  border-top: 1px solid #2c3138;
+}
+.dialog .im-message {
+  background: #303640;
+}
+.dialog .im-separator {
+  border-top-color: #393f4a;
+}
+.dialog .message-unread {
+  background: rgba(0, 255, 161, 0.1);
+}
+.empty-page {
+  text-shadow: -1px -1px 0 #111;
+}
+.nav > li > a:hover, .nav > li > a:focus {
+  background-color: #303640;
+}
+.btn:hover, .btn:focus, .btn.focus {
+  color: inherit;
+}
+.table > thead > tr > th {
+  border-bottom-color: #252a32;
+}
+.pagination > li > a, .pagination > li > span {
+  background-color: #404752;
+  border: 1px solid #525863;
+}
+.pagination > li > a:hover, .pagination > li > a:focus, .pagination > li > span:hover, .pagination > li > span:focus {
+  color: #31ceaf;
+  background-color: #525863;
+  border-color: #525863;
+}
+.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {
+  background-color: #404752;
+  border-color: #404752;
+}
+pre {
+  background-color: #303640;
+  border: 1px solid #292d33;
+  color: #bbb;
+}
+.post-highlighted {
+  box-shadow: 0 0 20px #3ccd9d inset, 0 1px 4px #3ccd9d !important;
+}
+.threads-scroll-spy:hover {
+  background: rgb(27 31 37 / 70%);
+  box-shadow: 0 1px 4px #000;
+}
+/* scrollbar styling: webkit */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+::-webkit-scrollbar-track:hover {
+  background: rgba(0, 0, 0, .1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+/* scrollbar styling: firefox */
+html {
+  scrollbar-color: rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.1);
+}
