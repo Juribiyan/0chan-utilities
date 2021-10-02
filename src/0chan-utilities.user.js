@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.0.5
+// @version      3.0.6
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -855,7 +855,7 @@ var darkMode = {
 
     this.css = GM_getResourceText("darkCSS")
     let settings = LSfetchJSON('ZU-settings')
-    , on = (settings.darkMode === undefined) ? this.enabledByDefault : settings.darkMode
+    , on = (settings && settings.darkMode !== undefined) ? settings.darkMode : this.enabledByDefault
     if (on) {
       this.toggle(on, false)
     }
