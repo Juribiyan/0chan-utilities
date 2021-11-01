@@ -247,6 +247,9 @@ pre {
   background: rgb(27 31 37 / 70%);
   box-shadow: 0 1px 4px #000;
 }
+.post .post-header .post-thread-options .active {
+  color: currentColor;
+}
 /* scrollbar styling: webkit */
 ::-webkit-scrollbar {
   width: 12px;
