@@ -277,7 +277,7 @@ html {
     repeat !important;
 }
 
-.code {
+code {
   color: inherit;
   background-color: rgb(0 0 0 / 29%)!important;
 }
