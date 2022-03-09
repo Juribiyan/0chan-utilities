@@ -497,3 +497,6 @@ span.ZU-hide-board-by-op {
 #ZU-invidious-instance {
   max-width: 240px;
 }
+.post-img-full {
+  max-width: 100%;
+}
