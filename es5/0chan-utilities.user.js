@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.0.11
+// @version      3.0.12
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -19,6 +19,7 @@
 // @include      https://foxhound.cc/*
 // @include      https://0chan.life/*
 // @include      https://p.0chan.life/*
+// @include      https://0chan.xyz/*
 // @grant        GM_getResourceText
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
 // @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/base.css?v=3-0-11
@@ -65,7 +66,7 @@ var appObserver,
 },
     version = GM_info.script.version;
 
-if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "https://foxhound.cc"].includes(location.host)) {
+if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "0chan.xyz", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "https://foxhound.cc"].includes(location.host)) {
   var IS_OCHKO = true;
 } else {
   var IS_OCHKO = false;
