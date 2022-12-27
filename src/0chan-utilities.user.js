@@ -810,6 +810,41 @@ var youtubeStuff = {
   }
 }
 
+var fixUkrSpelling = {
+  toggle: function(on) {
+    let allPosts = document.querySelectorAll('.post')
+    if (on) {
+      allPosts.forEach(post => {
+        let msg = post.querySelector('.post-body-message')
+        if (this.detect(msg.innerHTML)) {
+          msg._originalHTML = msg.innerHTML
+          msg.innerHTML = this.process(msg.innerHTML)
+          post.querySelector('.post-date').insertAdjacentHTML('afterEnd', '<span class="ZU-UA-flag"> 🇺🇦</span>')
+        }
+      })
+    }
+    else {
+      allPosts.forEach(post => {
+        let msg = post.querySelector('.post-body-message')
+        if (msg._originalHTML) {
+          msg.innerHTML = msg._originalHTML
+        }
+      })
+      document.querySelectorAll('.ZU-UA-flag').forEach(f => f.remove())
+    }
+  },
+  detect: function(txt) {
+    return txt.match(/є|Є|ь[іi]|Ь[IІl]/)
+  },
+  process: function(txt) {
+    return txt
+      .replace(/є/g, 'э')
+      .replace(/Є/g, 'Э')
+      .replace(/ь[іi]/g, 'ы')
+      .replace(/Ь[IІl]/g, 'Ы')
+  }
+}
+
 function UrlExists(url) {
   var http = new XMLHttpRequest()
   http.open('HEAD', url, false)
@@ -902,7 +937,8 @@ var settings = {
     turnOffSnow: (window.localStorage.getItem('disableSnow') == null) ? false : true,
     selectedBoard: 'b',
     selectedInstance: 0,
-    darkMode: darkMode.enabledByDefault
+    darkMode: darkMode.enabledByDefault,
+    fixUkrSpelling: true
   },
   _: {},
   hooks: {
@@ -917,7 +953,8 @@ var settings = {
     autohideAtt: autohideAtt.init.bind(autohideAtt),
     nullColor: NullRestyler.setValues.bind(NullRestyler),
     turnOffSnow: desnower.toggle.bind(desnower),
-    selectedInstance: youtubeStuff.changeInstance.bind(youtubeStuff)
+    selectedInstance: youtubeStuff.changeInstance.bind(youtubeStuff),
+    fixUkrSpelling: fixUkrSpelling.toggle.bind(fixUkrSpelling)
   },
   save: function() {
     this._.hiddenBoards = this.hiddenBoards
@@ -1684,9 +1721,11 @@ function handlePost(post) {
   	msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true/* ← safe */)
     // Add Youtube thumbnail
     youtubeStuff.addThumbs(msg, postData.postVue.post)
+    // Fix Ukrainian spelling quirks
+    if(settings.fixUkrSpelling)
+      msg.innerHTML = fixUkrSpelling.process(msg.innerHTML)
   }
 }
-
 
 function autohidePost(postData, postDOM) { // TODO: prevent hiding thread inside the thread; Force unhide thread
   if (
@@ -1887,6 +1926,12 @@ var settingsPanel = {
       id: 'thumbNoScroll',
       title: "Разворот без скролла",
       description: "Не скроллить при разворачивании картинок"
+    },
+    {
+      type: 'checkbox',
+      id: 'fixUkrSpelling',
+      title: "Исправлять украинские буквьi",
+      description: "Производить замену «є»→«э», «ьi»→«ы»"
     },
     {
       type: 'slider',
