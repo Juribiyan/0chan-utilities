@@ -10,7 +10,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.1.0
+// @version      3.1.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -693,24 +693,11 @@ var youtubeStuff = {
 };
 var fixUkrSpelling = {
   toggle: function toggle(on) {
-    var _this11 = this;
     var allPosts = document.querySelectorAll('.post');
     if (on) {
-      allPosts.forEach(function (post) {
-        var msg = post.querySelector('.post-body-message');
-        if (_this11.detect(msg.innerHTML)) {
-          msg._originalHTML = msg.innerHTML;
-          msg.innerHTML = _this11.process(msg.innerHTML);
-          post.querySelector('.post-date').insertAdjacentHTML('afterEnd', '<span class="ZU-UA-flag"> 🇺🇦</span>');
-        }
-      });
+      allPosts.forEach(this.process.bind(this));
     } else {
-      allPosts.forEach(function (post) {
-        var msg = post.querySelector('.post-body-message');
-        if (msg._originalHTML) {
-          msg.innerHTML = msg._originalHTML;
-        }
-      });
+      allPosts.forEach(this.revert.bind(this));
       document.querySelectorAll('.ZU-UA-flag').forEach(function (f) {
         return f.remove();
       });
@@ -719,7 +706,21 @@ var fixUkrSpelling = {
   detect: function detect(txt) {
     return txt.match(/є|Є|ь[іi]|Ь[IІl]/);
   },
-  process: function process(txt) {
+  process: function process(post) {
+    var msg = post.querySelector('.post-body-message');
+    if (this.detect(msg.innerHTML)) {
+      msg._originalHTML = msg.innerHTML;
+      msg.innerHTML = this.processText(msg.innerHTML);
+      post.querySelector('.post-date').insertAdjacentHTML('afterEnd', '<span class="ZU-UA-flag"> 🇺🇦</span>');
+    }
+  },
+  revert: function revert(post) {
+    var msg = post.querySelector('.post-body-message');
+    if (msg._originalHTML) {
+      msg.innerHTML = msg._originalHTML;
+    }
+  },
+  processText: function processText(txt) {
     return txt.replace(/є/g, 'э').replace(/Є/g, 'Э').replace(/ь[іi]/g, 'ы').replace(/Ь[IІl]/g, 'Ы');
   }
 };
@@ -768,11 +769,11 @@ var darkMode = {
     }
   },
   addButton: function addButton() {
-    var _this12 = this;
+    var _this11 = this;
     var buttonsRight = document.querySelector('.headmenu-buttons-right');
     buttonsRight.insertAdjacentHTML('afterbegin', "\n      <div class=\"btn-group\">\n        <button title=\"\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0442\u0435\u043C\u0443\" class=\"btn btn-link ZU-btn-link ZU-toggle-dark-mode\"><i class=\"fa fa-adjust\"></i></button>\n      </div>");
     buttonsRight.querySelector('.ZU-toggle-dark-mode').onclick = function () {
-      return _this12.toggle();
+      return _this11.toggle();
     };
   },
   toggle: function toggle() {
@@ -838,13 +839,13 @@ var settings = {
     localStorage['ZU-settings'] = JSON.stringify(this._);
   },
   init: function init() {
-    var _this13 = this;
+    var _this12 = this;
     var localSettings = LSfetchJSON('ZU-settings') || {},
       allSettings = Object.assign(cloneObj(this.defaults, true), localSettings);
     Object.keys(allSettings).forEach(function (key) {
       var value = allSettings[key];
       if (_typeof(value) !== "object") {
-        Object.defineProperty(_this13, key, {
+        Object.defineProperty(_this12, key, {
           set: function set(val) {
             this._[key] = val;
             if (this.hooks.hasOwnProperty(key)) {
@@ -857,7 +858,7 @@ var settings = {
           }
         });
       }
-      _this13[key] = value;
+      _this12[key] = value;
     });
   }
 };
@@ -1331,7 +1332,7 @@ var router = {
     return app.$bus.emit('refreshContent');
   },
   setupInterceptor: function setupInterceptor() {
-    var _this14 = this;
+    var _this13 = this;
     var doDebug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     app.$router.push = function (route, e, n) {
       var thread, threadID, postID;
@@ -1357,7 +1358,7 @@ var router = {
         && route.params.dir === contentVue.board.dir && !document.querySelector("a[href*=\"/".concat(threadID, "\"]")) // Thread does not exist yet
         ) {
           if (doDebug) console.log('Route intercepted (new thread)');
-          _this14.reload();
+          _this13.reload();
         } else {
           app.$router.history.push(route, e, n);
         }
@@ -1556,7 +1557,7 @@ function handlePost(post) {
     // Add Youtube thumbnail
     youtubeStuff.addThumbs(msg, postData.postVue.post);
     // Fix Ukrainian spelling quirks
-    if (settings.fixUkrSpelling) msg.innerHTML = fixUkrSpelling.process(msg.innerHTML);
+    if (settings.fixUkrSpelling) fixUkrSpelling.process(post);
   }
 }
 function autohidePost(postData, postDOM) {
@@ -1773,12 +1774,12 @@ var settingsPanel = {
     description: "Не использовать анимацию в качестве фона. Имеет смысл только в период нового года (~15 декабря - ~14 января)"
   }],
   install: function install() {
-    var _this15 = this;
+    var _this14 = this;
     var controls = this.controls.filter(function (control) {
       return !control.condition || control.condition();
     });
     document.querySelector('.headmenu').insertAdjacentHTML('beforeEnd', "\n      <div class=\"dropdown-menu ZU-settings-dropdown ZU-dropdown\" id=\"ZU-settings\">\n        <div id=\"ZU-settings-main\" class=\"ZU-top-menu-page\">\n          <ul class=\"ZU-settings-list\">\n            ".concat(controls.reduce(function (htm, control) {
-      return htm + _this15.modules[control.type].build(control);
+      return htm + _this14.modules[control.type].build(control);
     }, ''), "\n          </ul>\n          <button class=\"btn btn-default btn-xs ZU-enter-autohide-top\"><span>\u0410\u0432\u0442\u043E\u0441\u043A\u0440\u044B\u0442\u0438\u0435</span></button>\n        </div>\n        <div id=\"ZU-top-autohide\" class=\"ZU-top-menu-page\" hidden>\n          <div class=\"btn-group\">\n            <button class=\"btn btn-default btn-xs ZU-exit-autohide-top\"><span><i class=\"fa fa-chevron-left\"></i> <i class=\"fa fa-save\"></i> \u041D\u0430\u0437\u0430\u0434</span></button>\n            <!-- button class=\"btn btn-default btn-xs\"><span><i class=\"fa fa-undo\"></i></span></button -->\n          </div>\n          <div class=\"btn-group ZU-autohide-type-switch ZU-radio-btn-group\" data-toggle=\"buttons\">\n            <label class=\"btn btn-xs btn-default active\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"txt\" autocomplete=\"off\" checked> \u0422\u0435\u043A\u0441\u0442\n            </label>\n            <label class=\"btn btn-xs btn-default\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"img\" autocomplete=\"off\"> \u041A\u0430\u0440\u0442\u0438\u043D\u043A\u0438\n            </label>\n          </div>\n          <br>\n          <textarea id=\"ZU-autohide-text\" cols=\"30\" rows=\"10\" class=\"form-control ZU-autohide-content\"></textarea>\n          <div id=\"ZU-autohide-images\" class=\"ZU-autohide-content\" hidden>\n            ").concat(autohideAtt.getListHTML(), "\n          </div>\n        </div>\n      </div>"));
     var spellsVal = settings.autohide.map(function (spell) {
         return _typeof(spell) === 'object' ? "/".concat(spell.source, "/").concat(spell.flags) : spell;
@@ -1802,7 +1803,7 @@ var settingsPanel = {
     });
     controls.forEach(function (control) {
       if (state.condition && !state.condition()) return;
-      var allEvents = Object.assign(Object.create(_this15.modules[control.type].events || {}), control.events || {}),
+      var allEvents = Object.assign(Object.create(_this14.modules[control.type].events || {}), control.events || {}),
         controlDOM = document.querySelector("#ZU-SP-".concat(control.id));
       if (!controlDOM) return;
       var _loop = function _loop(eventName) {
@@ -1957,10 +1958,10 @@ if (!Array.prototype.includes) {
 ;
 [Element.prototype, Text.prototype].forEach(function (e) {
   e.matches || (e.matches = e.matchesSelector || function (selector) {
-    var _this16 = this;
+    var _this15 = this;
     var matches = document.querySelectorAll(selector);
     return Array.prototype.some.call(matches, function (e) {
-      return e === _this16;
+      return e === _this15;
     });
   });
   e.findParent = function (selector) {
@@ -2274,11 +2275,11 @@ function fancyResizeXfade(container, hide, show) {
 var formOnZeroPage = {
   defaultBoard: 'b',
   init: function init() {
-    var _this17 = this;
+    var _this16 = this;
     var buttonsRight = document.querySelector('.headmenu-buttons-right');
     buttonsRight.insertAdjacentHTML('afterbegin', "\n      <div class=\"btn-group\">\n        <button type=\"button\" class=\"btn btn-primary ZU-toggleNewThreadForm\"><i class=\"fa fa-pencil-square-o\"></i> \n          <span class=\"btn-caption hidden-xs\">\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0442\u0440\u0435\u0434</span>\n        </button>\n      </div>");
     buttonsRight.querySelector('.ZU-toggleNewThreadForm').onclick = function () {
-      return _this17.toggleNewThreadForm();
+      return _this16.toggleNewThreadForm();
     };
     // prevent title replacement
     var title = document.querySelector('.headmenu-title'),
@@ -2296,7 +2297,7 @@ var formOnZeroPage = {
     }).forEach(function (board) {
       var name = board.name.length > 40 ? board.name.slice(0, 40 - 3) + '...' : board.name,
         opt = "<option value=\"".concat(board.dir, "\">").concat(board.dir, " \u2014 ").concat(name, "</option>");
-      if (board.dir == settings.selectedBoard && settings.selectedBoard != _this17.defaultBoard) optSel = opt;else if (board.dir == _this17.defaultBoard) optDefault = opt;else opts += opt;
+      if (board.dir == settings.selectedBoard && settings.selectedBoard != _this16.defaultBoard) optSel = opt;else if (board.dir == _this16.defaultBoard) optDefault = opt;else opts += opt;
     });
     sel += optSel + optDefault + opts + '</select>';
     document.querySelector('.new-thread-form .btn-primary').insertAdjacentHTML('afterEnd', sel);
@@ -2322,22 +2323,22 @@ var textSteganography = {
     return String.fromCharCode(n);
   }),
   encode: function encode(txt) {
-    var _this18 = this;
+    var _this17 = this;
     return txt.split('').map(function (_char) {
       return _char.charCodeAt(0).toString(4).split('').map(function (digit) {
-        return _this18.charMap[digit];
+        return _this17.charMap[digit];
       }).join('');
     }).join(this.charMap[4]);
   },
   decode: function decode(htm) {
-    var _this19 = this;
+    var _this18 = this;
     var startTag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
     var endTag = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
     var safe = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
     return htm.replace(/[\u200b\u200c\u200d\u200e\u200f]+/g, function (match) {
-      var decoded = match.split(_this19.charMap[4]).map(function (chars) {
+      var decoded = match.split(_this18.charMap[4]).map(function (chars) {
         return String.fromCharCode(parseInt(chars.split('').map(function (_char2) {
-          return _this19.charMap.indexOf(_char2);
+          return _this18.charMap.indexOf(_char2);
         }).join(''), 4));
       }).join('');
       if (safe) {

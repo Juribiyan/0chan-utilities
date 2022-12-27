@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.1.0
+// @version      3.1.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -817,29 +817,31 @@ var fixUkrSpelling = {
   toggle: function(on) {
     let allPosts = document.querySelectorAll('.post')
     if (on) {
-      allPosts.forEach(post => {
-        let msg = post.querySelector('.post-body-message')
-        if (this.detect(msg.innerHTML)) {
-          msg._originalHTML = msg.innerHTML
-          msg.innerHTML = this.process(msg.innerHTML)
-          post.querySelector('.post-date').insertAdjacentHTML('afterEnd', '<span class="ZU-UA-flag"> 🇺🇦</span>')
-        }
-      })
+      allPosts.forEach(this.process.bind(this))
     }
     else {
-      allPosts.forEach(post => {
-        let msg = post.querySelector('.post-body-message')
-        if (msg._originalHTML) {
-          msg.innerHTML = msg._originalHTML
-        }
-      })
+      allPosts.forEach(this.revert.bind(this))
       document.querySelectorAll('.ZU-UA-flag').forEach(f => f.remove())
     }
   },
   detect: function(txt) {
     return txt.match(/є|Є|ь[іi]|Ь[IІl]/)
   },
-  process: function(txt) {
+  process: function(post) {
+    let msg = post.querySelector('.post-body-message')
+    if (this.detect(msg.innerHTML)) {
+      msg._originalHTML = msg.innerHTML
+      msg.innerHTML = this.processText(msg.innerHTML)
+      post.querySelector('.post-date').insertAdjacentHTML('afterEnd', '<span class="ZU-UA-flag"> 🇺🇦</span>')
+    }
+  },
+  revert: function(post) {
+    let msg = post.querySelector('.post-body-message')
+    if (msg._originalHTML) {
+      msg.innerHTML = msg._originalHTML
+    }
+  },
+  processText: function(txt) {
     return txt
       .replace(/є/g, 'э')
       .replace(/Є/g, 'Э')
@@ -1726,7 +1728,7 @@ function handlePost(post) {
     youtubeStuff.addThumbs(msg, postData.postVue.post)
     // Fix Ukrainian spelling quirks
     if(settings.fixUkrSpelling)
-      msg.innerHTML = fixUkrSpelling.process(msg.innerHTML)
+      fixUkrSpelling.process(post)
   }
 }
 
