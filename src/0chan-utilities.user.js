@@ -755,56 +755,58 @@ var youtubeStuff = {
   },
   addThumbs: function(msg, post) {
     let existingCodes = []
-    msg.querySelectorAll('a').forEach(a => {
-      let match = a.href.match(this.jumboRegExp)
-      , svc = this.instances[this.selectedInstance]
-      if (match) {
-        let code = match[2]
-        if (existingCodes.length <= 5 && !~existingCodes.indexOf(code)) {
-          // TODO: check if valid video!
-          post.attachments.push({
-            embed: {
-              embedId: code,
-              // TODO: let user choose what instance to embed!
-              html: `<div class="embed" aspect="16:9"><iframe src="${svc.url}embed/${code}?autoplay=1" frameborder="0" scrolling="no" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`,
-              service: "youtube",
-              title: ""
-            },
-            images: {
-              thumb_100px: {
-                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
-                height: `150`,
-                width: `200`,
-                name: `youtube-${code}-200.jpg` // vendor script demands it
+    if (!post.attachments.find(att => att.embed)) { // prevent repeated embedding bug
+      msg.querySelectorAll('a').forEach(a => {
+        let match = a.href.match(this.jumboRegExp)
+        , svc = this.instances[this.selectedInstance]
+        if (match) {
+          let code = match[2]
+          if (existingCodes.length <= 5 && !~existingCodes.indexOf(code)) {
+            // TODO: check if valid video!
+            post.attachments.push({
+              embed: {
+                embedId: code,
+                // TODO: let user choose what instance to embed!
+                html: `<div class="embed" aspect="16:9"><iframe src="${svc.url}embed/${code}?autoplay=1" frameborder="0" scrolling="no" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`,
+                service: "youtube",
+                title: ""
               },
-              thumb_200px: {
-                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
-                height: `150`,
-                width: `200`,
-                name: `youtube-${code}-200.jpg` // vendor script demands it
+              images: {
+                thumb_100px: {
+                  url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                  height: `150`,
+                  width: `200`,
+                  name: `youtube-${code}-200.jpg` // vendor script demands it
+                },
+                thumb_200px: {
+                  url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                  height: `150`,
+                  width: `200`,
+                  name: `youtube-${code}-200.jpg` // vendor script demands it
+                },
+                thumb_400px: {
+                  url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                  height: `150`,
+                  width: `200`,
+                  name: `youtube-${code}-200.jpg` // vendor script demands it
+                },
+                original: {
+                  url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
+                  height: `150`,
+                  width: `200`,
+                  name: `youtube-${code}-200.jpg` // vendor script demands it
+                }
               },
-              thumb_400px: {
-                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
-                height: `150`,
-                width: `200`,
-                name: `youtube-${code}-200.jpg` // vendor script demands it
-              },
-              original: {
-                url: `https://img.youtube.com/vi/${code}/hqdefault.jpg`,
-                height: `150`,
-                width: `200`,
-                name: `youtube-${code}-200.jpg` // vendor script demands it
-              }
-            },
-            id: `youtube-${code}`,
-            isDeleted: false,
-            isNsfw: false,
-            isPublished: true
-          })
-          existingCodes.push(code)
+              id: `youtube-${code}`,
+              isDeleted: false,
+              isNsfw: false,
+              isPublished: true
+            })
+            existingCodes.push(code)
+          }
         }
-      }
-    })
+      })
+    }
   }
 }
 
