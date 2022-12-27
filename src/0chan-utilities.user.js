@@ -755,7 +755,7 @@ var youtubeStuff = {
   },
   addThumbs: function(msg, post) {
     let existingCodes = []
-    if (!post.attachments.find(att => att.embed)) { // prevent repeated embedding bug
+    if (!post.attachments.find(att => att?.embed?.service=='youtube')) { // prevent repeated embedding bug
       msg.querySelectorAll('a').forEach(a => {
         let match = a.href.match(this.jumboRegExp)
         , svc = this.instances[this.selectedInstance]
