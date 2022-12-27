@@ -10,7 +10,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.1.1
+// @version      3.1.2
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -629,7 +629,7 @@ var youtubeStuff = {
   addThumbs: function addThumbs(msg, post) {
     var _this10 = this;
     var existingCodes = [];
-    if (!post.attachments.find(function (att) {
+    if (!(post !== null && post !== void 0 && post.attachments) || !post.attachments.find(function (att) {
       var _att$embed;
       return (att === null || att === void 0 ? void 0 : (_att$embed = att.embed) === null || _att$embed === void 0 ? void 0 : _att$embed.service) == 'youtube';
     })) {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.1.1
+// @version      3.1.2
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -758,7 +758,7 @@ var youtubeStuff = {
   },
   addThumbs: function(msg, post) {
     let existingCodes = []
-    if (!post.attachments.find(att => att?.embed?.service=='youtube')) { // prevent repeated embedding bug
+    if (!(post?.attachments) || !post.attachments.find(att => att?.embed?.service=='youtube')) { // prevent repeated embedding bug
       msg.querySelectorAll('a').forEach(a => {
         let match = a.href.match(this.jumboRegExp)
         , svc = this.instances[this.selectedInstance]
