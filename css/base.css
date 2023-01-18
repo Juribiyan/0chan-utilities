@@ -500,3 +500,221 @@ span.ZU-hide-board-by-op {
 .post-img-full {
   max-width: 100%;
 }
+
+/* -------------- YOBA media previews -------------- */
+.mv-container {
+  display: block;
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+}
+.media-viewer {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  user-select: none;
+}
+.media-viewer {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+.mvc-collapsed .mv-label {
+  display: none;
+}
+.mvc-collapsed .media-viewer {
+  background-color: transparent;
+}
+.mv-transparent/* , .mv-collapsed */ {
+  background-color: transparent;
+  pointer-events: none;
+}
+.media-viewer .media-item {
+  transition-property: transform;
+  transition-duration: .25s;
+  transform-origin: center;
+  transform: none;
+  max-width: 100%;
+  max-height: 100%;
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  pointer-events: all;
+}
+.mv-label {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  color: white;
+  padding: 2px 8px;
+  background: #00000030;
+  border-radius: 30px;
+  transform: translate(-50%, 0);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 1.5s;
+}
+.mv-label.mvl-visible {
+  opacity: 1;
+  transition-duration: .15s;
+}
+.mv-button {
+  cursor: pointer;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.4);
+  width: 80px;
+  opacity: 0;
+  transition: opacity .2s;
+  z-index: 2;
+}
+.mv-button:hover {
+  opacity: 1;
+}
+.mv-prev {
+  left: 0;
+  height: 100%;
+  top: 0;
+  background: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.4) 100%);
+}
+.mv-next {
+  right: 0;
+  height: 100%;
+  background: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 100%);
+}
+.mv-prev-next::before {
+  content: '';
+  width: 33px;
+  height: 33px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(0px, -50%) rotate(-45deg);
+  border-top: 2px solid white;
+  border-left: 2px solid white;
+  box-sizing: border-box;
+  transition: transform .2s;
+  box-shadow: -2px -2px 2px 0px rgb(0 0 0 / 40%), inset 2px 2px 2px 0px rgb(0 0 0 / 40%);
+}
+.mv-prev:hover::before {
+  transform: translate(-18px, -50%) rotate(-45deg);
+}
+.mv-next::before {
+  transform: translate(-33px, -50%) rotate(135deg);
+}
+.mv-next:hover::before {
+  transform: translate(-16px, -50%) rotate(135deg);
+}
+.mv-close {
+  height: 80px;
+  top: 0;
+  right: 0;
+}
+.mv-close::before, .mv-close::after {
+  content: '';
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  box-sizing: border-box;
+  transition: transform .2s;
+}
+.mv-close::before {
+  left: 50%;
+  top: 55px;
+  transform: translate(-5px, -50%) rotate(-45deg);
+  border-top: 2px solid #ffffff;
+}
+.mv-close::after {
+  left: 50%;
+  top: 29px;
+  transform: translate(-5px, -50%) rotate(-45deg);
+  border-left: 2px solid #ffffff;
+}
+.mv-restore {
+  height: 80px;
+  left: 0;
+  top: 0;
+}
+.mv-restore::before, .mv-restore::after {
+  content: '';
+  width: 26px;
+  height: 26px;
+  border: 2px solid #fff;
+  position: absolute;
+  left: 22px;
+  top: 26px;
+}
+.mv-restore::after {
+  transform: translate(8px, -6px);
+  border-bottom: none;
+  border-left: none;
+}
+.media-item img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: scale-down;
+}
+.mv-under {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+  top: 0;
+}
+.mv-over {
+  display: none;
+  position: relative;
+  z-index: 2;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+.loaded .mv-over {
+  display: block;
+}
+.media-item::before {
+  content: '';
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 100%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.4), inset 0 0 0 3px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.8) rgba(255, 255, 255, 0.8) rgba(0, 0, 0, 0.4) rgba(0, 0, 0, 0.4);
+  animation: c-spin 0.7s infinite linear;
+}
+.media-item.loaded::before {
+  content: none;
+}
+.placeholder-svg {
+  pointer-events: none;
+}
+.no-transition {
+  transition: none!important;
+}
+.ZU-thumb-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+@keyframes c-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}

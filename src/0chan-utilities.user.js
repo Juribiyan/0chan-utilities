@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.1.2
+// @version      3.2.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -25,7 +25,7 @@
 // @include      http://nullchan.i2p/*
 // @grant        GM_getResourceText
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
-// @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/base.css?v=3-0-11
+// @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/media-viewer/css/base.css?v=3-2-0
 // @resource     darkCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/dark.css?v=4
 // @resource     catalogCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/catalog.css
 // ==/UserScript==
@@ -387,11 +387,11 @@ var autohide = {
     return !!this.expressions.find(exp => str.match(exp))
   },
   checkReferenceCount: function(postVue) {
-  	return (this.referenceLimit > 0 && postVue.post && postVue.post.referencesToIds.length >= this.referenceLimit)
+    return (this.referenceLimit > 0 && postVue.post && postVue.post.referencesToIds.length >= this.referenceLimit)
   },
   updateReferenceLimit: function(val) {
-  	this.referenceLimit = val
-  	reAutohidePosts()
+    this.referenceLimit = val
+    reAutohidePosts()
   },
   expressions: [],
   awaitInstall: function() {
@@ -919,6 +919,307 @@ var darkMode = {
 }
 darkMode.init() // must be called ahead of time to prevent flashes
 
+class MediaViewer {
+  static handleAttachment(fig) {
+    if (fig.__vue__.attachment.embed || fig.querySelector('.ZU-thumb-overlay')) return;
+    let thumb = fig.querySelector('.post-img-thumbnail')
+    , link = fig.querySelector('a')
+    // add an overlay to prevent expanding
+    link._ins('afterend', `<a href="${link.href}" target="_blank" class="ZU-thumb-overlay"></a>`)
+    .addEventListener('click', function(ev) {
+      ev.preventDefault()
+      let mv = new MediaViewer(thumb, ...MediaViewer.parseFigure(fig))
+      mv.onCollapse = () => mv = null
+    })
+  }
+  static toggle(off) {
+    let allFigs = document.querySelectorAll('figure.post-img').forEach(fig => {
+      let ov = fig.querySelector('.ZU-thumb-overlay')
+      if (!off) {
+        if (! ov)
+          MediaViewer.handleAttachment(fig)
+      }
+      else {
+        if (ov)
+         ov.remove()
+      }
+    })
+  }
+  static parseFigure(fig) {
+    let fv = fig.__vue__
+    let orig = fv.attachment.images.original
+    , actual = fv.actualImage
+    return [orig.url, actual.url, orig.width, orig.height, actual.width, actual.height]
+  }
+  constructor(thumb, imgurl, thumburl, imgw, imgh, thumbw, thumbh) {
+    this.initZoom()
+    this.createContainer()
+    this.resetTransform()
+    // TODO: pin the popup somehow (currently unable to do it)
+    let thBCR = thumb.getBoundingClientRect()
+    , thumb_x = thBCR.x, thumb_y = thBCR.y, thumb_w = thBCR.width, thumb_h = thBCR.height
+    , win_w = this.viewer.clientWidth, win_h = this.viewer.clientHeight
+    , scaleDownFactor = Math.min(win_w / imgw, win_h / imgh, 1)
+    , pre_w = imgw * scaleDownFactor, pre_h = imgh * scaleDownFactor
+    , visibleMarginX = (win_w-pre_w)/2, visibleMarginY = (win_h-pre_h)/2
+    , mi_w = Math.min(win_w, imgw), mi_h = Math.min(win_h, imgh)
+    , screenScaleDownFactor = thumb_w/pre_w
+    , transX = (thumb_x + thumb_w/2) - win_w/2, transY = (thumb_y + thumb_h/2) - win_h/2
+    , trans = `style="transform: translate(${transX}px, ${transY}px) scale(${screenScaleDownFactor})"`
+    , me = this.viewer._ins('afterBegin', this.createMediaElement(thumb.src, imgw, imgh, imgurl, trans))
+    this.refreshList()
+    this.currentThumb = thumb
+    thumb.style.visibility = 'hidden'
+    this.updateCounter()
+    this.showPercentage(scaleDownFactor)
+    me._scaleDownFactor = scaleDownFactor
+    this.currentMediaItem = me
+    me._realWidth = imgw
+    this.imgw = imgw
+    this.imgh = imgh
+    document.body.style.overflow = 'hidden'
+    requestAnimationFrame(() => {
+      this.container.classList.remove('mvc-collapsed')
+      me.style.transform = null
+    })
+  }
+  refreshList() {
+    this.list = [].filter.call(document.querySelectorAll('figure.post-img'), fig => !fig.__vue__.attachment.embed)
+    .map(fig => fig.querySelector('.post-img-thumbnail'))
+  }
+  findIndex(thumb) {
+    return Array.prototype.findIndex.call(this.list, e => e==thumb)
+  }
+  // Container
+  createContainer() {
+    this.container = document.body._ins('beforeend', `<div class="mv-container mvc-collapsed">
+    <div class="media-viewer">
+      <div class="mv-label">
+        <span class="item-counter"></span>
+        <span class="scale-indicator"></span>
+      </div>
+      <div class="mv-button mv-prev-next mv-prev"></div>
+      <div class="mv-button mv-prev-next mv-next"></div>
+      <div class="mv-button mv-restore"></div>
+      <div class="mv-button mv-close"></div>
+    </div></div>`)
+    this.viewer = this.container.querySelector('.media-viewer')
+    this.viewer.addEventListener('wheel', this.handleZoom.bind(this))
+    this.viewer.addEventListener('mousemove', ev => {
+      this.mouseX = ev.clientX
+      this.mouseY = ev.clientY
+      if (this.isMouseDown) {
+        this.handleDrag()
+      }
+    })
+    this.viewer.addEventListener('mousedown', ev => {
+      this.gripX = ev.clientX
+      this.gripY = ev.clientY
+      this.isMouseDown = true
+      if (ev.target.classList.contains('media-viewer') || ev.target.classList.contains('mv-under'))
+        this.emptyClick = true
+    })
+    this.viewer.addEventListener('click', ev=> {
+      if (this.isDragged) {
+        this.isDragged = false
+        ev.preventDefault()
+      }
+    })
+    this.viewer.addEventListener('mouseup', ev => {
+      this.isMouseDown = false
+      this.currentMediaItem.classList.remove('no-transition')
+      if (this.isDragged) {
+        ev.preventDefault()
+      }
+      else if (ev.button == 0) {
+        this.collapse()
+      }
+      this.emptyClick = false
+    })
+    this.viewer.addEventListener('dragstart', ev => {
+      ev.preventDefault()
+      ev.stopPropagation()
+    })
+    this.viewer.querySelectorAll('.mv-button').forEach(pnb => {
+      pnb.addEventListener('click', ev => {
+        ev.stopPropagation()
+        this.refreshList()
+        let index = this.findIndex(this.currentThumb)
+        if (pnb.classList.contains('mv-prev') || pnb.classList.contains('mv-next')) {
+          if (pnb.classList.contains('mv-prev')) {
+            index -= 1
+            if (index < 0)
+              index = this.list.length-1
+          }
+          else  {
+            index += 1
+            if (index >= this.list.length)
+              index = 0
+          }
+          this.switchItem(this.list[index])
+        }
+        else if (pnb.classList.contains('mv-close')) {
+          this.collapse()
+        }
+        else if (pnb.classList.contains('mv-restore')) {
+          this.toggleFullSize(0)
+        }
+      })
+      ;['mouseup', 'mousedown'].forEach(evt => pnb.addEventListener(evt, ev => ev.stopPropagation()))
+    })
+    this.viewer.addEventListener('mouseleave', ev => {
+      this.isMouseDown = false
+      this.isDragged = false
+    })
+  }
+  // Managing transforms
+  applyTransform() {
+    let me = this.currentMediaItem
+    if (!me) return;
+    me.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`
+  }
+  resetTransform() {
+    this.translateX = 0
+    this.translateY = 0
+    this.scale = 1
+  }
+  // Zooming
+  initZoom() {
+    this.zoomAmount = 0.5
+    this.minScale = 0.1
+    this.zoomSteps = [0.1, 0.25, 0.33, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]
+  }
+  handleZoom(ev) {
+    let me = this.currentMediaItem
+    if (!me) return;
+    ev.stopPropagation()
+    ev.preventDefault()
+    let dir = -Math.sign(ev.deltaY)
+    , initialScale = 1/me._scaleDownFactor
+    , zSteps = Array.from(this.zoomSteps)
+      .filter(z => Math.abs((z-initialScale)/initialScale) > 0.1) // Remove zoom steps that are close to (real) 100%
+      .concat([initialScale]) // Add a (real) 100% step
+    , centerX = this.viewer.clientWidth / 2 + this.translateX
+    , centerY = this.viewer.clientHeight / 2 + this.translateY
+    , newScale = zSteps.map(z => z - this.scale).filter(z => z*dir > 0) // Pick only the steps in the needed direction
+      .sort((a,b) => (a-b)*dir)[0] + this.scale // Find the closest step
+    if (!isNaN(newScale)) { // It may be NaN in case when minimum or maximum zoom amount is achieved
+      this.showPercentage(me._scaleDownFactor * newScale)
+      this.translateX += (centerX - this.mouseX)/this.scale * (newScale-this.scale)
+      this.translateY += (centerY - this.mouseY)/this.scale * (newScale-this.scale)
+      this.scale = newScale
+      this.applyTransform()
+      this.flashLabel()
+    }
+  }
+  showPercentage(scale) {
+    this.viewer.querySelector('.scale-indicator').innerText = `| ${Math.round(scale * 100)}%`
+  }
+  // Dragging
+  handleDrag(ev) {
+    let me = this.currentMediaItem
+    if (!me) return;
+    let dx = this.mouseX - this.gripX
+    , dy = this.mouseY - this.gripY
+    if (dx != 0 || dy != 0) {
+      if (!this.isDragged) {
+        this.currentMediaItem.classList.add('no-transition')
+        this.isDragged = true
+        this.initialTransX = this.translateX
+        this.initialTransY = this.translateY
+      }
+      this.translateX = this.initialTransX+dx
+      this.translateY = this.initialTransY+dy
+      this.applyTransform()
+    }
+  }
+  // Switching
+  switchItem(thumb) {
+    let fig = thumb.findParent('figure')
+    , [imgurl, thumburl, imgw, imgh, thumbw, thumbh] = MediaViewer.parseFigure(fig)
+    , win_w = this.viewer.clientWidth, win_h = this.viewer.clientHeight
+    , scaleDownFactor = Math.min(win_w / imgw, win_h / imgh, 1)
+    this.showPercentage(scaleDownFactor)
+    this.resetTransform()
+    this.applyTransform()
+    this.currentMediaItem._scaleDownFactor = scaleDownFactor
+    this.currentMediaItem.classList.remove('no-transition')
+    this.currentMediaItem.innerHTML = this.createMediaElement(thumb.src, imgw, imgh, imgurl, null)
+    this.currentThumb.style.visibility = 'visible'
+    thumb.style.visibility = 'hidden'
+    this.currentThumb = thumb
+    this.updateCounter()
+    this.refreshList()
+  }
+  updateCounter() {
+    let index = this.findIndex(this.currentThumb)
+    this.viewer.querySelector('.item-counter').innerText = `${index+1}/${this.list.length}`
+    this.flashLabel()
+  }
+  flashLabel() {
+    clearTimeout(this.flashLabelTimeout)
+    this.viewer.querySelector('.mv-label').classList.add('mvl-visible')
+    this.flashLabelTimeout = setTimeout(() => this.viewer.querySelector('.mv-label').classList.remove('mvl-visible'), 1000)
+  }
+  // Closing
+  collapse() {
+    document.body.style.overflow = ''
+    let me = this.currentMediaItem
+    , mi_w = me.clientWidth, mi_h = me.clientHeight
+    , svg = me.querySelector('.placeholder-svg')
+    , resizeFactor = Math.min(this.viewer.clientHeight/svg.naturalHeight, this.viewer.clientWidth/svg.naturalWidth)
+    this.isDragged = false
+    if (resizeFactor < 1) {
+      mi_w = svg.naturalWidth * resizeFactor
+      mi_h = svg.naturalHeight * resizeFactor
+    }
+    let offScreen = true, transform = ''
+    if (document.body.contains(this.currentThumb)) {
+      let thumbBCR = this.currentThumb.getBoundingClientRect()
+      offScreen = !(
+        thumbBCR.y < window.innerHeight
+        &&
+        (thumbBCR.y + thumbBCR.height) > 0
+        &&
+        thumbBCR.x < window.innerWidth
+        &&
+        (thumbBCR.x + thumbBCR.width) > 0
+      )
+      if (!offScreen) {
+        let transX = (thumbBCR.x + thumbBCR.width/2) - this.viewer.clientWidth/2
+        , transY = (thumbBCR.y + thumbBCR.height/2) - this.viewer.clientHeight/2
+        me.style.transform = `translate(${transX}px, ${transY}px) scale(${thumbBCR.width/mi_w})`
+      }
+    }
+    if (offScreen) {
+      me.style.transform = `scale(0)`
+    }
+    me.classList.remove('no-transition')
+    this.container.classList.add('mvc-collapsed')
+    setTimeout(() => {
+      this.container.remove()
+      this.currentThumb.style.visibility = 'visible'
+      if (this.onCollapse) this.onCollapse()
+    }, 250)
+  }
+  // Full screen on and off
+  toggleFullSize(on) {
+    document.body.style.overflow = on ? 'hidden' : ''
+    if (on)
+      this.viewer.classList.remove('mv-transparent')
+    else
+      this.viewer.classList.add('mv-transparent')
+  }
+  // Media element within container
+  createMediaElement(underImageSrc, imgw, imgh, imgurl, trans='') {
+    return `<div class="media-item" ${trans}>
+      <div style="background-image: url(${underImageSrc}); max-width: ${imgw}px" class="mv-under"></div>
+      <img src="${imgurl}" class="mv-over" onload="this.parentElement.classList.add('loaded')">
+      <img class="placeholder-svg" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width='${imgw}' height='${imgh}'%2F%3E">
+    </div>`
+  }
+}
+
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -943,7 +1244,8 @@ var settings = {
     selectedBoard: 'b',
     selectedInstance: 0,
     darkMode: darkMode.enabledByDefault,
-    fixUkrSpelling: true
+    fixUkrSpelling: true,
+    legacyMediaViewer: false
   },
   _: {},
   hooks: {
@@ -959,7 +1261,8 @@ var settings = {
     nullColor: NullRestyler.setValues.bind(NullRestyler),
     turnOffSnow: desnower.toggle.bind(desnower),
     selectedInstance: youtubeStuff.changeInstance.bind(youtubeStuff),
-    fixUkrSpelling: fixUkrSpelling.toggle.bind(fixUkrSpelling)
+    fixUkrSpelling: fixUkrSpelling.toggle.bind(fixUkrSpelling),
+    legacyMediaViewer: MediaViewer.toggle.bind(MediaViewer)
   },
   save: function() {
     this._.hiddenBoards = this.hiddenBoards
@@ -1073,8 +1376,6 @@ const boardHider = {
     settings.save()
   }
 }
-
-
 
 var eventDispatcher = {
   click: function(e) {
@@ -1202,17 +1503,18 @@ var eventDispatcher = {
     // Hiding/unhiding selection in stegospoiler
     let shs = e.path.find(el => el.classList && el.classList.contains('ZU-hide-selection'))
     if (shs) {
-    	textSteganography.hideSelection(shs.findParent('.reply-form').querySelector('textarea'))
+      textSteganography.hideSelection(shs.findParent('.reply-form').querySelector('textarea'))
     }
     let srs = e.path.find(el => el.classList && el.classList.contains('ZU-remove-spoilers'))
     if (srs) {
-    	textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'))
+      textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'))
     }
     // Collapsed references uncollapsing
     let expRef = e.path.find(el => el.classList && el.classList.contains('ZU-expand-refs'))
     if (expRef) {
       referenceCollapsing.expand(expRef.findParent('.post'))
     }
+    // Thumbnail expanding
   },
   mousedown: function(e) {
     // Quote on reply
@@ -1329,11 +1631,11 @@ function mentionPost(post) {
 }
 
 function touchTextarea(textarea) {
-	textarea.dispatchEvent(new Event('input', {
-	  'bubbles': true,
-	  'cancelable': true
-	}))
-	textarea.focus()
+  textarea.dispatchEvent(new Event('input', {
+    'bubbles': true,
+    'cancelable': true
+  }))
+  textarea.focus()
 }
 
 function getSelection() {
@@ -1388,6 +1690,7 @@ function expandThread(threadDOM) {
   })
   .catch(handleNetworkError)
 }
+
 function updateThread(thread) {
   let threadVue, threadID, lastReplyID
   if (thread instanceof Element) {
@@ -1414,7 +1717,6 @@ function updateThread(thread) {
   })
   .catch(handleNetworkError)
 }
-
 
 const router = {
   push: function(path) {
@@ -1499,7 +1801,7 @@ function setupAlertInterceptor() {
       fuckCF(e, anusAlert, s)
     }
     else if (n.type === 'error' && n.text.indexOf('api/attachment/embed?url=youtube.com')!== -1) {
-    	document.querySelector('textarea:focus').findParent('.reply-form').__vue__.uploading = 0
+      document.querySelector('textarea:focus').findParent('.reply-form').__vue__.uploading = 0
     }
     else {
       this.alerts.unshift(n),
@@ -1579,10 +1881,9 @@ function handleReplyForm(form) {
   }
   // Add stegospoiler button
   form.querySelector('.reply-form-limit-counter').insertAdjacentHTML('beforeBegin', 
-  	`<button class="btn btn-xs btn-default ZU-hide-selection" title="Спрятать выделенный текст"><i class="fa fa-eye-slash"></i></button>
-  	 <button class="btn btn-xs btn-default ZU-remove-spoilers" title="Убрать спойлеры"><i class="fa fa-eye"></i></button> `)
+    `<button class="btn btn-xs btn-default ZU-hide-selection" title="Спрятать выделенный текст"><i class="fa fa-eye-slash"></i></button>
+     <button class="btn btn-xs btn-default ZU-remove-spoilers" title="Убрать спойлеры"><i class="fa fa-eye"></i></button> `)
 }
-
 
 function addSettingsButtons() {
   let showCatBtn = catalog.isApplicable
@@ -1723,7 +2024,7 @@ function handlePost(post) {
   let msg = post.querySelector('.post-body-message')
   if (msg) {
     // Stegospoilers
-  	msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true/* ← safe */)
+    msg.innerHTML = textSteganography.decode(msg.innerHTML, '<mark class="ZU-SSS">', '</mark>', true/* ← safe */)
     // Add Youtube thumbnail
     youtubeStuff.addThumbs(msg, postData.postVue.post)
     // Fix Ukrainian spelling quirks
@@ -1756,26 +2057,24 @@ function autohidePost(postData, postDOM) { // TODO: prevent hiding thread inside
 }
 
 referenceCollapsing = {
-	minPostsToCollapse: 5,
-	postsToDisplay: 3,
-	expand: function(post) {
-		post.querySelector('.ZU-good-ref-block').remove()
-		post.querySelector('.ZU-bad-ref-block').hidden = false
-	}
-}
-
-function collapseReferences(postData, postDOM) {
-	
+  minPostsToCollapse: 5,
+  postsToDisplay: 3,
+  expand: function(post) {
+    post.querySelector('.ZU-good-ref-block').remove()
+    post.querySelector('.ZU-bad-ref-block').hidden = false
+  }
 }
 
 function handleAttachment(att) {
   autohideAtt.addButton(att)
+  if (! settings.legacyMediaViewer) {
+    MediaViewer.handleAttachment(att)
+  }
 }
 
 function reAutohidePosts() {
   [].forEach.call(document.querySelectorAll('.post'), post => autohidePost(getPostDataFromDOM(post)))
 }
-
 
 function repositionPopup(popup) {
   let left = + popup.style.left.replace('px', '')
@@ -1939,6 +2238,12 @@ var settingsPanel = {
       description: "Производить замену «є»→«э», «ьi»→«ы»"
     },
     {
+      type: 'checkbox',
+      id: 'legacyMediaViewer',
+      title: "Дефолтный просмотрщик медиа",
+      description: "Использовать оригинальный просмотрщик медиа"
+    },
+    {
       type: 'slider',
       id: 'updateInterval',
       title: "Период обновления треда",
@@ -2034,7 +2339,6 @@ var settingsPanel = {
     })
   }
 }
-
 
 var ZURouter = {
   currentRoute: 'initial',
@@ -2318,18 +2622,18 @@ function start() {
     forAllNodes([{
       selector: '.post-referenced-by',
       fn: badRefBlock => {
-      	let links = badRefBlock.children
-      	if (links.length >= referenceCollapsing.minPostsToCollapse) {
-	      	goodRefBlock = badRefBlock.cloneNode(true)
-	      	badRefBlock.hidden = true
-	      	badRefBlock.classList.add('ZU-bad-ref-block')
-	      	goodRefBlock.classList.add('ZU-good-ref-block')
-      		while (goodRefBlock.children.length > referenceCollapsing.postsToDisplay) {
-      			goodRefBlock.lastChild.remove()
-      		}
-      		goodRefBlock.lastChild.insertAdjacentHTML('beforeend', `<a class="ZU-expand-refs"> и ещё ${links.length - referenceCollapsing.postsToDisplay}...</a>`)
-      		badRefBlock.parentElement.appendChild(goodRefBlock)
-      	}
+        let links = badRefBlock.children
+        if (links.length >= referenceCollapsing.minPostsToCollapse) {
+          goodRefBlock = badRefBlock.cloneNode(true)
+          badRefBlock.hidden = true
+          badRefBlock.classList.add('ZU-bad-ref-block')
+          goodRefBlock.classList.add('ZU-good-ref-block')
+          while (goodRefBlock.children.length > referenceCollapsing.postsToDisplay) {
+            goodRefBlock.lastChild.remove()
+          }
+          goodRefBlock.lastChild.insertAdjacentHTML('beforeend', `<a class="ZU-expand-refs"> и ещё ${links.length - referenceCollapsing.postsToDisplay}...</a>`)
+          badRefBlock.parentElement.appendChild(goodRefBlock)
+        }
       }
     } 
     ], document.querySelector('#content'), {subtree: true, queryChildren: true})
@@ -2529,21 +2833,21 @@ var formOnZeroPage = {
     , opts = '', optSel = '', optDefault = ''
     document.querySelector('#sidebar').__vue__.boardList.slice().sort((a,b) => a.dir < b.dir ? -1 : 1)
     .forEach(board => {
-    	let name = board.name.length > 40 ? board.name.slice(0,40-3)+'...' : board.name
-    	, opt = `<option value="${board.dir}">${board.dir} — ${name}</option>`
-    	if (board.dir == settings.selectedBoard && settings.selectedBoard != this.defaultBoard)
-    		optSel = opt
-    	else if (board.dir == this.defaultBoard)
-    		optDefault = opt
-    	else
-    		opts += opt
+      let name = board.name.length > 40 ? board.name.slice(0,40-3)+'...' : board.name
+      , opt = `<option value="${board.dir}">${board.dir} — ${name}</option>`
+      if (board.dir == settings.selectedBoard && settings.selectedBoard != this.defaultBoard)
+        optSel = opt
+      else if (board.dir == this.defaultBoard)
+        optDefault = opt
+      else
+        opts += opt
     })
     sel += optSel + optDefault + opts + '</select>'
     document.querySelector('.new-thread-form .btn-primary').insertAdjacentHTML('afterEnd', sel)
     document.querySelector('.ZU-boardlist-select').addEventListener('change', function() {
-    	document.querySelector('.new-thread-form').parentElement.__vue__.board.dir = this.value
-    	settings.selectedBoard = this.value
-    	settings.save()
+      document.querySelector('.new-thread-form').parentElement.__vue__.board.dir = this.value
+      settings.selectedBoard = this.value
+      settings.save()
     })
   },
   toggleNewThreadForm: function() {
@@ -2560,48 +2864,62 @@ var formOnZeroPage = {
 }
 
 var textSteganography = {
-	charMap: [0x200b,0x200c,0x200d,0x200e,0x200f].map(n => String.fromCharCode(n)),
-	encode: function(txt) {
-		return txt
-		.split('')
-		.map(char => char
-			.charCodeAt(0)
-			.toString(4)
-			.split('')
-			.map(digit => this.charMap[digit])
-			.join('')
-		).join(this.charMap[4])
-	},
-	decode: function(htm, startTag='', endTag='', safe=false) {
-		return htm.replace(/[\u200b\u200c\u200d\u200e\u200f]+/g, match => {
-			let decoded = match
-				.split(this.charMap[4])
-				.map(chars => String.fromCharCode(
-					parseInt(chars
-						.split('')
-						.map(char => this.charMap.indexOf(char))
-						.join(''), 4 )
-					)
-				).join('')
-			if (safe) {
-				decoded = safe_tags(decoded)
-			}
-			return startTag + decoded + endTag
-		})
-	},
-	hideSelection: function(area) {
-		area.value = 
-			area.value.slice(0, area.selectionStart) + 
-			this.encode(this.decode(area.value.slice(area.selectionStart, area.selectionEnd))) + 
-			area.value.slice(area.selectionEnd)
-		touchTextarea(area)
-	},
-	removeSpoilers: function(area) {
-		area.value = this.decode(area.value)
-		touchTextarea(area)
-	}
+  charMap: [0x200b,0x200c,0x200d,0x200e,0x200f].map(n => String.fromCharCode(n)),
+  encode: function(txt) {
+    return txt
+    .split('')
+    .map(char => char
+      .charCodeAt(0)
+      .toString(4)
+      .split('')
+      .map(digit => this.charMap[digit])
+      .join('')
+    ).join(this.charMap[4])
+  },
+  decode: function(htm, startTag='', endTag='', safe=false) {
+    return htm.replace(/[\u200b\u200c\u200d\u200e\u200f]+/g, match => {
+      let decoded = match
+        .split(this.charMap[4])
+        .map(chars => String.fromCharCode(
+          parseInt(chars
+            .split('')
+            .map(char => this.charMap.indexOf(char))
+            .join(''), 4 )
+          )
+        ).join('')
+      if (safe) {
+        decoded = safe_tags(decoded)
+      }
+      return startTag + decoded + endTag
+    })
+  },
+  hideSelection: function(area) {
+    area.value = 
+      area.value.slice(0, area.selectionStart) + 
+      this.encode(this.decode(area.value.slice(area.selectionStart, area.selectionEnd))) + 
+      area.value.slice(area.selectionEnd)
+    touchTextarea(area)
+  },
+  removeSpoilers: function(area) {
+    area.value = this.decode(area.value)
+    touchTextarea(area)
+  }
 }
 
 function safe_tags(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
+}
+
+// Insert adjacent HTML and immediately return the inserted element
+Element.prototype._ins = function(position='beforeend', html) {
+  this.insertAdjacentHTML(position, html)
+  position = position.toLowerCase()
+  if (position == 'afterbegin') 
+    return this.firstElementChild
+  else if (position == 'beforeend')
+    return this.lastElementChild
+  else if (position == 'beforebegin')
+    return this.previousElementSibling
+  else
+    return this.nextElementSibling
 }
