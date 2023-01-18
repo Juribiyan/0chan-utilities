@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.2.0
+// @version      3.2.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -1192,7 +1192,7 @@ class MediaViewer {
       }
     }
     if (offScreen) {
-      me.style.transform = `scale(0)`
+      me.style.transform = 'translate(0px, 0px) scale(0)'
     }
     me.classList.remove('no-transition')
     this.container.classList.add('mvc-collapsed')
