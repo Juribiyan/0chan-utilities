@@ -25,7 +25,7 @@
 // @include      http://nullchan.i2p/*
 // @grant        GM_getResourceText
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
-// @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/media-viewer/css/base.css?v=3-2-0
+// @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/base.css?v=3-2-0
 // @resource     darkCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/dark.css?v=4
 // @resource     catalogCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/catalog.css
 // ==/UserScript==

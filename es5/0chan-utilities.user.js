@@ -1,16 +1,28 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct.bind(); } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.1.2
+// @version      3.2.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -34,7 +46,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
 // @include      http://nullchan.i2p/*
 // @grant        GM_getResourceText
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
-// @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/base.css?v=3-0-11
+// @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/base.css?v=3-2-0
 // @resource     darkCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/dark.css?v=4
 // @resource     catalogCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/catalog.css
 // ==/UserScript==
@@ -788,7 +800,355 @@ var darkMode = {
   }
 };
 darkMode.init(); // must be called ahead of time to prevent flashes
-
+var MediaViewer = /*#__PURE__*/function () {
+  function MediaViewer(thumb, imgurl, thumburl, imgw, imgh, thumbw, thumbh) {
+    var _this12 = this;
+    _classCallCheck(this, MediaViewer);
+    this.initZoom();
+    this.createContainer();
+    this.resetTransform();
+    // TODO: pin the popup somehow (currently unable to do it)
+    var thBCR = thumb.getBoundingClientRect(),
+      thumb_x = thBCR.x,
+      thumb_y = thBCR.y,
+      thumb_w = thBCR.width,
+      thumb_h = thBCR.height,
+      win_w = this.viewer.clientWidth,
+      win_h = this.viewer.clientHeight,
+      scaleDownFactor = Math.min(win_w / imgw, win_h / imgh, 1),
+      pre_w = imgw * scaleDownFactor,
+      pre_h = imgh * scaleDownFactor,
+      visibleMarginX = (win_w - pre_w) / 2,
+      visibleMarginY = (win_h - pre_h) / 2,
+      mi_w = Math.min(win_w, imgw),
+      mi_h = Math.min(win_h, imgh),
+      screenScaleDownFactor = thumb_w / pre_w,
+      transX = thumb_x + thumb_w / 2 - win_w / 2,
+      transY = thumb_y + thumb_h / 2 - win_h / 2,
+      trans = "style=\"transform: translate(".concat(transX, "px, ").concat(transY, "px) scale(").concat(screenScaleDownFactor, ")\""),
+      me = this.viewer._ins('afterBegin', this.createMediaElement(thumb.src, imgw, imgh, imgurl, trans));
+    this.refreshList();
+    this.currentThumb = thumb;
+    thumb.style.visibility = 'hidden';
+    this.updateCounter();
+    this.showPercentage(scaleDownFactor);
+    me._scaleDownFactor = scaleDownFactor;
+    this.currentMediaItem = me;
+    me._realWidth = imgw;
+    this.imgw = imgw;
+    this.imgh = imgh;
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function () {
+      _this12.container.classList.remove('mvc-collapsed');
+      me.style.transform = null;
+    });
+  }
+  _createClass(MediaViewer, [{
+    key: "refreshList",
+    value: function refreshList() {
+      this.list = [].filter.call(document.querySelectorAll('figure.post-img'), function (fig) {
+        return !fig.__vue__.attachment.embed;
+      }).map(function (fig) {
+        return fig.querySelector('.post-img-thumbnail');
+      });
+    }
+  }, {
+    key: "findIndex",
+    value: function findIndex(thumb) {
+      return Array.prototype.findIndex.call(this.list, function (e) {
+        return e == thumb;
+      });
+    }
+    // Container
+  }, {
+    key: "createContainer",
+    value: function createContainer() {
+      var _this13 = this;
+      this.container = document.body._ins('beforeend', "<div class=\"mv-container mvc-collapsed\">\n    <div class=\"media-viewer\">\n      <div class=\"mv-label\">\n        <span class=\"item-counter\"></span>\n        <span class=\"scale-indicator\"></span>\n      </div>\n      <div class=\"mv-button mv-prev-next mv-prev\"></div>\n      <div class=\"mv-button mv-prev-next mv-next\"></div>\n      <div class=\"mv-button mv-restore\"></div>\n      <div class=\"mv-button mv-close\"></div>\n    </div></div>");
+      this.viewer = this.container.querySelector('.media-viewer');
+      this.viewer.addEventListener('wheel', this.handleZoom.bind(this));
+      this.viewer.addEventListener('mousemove', function (ev) {
+        _this13.mouseX = ev.clientX;
+        _this13.mouseY = ev.clientY;
+        if (_this13.isMouseDown) {
+          _this13.handleDrag();
+        }
+      });
+      this.viewer.addEventListener('mousedown', function (ev) {
+        _this13.gripX = ev.clientX;
+        _this13.gripY = ev.clientY;
+        _this13.isMouseDown = true;
+        if (ev.target.classList.contains('media-viewer') || ev.target.classList.contains('mv-under')) _this13.emptyClick = true;
+      });
+      this.viewer.addEventListener('click', function (ev) {
+        if (_this13.isDragged) {
+          _this13.isDragged = false;
+          ev.preventDefault();
+        }
+      });
+      this.viewer.addEventListener('mouseup', function (ev) {
+        _this13.isMouseDown = false;
+        _this13.currentMediaItem.classList.remove('no-transition');
+        if (_this13.isDragged) {
+          ev.preventDefault();
+        } else if (ev.button == 0) {
+          _this13.collapse();
+        }
+        _this13.emptyClick = false;
+      });
+      this.viewer.addEventListener('dragstart', function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+      });
+      this.viewer.querySelectorAll('.mv-button').forEach(function (pnb) {
+        pnb.addEventListener('click', function (ev) {
+          ev.stopPropagation();
+          _this13.refreshList();
+          var index = _this13.findIndex(_this13.currentThumb);
+          if (pnb.classList.contains('mv-prev') || pnb.classList.contains('mv-next')) {
+            if (pnb.classList.contains('mv-prev')) {
+              index -= 1;
+              if (index < 0) index = _this13.list.length - 1;
+            } else {
+              index += 1;
+              if (index >= _this13.list.length) index = 0;
+            }
+            _this13.switchItem(_this13.list[index]);
+          } else if (pnb.classList.contains('mv-close')) {
+            _this13.collapse();
+          } else if (pnb.classList.contains('mv-restore')) {
+            _this13.toggleFullSize(0);
+          }
+        });
+        ['mouseup', 'mousedown'].forEach(function (evt) {
+          return pnb.addEventListener(evt, function (ev) {
+            return ev.stopPropagation();
+          });
+        });
+      });
+      this.viewer.addEventListener('mouseleave', function (ev) {
+        _this13.isMouseDown = false;
+        _this13.isDragged = false;
+      });
+    }
+    // Managing transforms
+  }, {
+    key: "applyTransform",
+    value: function applyTransform() {
+      var me = this.currentMediaItem;
+      if (!me) return;
+      me.style.transform = "translate(".concat(this.translateX, "px, ").concat(this.translateY, "px) scale(").concat(this.scale, ")");
+    }
+  }, {
+    key: "resetTransform",
+    value: function resetTransform() {
+      this.translateX = 0;
+      this.translateY = 0;
+      this.scale = 1;
+    }
+    // Zooming
+  }, {
+    key: "initZoom",
+    value: function initZoom() {
+      this.zoomAmount = 0.5;
+      this.minScale = 0.1;
+      this.zoomSteps = [0.1, 0.25, 0.33, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+    }
+  }, {
+    key: "handleZoom",
+    value: function handleZoom(ev) {
+      var _this14 = this;
+      var me = this.currentMediaItem;
+      if (!me) return;
+      ev.stopPropagation();
+      ev.preventDefault();
+      var dir = -Math.sign(ev.deltaY),
+        initialScale = 1 / me._scaleDownFactor,
+        zSteps = Array.from(this.zoomSteps).filter(function (z) {
+          return Math.abs((z - initialScale) / initialScale) > 0.1;
+        }) // Remove zoom steps that are close to (real) 100%
+        .concat([initialScale]) // Add a (real) 100% step
+        ,
+        centerX = this.viewer.clientWidth / 2 + this.translateX,
+        centerY = this.viewer.clientHeight / 2 + this.translateY,
+        newScale = zSteps.map(function (z) {
+          return z - _this14.scale;
+        }).filter(function (z) {
+          return z * dir > 0;
+        }) // Pick only the steps in the needed direction
+        .sort(function (a, b) {
+          return (a - b) * dir;
+        })[0] + this.scale; // Find the closest step
+      if (!isNaN(newScale)) {
+        // It may be NaN in case when minimum or maximum zoom amount is achieved
+        this.showPercentage(me._scaleDownFactor * newScale);
+        this.translateX += (centerX - this.mouseX) / this.scale * (newScale - this.scale);
+        this.translateY += (centerY - this.mouseY) / this.scale * (newScale - this.scale);
+        this.scale = newScale;
+        this.applyTransform();
+        this.flashLabel();
+      }
+    }
+  }, {
+    key: "showPercentage",
+    value: function showPercentage(scale) {
+      this.viewer.querySelector('.scale-indicator').innerText = "| ".concat(Math.round(scale * 100), "%");
+    }
+    // Dragging
+  }, {
+    key: "handleDrag",
+    value: function handleDrag(ev) {
+      var me = this.currentMediaItem;
+      if (!me) return;
+      var dx = this.mouseX - this.gripX,
+        dy = this.mouseY - this.gripY;
+      if (dx != 0 || dy != 0) {
+        if (!this.isDragged) {
+          this.currentMediaItem.classList.add('no-transition');
+          this.isDragged = true;
+          this.initialTransX = this.translateX;
+          this.initialTransY = this.translateY;
+        }
+        this.translateX = this.initialTransX + dx;
+        this.translateY = this.initialTransY + dy;
+        this.applyTransform();
+      }
+    }
+    // Switching
+  }, {
+    key: "switchItem",
+    value: function switchItem(thumb) {
+      var fig = thumb.findParent('figure'),
+        _MediaViewer$parseFig = MediaViewer.parseFigure(fig),
+        _MediaViewer$parseFig2 = _slicedToArray(_MediaViewer$parseFig, 6),
+        imgurl = _MediaViewer$parseFig2[0],
+        thumburl = _MediaViewer$parseFig2[1],
+        imgw = _MediaViewer$parseFig2[2],
+        imgh = _MediaViewer$parseFig2[3],
+        thumbw = _MediaViewer$parseFig2[4],
+        thumbh = _MediaViewer$parseFig2[5],
+        win_w = this.viewer.clientWidth,
+        win_h = this.viewer.clientHeight,
+        scaleDownFactor = Math.min(win_w / imgw, win_h / imgh, 1);
+      this.showPercentage(scaleDownFactor);
+      this.resetTransform();
+      this.applyTransform();
+      this.currentMediaItem._scaleDownFactor = scaleDownFactor;
+      this.currentMediaItem.classList.remove('no-transition');
+      this.currentMediaItem.innerHTML = this.createMediaElement(thumb.src, imgw, imgh, imgurl, null);
+      this.currentThumb.style.visibility = 'visible';
+      thumb.style.visibility = 'hidden';
+      this.currentThumb = thumb;
+      this.updateCounter();
+      this.refreshList();
+    }
+  }, {
+    key: "updateCounter",
+    value: function updateCounter() {
+      var index = this.findIndex(this.currentThumb);
+      this.viewer.querySelector('.item-counter').innerText = "".concat(index + 1, "/").concat(this.list.length);
+      this.flashLabel();
+    }
+  }, {
+    key: "flashLabel",
+    value: function flashLabel() {
+      var _this15 = this;
+      clearTimeout(this.flashLabelTimeout);
+      this.viewer.querySelector('.mv-label').classList.add('mvl-visible');
+      this.flashLabelTimeout = setTimeout(function () {
+        return _this15.viewer.querySelector('.mv-label').classList.remove('mvl-visible');
+      }, 1000);
+    }
+    // Closing
+  }, {
+    key: "collapse",
+    value: function collapse() {
+      var _this16 = this;
+      document.body.style.overflow = '';
+      var me = this.currentMediaItem,
+        mi_w = me.clientWidth,
+        mi_h = me.clientHeight,
+        svg = me.querySelector('.placeholder-svg'),
+        resizeFactor = Math.min(this.viewer.clientHeight / svg.naturalHeight, this.viewer.clientWidth / svg.naturalWidth);
+      this.isDragged = false;
+      if (resizeFactor < 1) {
+        mi_w = svg.naturalWidth * resizeFactor;
+        mi_h = svg.naturalHeight * resizeFactor;
+      }
+      var offScreen = true,
+        transform = '';
+      if (document.body.contains(this.currentThumb)) {
+        var thumbBCR = this.currentThumb.getBoundingClientRect();
+        offScreen = !(thumbBCR.y < window.innerHeight && thumbBCR.y + thumbBCR.height > 0 && thumbBCR.x < window.innerWidth && thumbBCR.x + thumbBCR.width > 0);
+        if (!offScreen) {
+          var transX = thumbBCR.x + thumbBCR.width / 2 - this.viewer.clientWidth / 2,
+            transY = thumbBCR.y + thumbBCR.height / 2 - this.viewer.clientHeight / 2;
+          me.style.transform = "translate(".concat(transX, "px, ").concat(transY, "px) scale(").concat(thumbBCR.width / mi_w, ")");
+        }
+      }
+      if (offScreen) {
+        me.style.transform = "scale(0)";
+      }
+      me.classList.remove('no-transition');
+      this.container.classList.add('mvc-collapsed');
+      setTimeout(function () {
+        _this16.container.remove();
+        _this16.currentThumb.style.visibility = 'visible';
+        if (_this16.onCollapse) _this16.onCollapse();
+      }, 250);
+    }
+    // Full screen on and off
+  }, {
+    key: "toggleFullSize",
+    value: function toggleFullSize(on) {
+      document.body.style.overflow = on ? 'hidden' : '';
+      if (on) this.viewer.classList.remove('mv-transparent');else this.viewer.classList.add('mv-transparent');
+    }
+    // Media element within container
+  }, {
+    key: "createMediaElement",
+    value: function createMediaElement(underImageSrc, imgw, imgh, imgurl) {
+      var trans = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
+      return "<div class=\"media-item\" ".concat(trans, ">\n      <div style=\"background-image: url(").concat(underImageSrc, "); max-width: ").concat(imgw, "px\" class=\"mv-under\"></div>\n      <img src=\"").concat(imgurl, "\" class=\"mv-over\" onload=\"this.parentElement.classList.add('loaded')\">\n      <img class=\"placeholder-svg\" src=\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width='").concat(imgw, "' height='").concat(imgh, "'%2F%3E\">\n    </div>");
+    }
+  }], [{
+    key: "handleAttachment",
+    value: function handleAttachment(fig) {
+      if (fig.__vue__.attachment.embed || fig.querySelector('.ZU-thumb-overlay')) return;
+      var thumb = fig.querySelector('.post-img-thumbnail'),
+        link = fig.querySelector('a');
+      // add an overlay to prevent expanding
+      link._ins('afterend', "<a href=\"".concat(link.href, "\" target=\"_blank\" class=\"ZU-thumb-overlay\"></a>")).addEventListener('click', function (ev) {
+        ev.preventDefault();
+        var mv = _construct(MediaViewer, [thumb].concat(_toConsumableArray(MediaViewer.parseFigure(fig))));
+        mv.onCollapse = function () {
+          return mv = null;
+        };
+      });
+    }
+  }, {
+    key: "toggle",
+    value: function toggle(off) {
+      var allFigs = document.querySelectorAll('figure.post-img').forEach(function (fig) {
+        var ov = fig.querySelector('.ZU-thumb-overlay');
+        if (!off) {
+          if (!ov) MediaViewer.handleAttachment(fig);
+        } else {
+          if (ov) ov.remove();
+        }
+      });
+    }
+  }, {
+    key: "parseFigure",
+    value: function parseFigure(fig) {
+      var fv = fig.__vue__;
+      var orig = fv.attachment.images.original,
+        actual = fv.actualImage;
+      return [orig.url, actual.url, orig.width, orig.height, actual.width, actual.height];
+    }
+  }]);
+  return MediaViewer;
+}();
 var settings = {
   defaults: {
     thumbNoScroll: true,
@@ -813,7 +1173,8 @@ var settings = {
     selectedBoard: 'b',
     selectedInstance: 0,
     darkMode: darkMode.enabledByDefault,
-    fixUkrSpelling: true
+    fixUkrSpelling: true,
+    legacyMediaViewer: false
   },
   _: {},
   hooks: {
@@ -829,7 +1190,8 @@ var settings = {
     nullColor: NullRestyler.setValues.bind(NullRestyler),
     turnOffSnow: desnower.toggle.bind(desnower),
     selectedInstance: youtubeStuff.changeInstance.bind(youtubeStuff),
-    fixUkrSpelling: fixUkrSpelling.toggle.bind(fixUkrSpelling)
+    fixUkrSpelling: fixUkrSpelling.toggle.bind(fixUkrSpelling),
+    legacyMediaViewer: MediaViewer.toggle.bind(MediaViewer)
   },
   save: function save() {
     this._.hiddenBoards = this.hiddenBoards;
@@ -839,13 +1201,13 @@ var settings = {
     localStorage['ZU-settings'] = JSON.stringify(this._);
   },
   init: function init() {
-    var _this12 = this;
+    var _this17 = this;
     var localSettings = LSfetchJSON('ZU-settings') || {},
       allSettings = Object.assign(cloneObj(this.defaults, true), localSettings);
     Object.keys(allSettings).forEach(function (key) {
       var value = allSettings[key];
       if (_typeof(value) !== "object") {
-        Object.defineProperty(_this12, key, {
+        Object.defineProperty(_this17, key, {
           set: function set(val) {
             this._[key] = val;
             if (this.hooks.hasOwnProperty(key)) {
@@ -858,7 +1220,7 @@ var settings = {
           }
         });
       }
-      _this12[key] = value;
+      _this17[key] = value;
     });
   }
 };
@@ -1132,7 +1494,9 @@ var eventDispatcher = {
     if (expRef) {
       referenceCollapsing.expand(expRef.findParent('.post'));
     }
+    // Thumbnail expanding
   },
+
   mousedown: function mousedown(e) {
     // Quote on reply
     var replyBtn = e.path.find(function (el) {
@@ -1332,7 +1696,7 @@ var router = {
     return app.$bus.emit('refreshContent');
   },
   setupInterceptor: function setupInterceptor() {
-    var _this13 = this;
+    var _this18 = this;
     var doDebug = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     app.$router.push = function (route, e, n) {
       var thread, threadID, postID;
@@ -1358,7 +1722,7 @@ var router = {
         && route.params.dir === contentVue.board.dir && !document.querySelector("a[href*=\"/".concat(threadID, "\"]")) // Thread does not exist yet
         ) {
           if (doDebug) console.log('Route intercepted (new thread)');
-          _this13.reload();
+          _this18.reload();
         } else {
           app.$router.history.push(route, e, n);
         }
@@ -1458,7 +1822,7 @@ function handleReplyForm(form) {
     textarea.focus();
   }
   // Add stegospoiler button
-  form.querySelector('.reply-form-limit-counter').insertAdjacentHTML('beforeBegin', "<button class=\"btn btn-xs btn-default ZU-hide-selection\" title=\"\u0421\u043F\u0440\u044F\u0442\u0430\u0442\u044C \u0432\u044B\u0434\u0435\u043B\u0435\u043D\u043D\u044B\u0439 \u0442\u0435\u043A\u0441\u0442\"><i class=\"fa fa-eye-slash\"></i></button>\n  \t <button class=\"btn btn-xs btn-default ZU-remove-spoilers\" title=\"\u0423\u0431\u0440\u0430\u0442\u044C \u0441\u043F\u043E\u0439\u043B\u0435\u0440\u044B\"><i class=\"fa fa-eye\"></i></button> ");
+  form.querySelector('.reply-form-limit-counter').insertAdjacentHTML('beforeBegin', "<button class=\"btn btn-xs btn-default ZU-hide-selection\" title=\"\u0421\u043F\u0440\u044F\u0442\u0430\u0442\u044C \u0432\u044B\u0434\u0435\u043B\u0435\u043D\u043D\u044B\u0439 \u0442\u0435\u043A\u0441\u0442\"><i class=\"fa fa-eye-slash\"></i></button>\n     <button class=\"btn btn-xs btn-default ZU-remove-spoilers\" title=\"\u0423\u0431\u0440\u0430\u0442\u044C \u0441\u043F\u043E\u0439\u043B\u0435\u0440\u044B\"><i class=\"fa fa-eye\"></i></button> ");
 }
 function addSettingsButtons() {
   var showCatBtn = catalog.isApplicable;
@@ -1582,9 +1946,11 @@ referenceCollapsing = {
     post.querySelector('.ZU-bad-ref-block').hidden = false;
   }
 };
-function collapseReferences(postData, postDOM) {}
 function handleAttachment(att) {
   autohideAtt.addButton(att);
+  if (!settings.legacyMediaViewer) {
+    MediaViewer.handleAttachment(att);
+  }
 }
 function reAutohidePosts() {
   [].forEach.call(document.querySelectorAll('.post'), function (post) {
@@ -1736,6 +2102,11 @@ var settingsPanel = {
     title: "Исправлять украинские буквьi",
     description: "Производить замену «є»→«э», «ьi»→«ы»"
   }, {
+    type: 'checkbox',
+    id: 'legacyMediaViewer',
+    title: "Дефолтный просмотрщик медиа",
+    description: "Использовать оригинальный просмотрщик медиа"
+  }, {
     type: 'slider',
     id: 'updateInterval',
     title: "Период обновления треда",
@@ -1774,12 +2145,12 @@ var settingsPanel = {
     description: "Не использовать анимацию в качестве фона. Имеет смысл только в период нового года (~15 декабря - ~14 января)"
   }],
   install: function install() {
-    var _this14 = this;
+    var _this19 = this;
     var controls = this.controls.filter(function (control) {
       return !control.condition || control.condition();
     });
     document.querySelector('.headmenu').insertAdjacentHTML('beforeEnd', "\n      <div class=\"dropdown-menu ZU-settings-dropdown ZU-dropdown\" id=\"ZU-settings\">\n        <div id=\"ZU-settings-main\" class=\"ZU-top-menu-page\">\n          <ul class=\"ZU-settings-list\">\n            ".concat(controls.reduce(function (htm, control) {
-      return htm + _this14.modules[control.type].build(control);
+      return htm + _this19.modules[control.type].build(control);
     }, ''), "\n          </ul>\n          <button class=\"btn btn-default btn-xs ZU-enter-autohide-top\"><span>\u0410\u0432\u0442\u043E\u0441\u043A\u0440\u044B\u0442\u0438\u0435</span></button>\n        </div>\n        <div id=\"ZU-top-autohide\" class=\"ZU-top-menu-page\" hidden>\n          <div class=\"btn-group\">\n            <button class=\"btn btn-default btn-xs ZU-exit-autohide-top\"><span><i class=\"fa fa-chevron-left\"></i> <i class=\"fa fa-save\"></i> \u041D\u0430\u0437\u0430\u0434</span></button>\n            <!-- button class=\"btn btn-default btn-xs\"><span><i class=\"fa fa-undo\"></i></span></button -->\n          </div>\n          <div class=\"btn-group ZU-autohide-type-switch ZU-radio-btn-group\" data-toggle=\"buttons\">\n            <label class=\"btn btn-xs btn-default active\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"txt\" autocomplete=\"off\" checked> \u0422\u0435\u043A\u0441\u0442\n            </label>\n            <label class=\"btn btn-xs btn-default\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"img\" autocomplete=\"off\"> \u041A\u0430\u0440\u0442\u0438\u043D\u043A\u0438\n            </label>\n          </div>\n          <br>\n          <textarea id=\"ZU-autohide-text\" cols=\"30\" rows=\"10\" class=\"form-control ZU-autohide-content\"></textarea>\n          <div id=\"ZU-autohide-images\" class=\"ZU-autohide-content\" hidden>\n            ").concat(autohideAtt.getListHTML(), "\n          </div>\n        </div>\n      </div>"));
     var spellsVal = settings.autohide.map(function (spell) {
         return _typeof(spell) === 'object' ? "/".concat(spell.source, "/").concat(spell.flags) : spell;
@@ -1803,7 +2174,7 @@ var settingsPanel = {
     });
     controls.forEach(function (control) {
       if (state.condition && !state.condition()) return;
-      var allEvents = Object.assign(Object.create(_this14.modules[control.type].events || {}), control.events || {}),
+      var allEvents = Object.assign(Object.create(_this19.modules[control.type].events || {}), control.events || {}),
         controlDOM = document.querySelector("#ZU-SP-".concat(control.id));
       if (!controlDOM) return;
       var _loop = function _loop(eventName) {
@@ -1958,10 +2329,10 @@ if (!Array.prototype.includes) {
 ;
 [Element.prototype, Text.prototype].forEach(function (e) {
   e.matches || (e.matches = e.matchesSelector || function (selector) {
-    var _this15 = this;
+    var _this20 = this;
     var matches = document.querySelectorAll(selector);
     return Array.prototype.some.call(matches, function (e) {
-      return e === _this15;
+      return e === _this20;
     });
   });
   e.findParent = function (selector) {
@@ -2275,11 +2646,11 @@ function fancyResizeXfade(container, hide, show) {
 var formOnZeroPage = {
   defaultBoard: 'b',
   init: function init() {
-    var _this16 = this;
+    var _this21 = this;
     var buttonsRight = document.querySelector('.headmenu-buttons-right');
     buttonsRight.insertAdjacentHTML('afterbegin', "\n      <div class=\"btn-group\">\n        <button type=\"button\" class=\"btn btn-primary ZU-toggleNewThreadForm\"><i class=\"fa fa-pencil-square-o\"></i> \n          <span class=\"btn-caption hidden-xs\">\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0442\u0440\u0435\u0434</span>\n        </button>\n      </div>");
     buttonsRight.querySelector('.ZU-toggleNewThreadForm').onclick = function () {
-      return _this16.toggleNewThreadForm();
+      return _this21.toggleNewThreadForm();
     };
     // prevent title replacement
     var title = document.querySelector('.headmenu-title'),
@@ -2297,7 +2668,7 @@ var formOnZeroPage = {
     }).forEach(function (board) {
       var name = board.name.length > 40 ? board.name.slice(0, 40 - 3) + '...' : board.name,
         opt = "<option value=\"".concat(board.dir, "\">").concat(board.dir, " \u2014 ").concat(name, "</option>");
-      if (board.dir == settings.selectedBoard && settings.selectedBoard != _this16.defaultBoard) optSel = opt;else if (board.dir == _this16.defaultBoard) optDefault = opt;else opts += opt;
+      if (board.dir == settings.selectedBoard && settings.selectedBoard != _this21.defaultBoard) optSel = opt;else if (board.dir == _this21.defaultBoard) optDefault = opt;else opts += opt;
     });
     sel += optSel + optDefault + opts + '</select>';
     document.querySelector('.new-thread-form .btn-primary').insertAdjacentHTML('afterEnd', sel);
@@ -2323,22 +2694,22 @@ var textSteganography = {
     return String.fromCharCode(n);
   }),
   encode: function encode(txt) {
-    var _this17 = this;
+    var _this22 = this;
     return txt.split('').map(function (_char) {
       return _char.charCodeAt(0).toString(4).split('').map(function (digit) {
-        return _this17.charMap[digit];
+        return _this22.charMap[digit];
       }).join('');
     }).join(this.charMap[4]);
   },
   decode: function decode(htm) {
-    var _this18 = this;
+    var _this23 = this;
     var startTag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
     var endTag = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
     var safe = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
     return htm.replace(/[\u200b\u200c\u200d\u200e\u200f]+/g, function (match) {
-      var decoded = match.split(_this18.charMap[4]).map(function (chars) {
+      var decoded = match.split(_this23.charMap[4]).map(function (chars) {
         return String.fromCharCode(parseInt(chars.split('').map(function (_char2) {
-          return _this18.charMap.indexOf(_char2);
+          return _this23.charMap.indexOf(_char2);
         }).join(''), 4));
       }).join('');
       if (safe) {
@@ -2359,3 +2730,12 @@ var textSteganography = {
 function safe_tags(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+
+// Insert adjacent HTML and immediately return the inserted element
+Element.prototype._ins = function () {
+  var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'beforeend';
+  var html = arguments.length > 1 ? arguments[1] : undefined;
+  this.insertAdjacentHTML(position, html);
+  position = position.toLowerCase();
+  if (position == 'afterbegin') return this.firstElementChild;else if (position == 'beforeend') return this.lastElementChild;else if (position == 'beforebegin') return this.previousElementSibling;else return this.nextElementSibling;
+};
