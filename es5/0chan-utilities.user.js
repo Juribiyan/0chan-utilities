@@ -22,7 +22,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.2.0
+// @version      3.2.2
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -1087,7 +1087,7 @@ var MediaViewer = /*#__PURE__*/function () {
         }
       }
       if (offScreen) {
-        me.style.transform = "scale(0)";
+        me.style.transform = 'translate(0px, 0px) scale(0)';
       }
       me.classList.remove('no-transition');
       this.container.classList.add('mvc-collapsed');
@@ -1145,6 +1145,18 @@ var MediaViewer = /*#__PURE__*/function () {
       var orig = fv.attachment.images.original,
         actual = fv.actualImage;
       return [orig.url, actual.url, orig.width, orig.height, actual.width, actual.height];
+    }
+  }, {
+    key: "setupKeyNavigation",
+    value: function setupKeyNavigation() {
+      document.addEventListener("keydown", function (ev) {
+        var mv = document.querySelector('.media-viewer:not(.mv-transparent)');
+        if (mv) {
+          if (event.key == 'ArrowLeft') mv.querySelector('.mv-prev').click();
+          if (event.key == 'ArrowRight') mv.querySelector('.mv-next').click();
+          if (event.key == 'Escape') mv.querySelector('.mv-close').click();
+        }
+      });
     }
   }]);
   return MediaViewer;
@@ -2508,10 +2520,8 @@ function start() {
   Object.keys(eventDispatcher).forEach(function (evType) {
     document.addEventListener(evType, eventDispatcher[evType], true);
   });
-
-  // youtubeStuff.init()
+  MediaViewer.setupKeyNavigation();
 }
-
 start();
 function onFreshContent() {
   try {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.2.1
+// @version      3.2.2
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -950,6 +950,19 @@ class MediaViewer {
     let orig = fv.attachment.images.original
     , actual = fv.actualImage
     return [orig.url, actual.url, orig.width, orig.height, actual.width, actual.height]
+  }
+  static setupKeyNavigation() {
+    document.addEventListener("keydown", ev => {
+      let mv = document.querySelector('.media-viewer:not(.mv-transparent)')
+      if (mv) {
+        if (event.key == 'ArrowLeft')
+          mv.querySelector('.mv-prev').click()
+        if (event.key == 'ArrowRight')
+          mv.querySelector('.mv-next').click()
+        if (event.key == 'Escape')
+          mv.querySelector('.mv-close').click()
+      }
+    })
   }
   constructor(thumb, imgurl, thumburl, imgw, imgh, thumbw, thumbh) {
     this.initZoom()
@@ -2658,7 +2671,7 @@ function start() {
     document.addEventListener(evType, eventDispatcher[evType], true)
   })
 
-  // youtubeStuff.init()
+  MediaViewer.setupKeyNavigation()
 }
 start()
 
