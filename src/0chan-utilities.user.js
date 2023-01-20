@@ -966,7 +966,7 @@ class MediaViewer {
   }
   static toggleScalability(on) {
     let vp = document.querySelector("meta[name=viewport]")
-    vp.setAttribute('content', `width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1${on ? '' : ',user-scalable=no'}`)
+    vp.setAttribute('content', `width=device-width,initial-scale=1${on ? '' : ',maximum-scale=1,minimum-scale=1,user-scalable=no'}`)
   }
   constructor(thumb, imgurl, thumburl, imgw, imgh, thumbw, thumbh) {
     this.initZoom()
