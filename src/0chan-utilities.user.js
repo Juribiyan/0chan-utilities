@@ -966,7 +966,7 @@ class MediaViewer {
   }
   static toggleScalability(on) {
     let vp = document.querySelector("meta[name=viewport]")
-    vp.setAttribute('content', `width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1${on ? ',user-scalable=no' : ''}`)
+    vp.setAttribute('content', `width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1${on ? '' : ',user-scalable=no'}`)
   }
   constructor(thumb, imgurl, thumburl, imgw, imgh, thumbw, thumbh) {
     this.initZoom()
@@ -999,7 +999,7 @@ class MediaViewer {
       this.container.classList.remove('mvc-collapsed')
       me.style.transform = null
     })
-    MediaViewer.toggleScalability(false)
+    MediaViewer.toggleScalability(true)
   }
   refreshList() {
     this.list = [].filter.call(document.querySelectorAll('figure.post-img'), fig => !fig.__vue__.attachment.embed)
@@ -1219,7 +1219,7 @@ class MediaViewer {
       this.currentThumb.style.visibility = 'visible'
       if (this.onCollapse) this.onCollapse()
     }, 250)
-    MediaViewer.toggleScalability(true)
+    MediaViewer.toggleScalability(false)
   }
   // Full screen on and off
   toggleFullSize(on) {
