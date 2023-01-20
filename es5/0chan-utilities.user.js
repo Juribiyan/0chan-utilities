@@ -22,7 +22,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.2.2
+// @version      3.2.3
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -842,6 +842,7 @@ var MediaViewer = /*#__PURE__*/function () {
       _this12.container.classList.remove('mvc-collapsed');
       me.style.transform = null;
     });
+    MediaViewer.toggleScalability(true);
   }
   _createClass(MediaViewer, [{
     key: "refreshList",
@@ -1096,6 +1097,7 @@ var MediaViewer = /*#__PURE__*/function () {
         _this16.currentThumb.style.visibility = 'visible';
         if (_this16.onCollapse) _this16.onCollapse();
       }, 250);
+      MediaViewer.toggleScalability(false);
     }
     // Full screen on and off
   }, {
@@ -1157,6 +1159,12 @@ var MediaViewer = /*#__PURE__*/function () {
           if (event.key == 'Escape') mv.querySelector('.mv-close').click();
         }
       });
+    }
+  }, {
+    key: "toggleScalability",
+    value: function toggleScalability(on) {
+      var vp = document.querySelector("meta[name=viewport]");
+      vp.setAttribute('content', "width=device-width,initial-scale=1".concat(on ? '' : ',maximum-scale=1,minimum-scale=1,user-scalable=no'));
     }
   }]);
   return MediaViewer;
