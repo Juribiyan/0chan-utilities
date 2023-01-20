@@ -999,7 +999,7 @@ class MediaViewer {
       this.container.classList.remove('mvc-collapsed')
       me.style.transform = null
     })
-    MediaViewer.toggleScalability(true)
+    MediaViewer.toggleScalability(false)
   }
   refreshList() {
     this.list = [].filter.call(document.querySelectorAll('figure.post-img'), fig => !fig.__vue__.attachment.embed)
@@ -1219,7 +1219,7 @@ class MediaViewer {
       this.currentThumb.style.visibility = 'visible'
       if (this.onCollapse) this.onCollapse()
     }, 250)
-    MediaViewer.toggleScalability(false)
+    MediaViewer.toggleScalability(true)
   }
   // Full screen on and off
   toggleFullSize(on) {
