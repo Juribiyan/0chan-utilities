@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.2.3
+// @version      3.3.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -953,15 +953,30 @@ class MediaViewer {
   }
   static setupKeyNavigation() {
     document.addEventListener("keydown", ev => {
-      let mv = document.querySelector('.media-viewer:not(.mv-transparent)')
-      if (mv) {
-        if (event.key == 'ArrowLeft')
-          mv.querySelector('.mv-prev').click()
-        if (event.key == 'ArrowRight')
-          mv.querySelector('.mv-next').click()
-        if (event.key == 'Escape')
-          mv.querySelector('.mv-close').click()
+      if (ev.ctrlKey) {
+        let threadId = +app.$router.currentRoute.params.threadId
+        if (!isNaN(threadId)) {
+          let dir = app.$router.currentRoute.params.dir
+          if (event.key == 'ArrowLeft') {
+            router.push(`/${dir}/${threadId-1}`)
+          }
+          if (event.key == 'ArrowRight') {
+            router.push(`/${dir}/${threadId+1}`)
+          }
+        }
       }
+      else {
+        let mv = document.querySelector('.media-viewer:not(.mv-transparent)')
+        if (mv) {
+          if (event.key == 'ArrowLeft')
+            mv.querySelector('.mv-prev').click()
+          if (event.key == 'ArrowRight')
+            mv.querySelector('.mv-next').click()
+          if (event.key == 'Escape')
+            mv.querySelector('.mv-close').click()
+        }
+      }
+      
     })
   }
   static toggleScalability(on) {
@@ -2691,13 +2706,13 @@ function onFreshContent() {
 
   content = document.querySelector('#content > div')
   if (state.type==='thread')
-    singleThread = document.querySelector('.post-op').parentNode.parentNode
+    singleThread = document.querySelector('.post-op')?.parentNode.parentNode
   if (! state.initialized) {
     init()
   }
   else {
     contentVue = content.__vue__
-    if (state.type==='thread')
+    if (state.type==='thread' && singleThread)
       singleThreadVue = singleThread.__vue__
   }
 

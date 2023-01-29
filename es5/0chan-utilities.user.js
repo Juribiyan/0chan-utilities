@@ -22,7 +22,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.2.3
+// @version      3.3.0
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -1152,11 +1152,24 @@ var MediaViewer = /*#__PURE__*/function () {
     key: "setupKeyNavigation",
     value: function setupKeyNavigation() {
       document.addEventListener("keydown", function (ev) {
-        var mv = document.querySelector('.media-viewer:not(.mv-transparent)');
-        if (mv) {
-          if (event.key == 'ArrowLeft') mv.querySelector('.mv-prev').click();
-          if (event.key == 'ArrowRight') mv.querySelector('.mv-next').click();
-          if (event.key == 'Escape') mv.querySelector('.mv-close').click();
+        if (ev.ctrlKey) {
+          var threadId = +app.$router.currentRoute.params.threadId;
+          if (!isNaN(threadId)) {
+            var dir = app.$router.currentRoute.params.dir;
+            if (event.key == 'ArrowLeft') {
+              router.push("/".concat(dir, "/").concat(threadId - 1));
+            }
+            if (event.key == 'ArrowRight') {
+              router.push("/".concat(dir, "/").concat(threadId + 1));
+            }
+          }
+        } else {
+          var mv = document.querySelector('.media-viewer:not(.mv-transparent)');
+          if (mv) {
+            if (event.key == 'ArrowLeft') mv.querySelector('.mv-prev').click();
+            if (event.key == 'ArrowRight') mv.querySelector('.mv-next').click();
+            if (event.key == 'Escape') mv.querySelector('.mv-close').click();
+          }
         }
       });
     }
@@ -2532,18 +2545,19 @@ function start() {
 }
 start();
 function onFreshContent() {
+  var _document$querySelect;
   try {
     state.type = app.$router.currentRoute.name;
   } catch (e) {
     console.warn('[0u] Unable to determine app state', e);
   }
   content = document.querySelector('#content > div');
-  if (state.type === 'thread') singleThread = document.querySelector('.post-op').parentNode.parentNode;
+  if (state.type === 'thread') singleThread = (_document$querySelect = document.querySelector('.post-op')) === null || _document$querySelect === void 0 ? void 0 : _document$querySelect.parentNode.parentNode;
   if (!state.initialized) {
     init();
   } else {
     contentVue = content.__vue__;
-    if (state.type === 'thread') singleThreadVue = singleThread.__vue__;
+    if (state.type === 'thread' && singleThread) singleThreadVue = singleThread.__vue__;
   }
   alerts = document.querySelector('.alerts-wrapper');
   alertsVue = alerts.__vue__;
