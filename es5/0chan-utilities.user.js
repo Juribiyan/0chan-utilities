@@ -22,7 +22,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://www.0chan.pl/userjs/
-// @version      3.3.0
+// @version      3.3.1
 // @description  Various 0chan utilities
 // @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
 // @author       Snivy & devarped
@@ -44,6 +44,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // @include      https://nullchan.i2phides.me/*
 // @include      http://nullz2mkp7znirlcersxpk7qmkmgcc6u3yhe462p2qkpxsdb3mja.b32.i2p/*
 // @include      http://nullchan.i2p/*
+// @include      https://0chan.nl/*
 // @grant        GM_getResourceText
 // @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
 // @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/base.css?v=3-2-0
