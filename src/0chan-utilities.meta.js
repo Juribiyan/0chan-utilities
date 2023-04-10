@@ -3,8 +3,8 @@
 // @namespace    https://www.0chan.pl/userjs/
 // @version      3.3.3
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.meta.js
-// @downloadURL  https://github.com/juribiyan/0chan-utilities/raw/master/es5/0chan-utilities.user.js
+// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
+// @downloadURL  https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*

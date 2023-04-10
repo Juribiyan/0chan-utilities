@@ -1,0 +1,67 @@
+html {
+    height: 100%;
+}
+body {
+    margin: 0;
+    background-color: #efefef;
+    font-family: "Trebuchet MS", sans-serif;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+a, a:visited {
+    color: #1abc9c;
+}
+a:hover {
+    color: #0d5d4d;
+}
+.main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items:  center;
+    justify-content: center;
+}
+footer {
+    font-size: .75em;
+    text-align: center;
+    padding: 20px 0;
+    border-top: 1px dashed #999999;
+}
+.logo {
+    margin: -200px 0 30px;
+    width: 200px;
+    max-width: calc(100% - 10px);
+}
+.logo img {
+    width: 100%;
+}
+.download-btn {
+    background: #16a085;
+    border-radius: 3px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    border: 1px solid transparent;
+    border-color: #ffffff91 #11846e #00000036 #11846e;
+    margin-bottom: 20px;
+    transition: background-color .2s, box-shadow .2s;
+    box-shadow: 0 3px 7px #16a08578;
+}
+.download-btn:hover {
+    color: white;
+    background: #199079;
+    box-shadow: 0 4px 10px #16a085cc;
+}
+.download-btn div {
+    font-size: 1.2em;
+    padding: 15px 30px 10px;
+    font-weight: bold;
+    border-bottom: 1px dashed currentColor;
+}
+.download-btn small {
+    padding: 4px 0;
+    text-align: center;
+    display: inline-block;
+}
