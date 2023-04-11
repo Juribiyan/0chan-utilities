@@ -58,7 +58,8 @@ footer {
     font-size: 1.2em;
     padding: 15px 30px 10px;
     font-weight: bold;
-    border-bottom: 1px dashed currentColor;
+    border-bottom: 1px solid #00000030;
+    box-shadow: 0 1px 0 0 #ffffff52;
 }
 .download-btn small {
     padding: 4px 0;

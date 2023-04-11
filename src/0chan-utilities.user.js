@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         0chan Utilities
-// @namespace    https://www.0chan.pl/userjs/
-// @version      3.3.3
+// @namespace    https://ochan.ru/userjs/
+// @version      3.3.4
 // @description  Various 0chan utilities
-// @updateURL    https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.meta.js
-// @downloadURL  https://github.com/juribiyan/0chan-utilities/raw/master/src/0chan-utilities.user.js
+// @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
+// @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
@@ -27,10 +27,10 @@
 // @include      https://0chan.nl/*
 // @include      https://0chna.ru/*
 // @grant        GM_getResourceText
-// @icon         https://raw.githubusercontent.com/juribiyan/0chan-utilities/master/icon.png
-// @resource     baseCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/base.css?v=3-2-0
-// @resource     darkCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/dark.css?v=4
-// @resource     catalogCSS https://raw.githubusercontent.com/Juribiyan/0chan-utilities/master/css/catalog.css
+// @icon         https://juribiyan.github.io/0chan-utilities/icon.png
+// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
+// @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
+// @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
 // ==/UserScript==
 
 const icons =
@@ -832,7 +832,7 @@ var fixUkrSpelling = {
   },
   process: function(post) {
     let msg = post.querySelector('.post-body-message')
-    if (this.detect(msg.innerHTML)) {
+    if (msg && this.detect(msg.innerHTML)) {
       msg._originalHTML = msg.innerHTML
       msg.innerHTML = this.processText(msg.innerHTML)
       post.querySelector('.post-date').insertAdjacentHTML('afterEnd', '<span class="ZU-UA-flag"> 🇺🇦</span>')
@@ -1477,7 +1477,7 @@ var eventDispatcher = {
       document.querySelector('#ZU-settings').classList.toggle('ZU-dropdown-show')
     }
     else if (! e.path.find(el => el?.classList && (el.classList.contains('ZU-settings-dropdown') || el.classList.contains('ZU-prevent-settings-dropdown-close')))) {
-      document.querySelector('#ZU-settings').classList.remove('ZU-dropdown-show')
+      document.querySelector('#ZU-settings')?.classList?.remove('ZU-dropdown-show')
     }
     if (! e.path.find(el => el?.classList && (el.classList.contains('ZU-share-btn') || el.classList.contains('ZU-share-btn')))) {
       Array.prototype.forEach.call(document.querySelectorAll('.ZU-share-dropdown'), dd => dd.classList.remove('ZU-dropdown-show'))
