@@ -1620,8 +1620,8 @@ var eventDispatcher = {
     let nr = e.path.find(el => el?.classList.contains('ZU-range'))
     if (nr) {
       nr.parentElement.querySelector('output .ZU-output').innerText = nr.value
+      NullRestyler.update()
     }
-    NullRestyler.update()
   }
 }
 
