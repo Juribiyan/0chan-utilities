@@ -2330,7 +2330,7 @@ var settingsPanel = {
           </ul>
           <button class="btn btn-default btn-xs ZU-enter-autohide-top ZU-menu-fullsize-btn"><span>Автоскрытие</span></button>
           <button style="margin: 10px 0 2px 0; width: 100%" class="btn btn-default btn-xs ZU-prepare-archive ZU-menu-fullsize-btn" title="Подготовить страницу к сохранению"><span>Архивировать</span></button>
-          <label style="display: block" for="ZU-archive-with-pictures"><input id="ZU-archive-with-pictures" type="checkbox" checked> Развернуть картинки при сохранении</label>
+          <label style="display: block" for="ZU-archive-with-pictures"><input id="ZU-archive-with-pictures" type="checkbox" checked> с полноразмерными картинками</label>
         </div>
         <div id="ZU-top-autohide" class="ZU-top-menu-page" hidden>
           <div class="btn-group">
