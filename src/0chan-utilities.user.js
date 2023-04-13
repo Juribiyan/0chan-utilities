@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.3.4
+// @version      3.4.0
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -1487,6 +1487,11 @@ var eventDispatcher = {
     if (eat) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-settings-main', '#ZU-top-autohide')
     }
+    // Page archiving
+    let zpa = e.path.find(el => el?.classList.contains('ZU-prepare-archive'))
+    if (zpa) {
+      preparePageSave(document.querySelector('#ZU-archive-with-pictures')?.checked)
+    }
     // Saving autohide menu
     let ret = e.path.find(el => el?.classList.contains('ZU-exit-autohide-top'))
     if (ret) {
@@ -2323,7 +2328,9 @@ var settingsPanel = {
           <ul class="ZU-settings-list">
             ${controls.reduce((htm, control) => htm + this.modules[control.type].build(control), '')}
           </ul>
-          <button class="btn btn-default btn-xs ZU-enter-autohide-top"><span>Автоскрытие</span></button>
+          <button class="btn btn-default btn-xs ZU-enter-autohide-top ZU-menu-fullsize-btn"><span>Автоскрытие</span></button>
+          <button style="margin: 10px 0 2px 0; width: 100%" class="btn btn-default btn-xs ZU-prepare-archive ZU-menu-fullsize-btn" title="Подготовить страницу к сохранению"><span>Архивировать</span></button>
+          <label style="display: block" for="ZU-archive-with-pictures"><input id="ZU-archive-with-pictures" type="checkbox" checked> Развернуть картинки при сохранении</label>
         </div>
         <div id="ZU-top-autohide" class="ZU-top-menu-page" hidden>
           <div class="btn-group">
@@ -2960,4 +2967,63 @@ Element.prototype._ins = function(position='beforeend', html) {
     return this.previousElementSibling
   else
     return this.nextElementSibling
+}
+
+function preparePageSave(withPictures=false) {
+  // Remove sidebar
+  document.body.classList.add('ZU-sidebar-hidden')
+  document.body.querySelector('#sidebar').remove()
+  // Remove post footers
+  document.body.querySelectorAll('.post-footer').forEach(foot => foot.innerHTML='')
+  // Remove unnecessary buttons buttons 
+  document.body.querySelectorAll('.headmenu-buttons').forEach(buttonGroup => buttonGroup.remove())
+  document.body.querySelector('.threads .btn-group')?.remove()
+  // Remove scripts
+  document.body.querySelectorAll('script').forEach(scr => scr.remove())
+  // Inject some CSS
+  injector.inject('zu-offline', `
+    .headmenu-title {
+      left: 10px!important
+    }
+  `)
+  // Add info line
+  let date = new Date()
+  , year = date.getFullYear()
+  , [day, month] = [date.getDate(), date.getMonth()+1].map(n => {
+    n = n.toString()
+    if (n.length < 2)
+      n = '0'+n
+    return n
+  })
+  document.querySelector('#content div').insertAdjacentHTML('beforeEnd', `<small><i>
+    Сохранено при помощи 
+    <a href="https://juribiyan.github.io/0chan-utilities/">0chan Utilities</a>
+    @ ${day}.${month}.${year}<br>
+    Оригинал страницы:
+    <a href="${document.location.href}">${document.location.href}</a>
+  </i></small>`)
+  // Replace thumbnails with big pictures
+  if (!withPictures) return;
+  document.body.querySelectorAll('.post-img').forEach(fig => {
+    if (fig.querySelector('.post-embed')) return;
+    let uid = fig.__vue__._uid
+    fig.querySelector('.ZU-thumb-overlay')?.remove()
+    fig.querySelector('.ZU-hide-attachment')?.remove()
+    let a = fig.querySelector('a')
+    , img = fig.querySelector('.post-img-thumbnail')
+    , container = a.parentElement
+    container.insertAdjacentHTML('beforeEnd', `<label for="ZU-offline-pic-switcher-${uid}">
+      <input type="checkbox" id="ZU-offline-pic-switcher-${uid}" class="ZU-offline-pic-switcher">
+      <img src="${a.href}" class="ZU-offline-pic-thumb" style="${img.getAttribute('style')}">
+      <img src="${a.href}" class="ZU-offline-pic-full">
+    </label>`)
+    a.remove()
+  })
+  injector.inject('zu-offline-pic-expanding', `
+    .ZU-offline-pic-switcher,
+    .ZU-offline-pic-switcher:not(:checked) + .ZU-offline-pic-thumb + .ZU-offline-pic-full,
+    .ZU-offline-pic-switcher:checked + .ZU-offline-pic-thumb {
+      display: none
+    }
+  `)
 }

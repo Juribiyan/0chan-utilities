@@ -22,7 +22,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.3.4
+// @version      3.4.0
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.user.js
@@ -1445,6 +1445,14 @@ var eventDispatcher = {
     if (eat) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-settings-main', '#ZU-top-autohide');
     }
+    // Page archiving
+    var zpa = e.path.find(function (el) {
+      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-prepare-archive');
+    });
+    if (zpa) {
+      var _document$querySelect3;
+      preparePageSave((_document$querySelect3 = document.querySelector('#ZU-archive-with-pictures')) === null || _document$querySelect3 === void 0 ? void 0 : _document$querySelect3.checked);
+    }
     // Saving autohide menu
     var ret = e.path.find(function (el) {
       return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-exit-autohide-top');
@@ -1600,8 +1608,8 @@ var eventDispatcher = {
     });
     if (nr) {
       nr.parentElement.querySelector('output .ZU-output').innerText = nr.value;
+      NullRestyler.update();
     }
-    NullRestyler.update();
   }
 };
 function resizeTextAreaToContent(area) {
@@ -2190,7 +2198,7 @@ var settingsPanel = {
     });
     document.querySelector('.headmenu').insertAdjacentHTML('beforeEnd', "\n      <div class=\"dropdown-menu ZU-settings-dropdown ZU-dropdown\" id=\"ZU-settings\">\n        <div id=\"ZU-settings-main\" class=\"ZU-top-menu-page\">\n          <ul class=\"ZU-settings-list\">\n            ".concat(controls.reduce(function (htm, control) {
       return htm + _this19.modules[control.type].build(control);
-    }, ''), "\n          </ul>\n          <button class=\"btn btn-default btn-xs ZU-enter-autohide-top\"><span>\u0410\u0432\u0442\u043E\u0441\u043A\u0440\u044B\u0442\u0438\u0435</span></button>\n        </div>\n        <div id=\"ZU-top-autohide\" class=\"ZU-top-menu-page\" hidden>\n          <div class=\"btn-group\">\n            <button class=\"btn btn-default btn-xs ZU-exit-autohide-top\"><span><i class=\"fa fa-chevron-left\"></i> <i class=\"fa fa-save\"></i> \u041D\u0430\u0437\u0430\u0434</span></button>\n            <!-- button class=\"btn btn-default btn-xs\"><span><i class=\"fa fa-undo\"></i></span></button -->\n          </div>\n          <div class=\"btn-group ZU-autohide-type-switch ZU-radio-btn-group\" data-toggle=\"buttons\">\n            <label class=\"btn btn-xs btn-default active\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"txt\" autocomplete=\"off\" checked> \u0422\u0435\u043A\u0441\u0442\n            </label>\n            <label class=\"btn btn-xs btn-default\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"img\" autocomplete=\"off\"> \u041A\u0430\u0440\u0442\u0438\u043D\u043A\u0438\n            </label>\n          </div>\n          <br>\n          <textarea id=\"ZU-autohide-text\" cols=\"30\" rows=\"10\" class=\"form-control ZU-autohide-content\"></textarea>\n          <div id=\"ZU-autohide-images\" class=\"ZU-autohide-content\" hidden>\n            ").concat(autohideAtt.getListHTML(), "\n          </div>\n        </div>\n      </div>"));
+    }, ''), "\n          </ul>\n          <button class=\"btn btn-default btn-xs ZU-enter-autohide-top ZU-menu-fullsize-btn\"><span>\u0410\u0432\u0442\u043E\u0441\u043A\u0440\u044B\u0442\u0438\u0435</span></button>\n          <button style=\"margin: 10px 0 2px 0; width: 100%\" class=\"btn btn-default btn-xs ZU-prepare-archive ZU-menu-fullsize-btn\" title=\"\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u0438\u0442\u044C \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443 \u043A \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044E\"><span>\u0410\u0440\u0445\u0438\u0432\u0438\u0440\u043E\u0432\u0430\u0442\u044C</span></button>\n          <label style=\"display: block\" for=\"ZU-archive-with-pictures\"><input id=\"ZU-archive-with-pictures\" type=\"checkbox\" checked> \u0420\u0430\u0437\u0432\u0435\u0440\u043D\u0443\u0442\u044C \u043A\u0430\u0440\u0442\u0438\u043D\u043A\u0438 \u043F\u0440\u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0438</label>\n        </div>\n        <div id=\"ZU-top-autohide\" class=\"ZU-top-menu-page\" hidden>\n          <div class=\"btn-group\">\n            <button class=\"btn btn-default btn-xs ZU-exit-autohide-top\"><span><i class=\"fa fa-chevron-left\"></i> <i class=\"fa fa-save\"></i> \u041D\u0430\u0437\u0430\u0434</span></button>\n            <!-- button class=\"btn btn-default btn-xs\"><span><i class=\"fa fa-undo\"></i></span></button -->\n          </div>\n          <div class=\"btn-group ZU-autohide-type-switch ZU-radio-btn-group\" data-toggle=\"buttons\">\n            <label class=\"btn btn-xs btn-default active\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"txt\" autocomplete=\"off\" checked> \u0422\u0435\u043A\u0441\u0442\n            </label>\n            <label class=\"btn btn-xs btn-default\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"img\" autocomplete=\"off\"> \u041A\u0430\u0440\u0442\u0438\u043D\u043A\u0438\n            </label>\n          </div>\n          <br>\n          <textarea id=\"ZU-autohide-text\" cols=\"30\" rows=\"10\" class=\"form-control ZU-autohide-content\"></textarea>\n          <div id=\"ZU-autohide-images\" class=\"ZU-autohide-content\" hidden>\n            ").concat(autohideAtt.getListHTML(), "\n          </div>\n        </div>\n      </div>"));
     var spellsVal = settings.autohide.map(function (spell) {
         return _typeof(spell) === 'object' ? "/".concat(spell.source, "/").concat(spell.flags) : spell;
       }).join('\n'),
@@ -2551,14 +2559,14 @@ function start() {
 }
 start();
 function onFreshContent() {
-  var _document$querySelect3;
+  var _document$querySelect4;
   try {
     state.type = app.$router.currentRoute.name;
   } catch (e) {
     console.warn('[0u] Unable to determine app state', e);
   }
   content = document.querySelector('#content > div');
-  if (state.type === 'thread') singleThread = (_document$querySelect3 = document.querySelector('.post-op')) === null || _document$querySelect3 === void 0 ? void 0 : _document$querySelect3.parentNode.parentNode;
+  if (state.type === 'thread') singleThread = (_document$querySelect4 = document.querySelector('.post-op')) === null || _document$querySelect4 === void 0 ? void 0 : _document$querySelect4.parentNode.parentNode;
   if (!state.initialized) {
     init();
   } else {
@@ -2777,3 +2785,52 @@ Element.prototype._ins = function () {
   position = position.toLowerCase();
   if (position == 'afterbegin') return this.firstElementChild;else if (position == 'beforeend') return this.lastElementChild;else if (position == 'beforebegin') return this.previousElementSibling;else return this.nextElementSibling;
 };
+function preparePageSave() {
+  var _document$body$queryS;
+  var withPictures = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  // Remove sidebar
+  document.body.classList.add('ZU-sidebar-hidden');
+  document.body.querySelector('#sidebar').remove();
+  // Remove post footers
+  document.body.querySelectorAll('.post-footer').forEach(function (foot) {
+    return foot.innerHTML = '';
+  });
+  // Remove unnecessary buttons buttons 
+  document.body.querySelectorAll('.headmenu-buttons').forEach(function (buttonGroup) {
+    return buttonGroup.remove();
+  });
+  (_document$body$queryS = document.body.querySelector('.threads .btn-group')) === null || _document$body$queryS === void 0 ? void 0 : _document$body$queryS.remove();
+  // Remove scripts
+  document.body.querySelectorAll('script').forEach(function (scr) {
+    return scr.remove();
+  });
+  // Inject some CSS
+  injector.inject('zu-offline', "\n    .headmenu-title {\n      left: 10px!important\n    }\n  ");
+  // Add info line
+  var date = new Date(),
+    year = date.getFullYear(),
+    _map = [date.getDate(), date.getMonth() + 1].map(function (n) {
+      n = n.toString();
+      if (n.length < 2) n = '0' + n;
+      return n;
+    }),
+    _map2 = _slicedToArray(_map, 2),
+    day = _map2[0],
+    month = _map2[1];
+  document.querySelector('#content div').insertAdjacentHTML('beforeEnd', "<small><i>\n    \u0421\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u043E \u043F\u0440\u0438 \u043F\u043E\u043C\u043E\u0449\u0438 \n    <a href=\"https://juribiyan.github.io/0chan-utilities/\">0chan Utilities</a>\n    @ ".concat(day, ".").concat(month, ".").concat(year, "<br>\n    \u041E\u0440\u0438\u0433\u0438\u043D\u0430\u043B \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B:\n    <a href=\"").concat(document.location.href, "\">").concat(document.location.href, "</a>\n  </i></small>"));
+  // Replace thumbnails with big pictures
+  if (!withPictures) return;
+  document.body.querySelectorAll('.post-img').forEach(function (fig) {
+    var _fig$querySelector, _fig$querySelector2;
+    if (fig.querySelector('.post-embed')) return;
+    var uid = fig.__vue__._uid;
+    (_fig$querySelector = fig.querySelector('.ZU-thumb-overlay')) === null || _fig$querySelector === void 0 ? void 0 : _fig$querySelector.remove();
+    (_fig$querySelector2 = fig.querySelector('.ZU-hide-attachment')) === null || _fig$querySelector2 === void 0 ? void 0 : _fig$querySelector2.remove();
+    var a = fig.querySelector('a'),
+      img = fig.querySelector('.post-img-thumbnail'),
+      container = a.parentElement;
+    container.insertAdjacentHTML('beforeEnd', "<label for=\"ZU-offline-pic-switcher-".concat(uid, "\">\n      <input type=\"checkbox\" id=\"ZU-offline-pic-switcher-").concat(uid, "\" class=\"ZU-offline-pic-switcher\">\n      <img src=\"").concat(a.href, "\" class=\"ZU-offline-pic-thumb\" style=\"").concat(img.getAttribute('style'), "\">\n      <img src=\"").concat(a.href, "\" class=\"ZU-offline-pic-full\">\n    </label>"));
+    a.remove();
+  });
+  injector.inject('zu-offline-pic-expanding', "\n    .ZU-offline-pic-switcher,\n    .ZU-offline-pic-switcher:not(:checked) + .ZU-offline-pic-thumb + .ZU-offline-pic-full,\n    .ZU-offline-pic-switcher:checked + .ZU-offline-pic-thumb {\n      display: none\n    }\n  ");
+}
