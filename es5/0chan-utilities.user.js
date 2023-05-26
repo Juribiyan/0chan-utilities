@@ -22,7 +22,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.4.2
+// @version      3.4.3
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.user.js
@@ -77,7 +77,7 @@ var appObserver,
     initialized: false
   },
   version = GM_info.script.version;
-if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "0chan.xyz", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "https://foxhound.cc"].includes(location.host)) {
+if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "0chan.xyz", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "foxhound.cc", "0chna.ru", "mint.0chan.ru", "0chans.ru"].includes(location.host)) {
   var IS_OCHKO = true;
 } else {
   var IS_OCHKO = false;
