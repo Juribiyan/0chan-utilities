@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.4.3
+// @version      3.4.4
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.user.js
@@ -34,3 +34,4 @@
 // @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
 // @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
 // ==/UserScript==
+"use strict";

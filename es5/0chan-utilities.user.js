@@ -22,7 +22,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.4.3
+// @version      3.4.4
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.user.js
@@ -1348,7 +1348,8 @@ var eventDispatcher = {
     var _e$target, _e$target2;
     // Close alerts with one click
     var alertsWrapper = e.path.find(function (el) {
-      return el.classList.contains('alerts-wrapper');
+      var _el$classList;
+      return el === null || el === void 0 ? void 0 : (_el$classList = el.classList) === null || _el$classList === void 0 ? void 0 : _el$classList.contains('alerts-wrapper');
     });
     if (alertsWrapper) {
       alertsWrapper.__vue__.alerts = [];
@@ -1356,7 +1357,8 @@ var eventDispatcher = {
     // Thread updating and expanding
     if (e !== null && e !== void 0 && (_e$target = e.target) !== null && _e$target !== void 0 && _e$target.classList.contains('ZU-expand-thread')) {
       var thread = e.path.find(function (el) {
-        return el.classList && el.classList.contains('thread');
+        var _el$classList2;
+        return el === null || el === void 0 ? void 0 : (_el$classList2 = el.classList) === null || _el$classList2 === void 0 ? void 0 : _el$classList2.contains('thread');
       });
       if (thread) {
         expandThread(thread);
@@ -1364,7 +1366,8 @@ var eventDispatcher = {
     }
     if (e !== null && e !== void 0 && (_e$target2 = e.target) !== null && _e$target2 !== void 0 && _e$target2.classList.contains('ZU-update-thread')) {
       var _thread = e.path.find(function (el) {
-        return el === null || el === void 0 ? void 0 : el.classList.contains('thread');
+        var _el$classList3;
+        return el === null || el === void 0 ? void 0 : (_el$classList3 = el.classList) === null || _el$classList3 === void 0 ? void 0 : _el$classList3.contains('thread');
       });
       if (_thread) {
         updateThread(_thread);
@@ -1372,7 +1375,8 @@ var eventDispatcher = {
     }
     // No scroll
     var img = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('post-img');
+      var _el$classList4;
+      return el === null || el === void 0 ? void 0 : (_el$classList4 = el.classList) === null || _el$classList4 === void 0 ? void 0 : _el$classList4.contains('post-img');
     });
     if (img) {
       if (settings.thumbNoScroll) {
@@ -1381,7 +1385,8 @@ var eventDispatcher = {
     }
     // Board hiding
     var hideBtn = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-boardhideunhide');
+      var _el$classList5;
+      return el === null || el === void 0 ? void 0 : (_el$classList5 = el.classList) === null || _el$classList5 === void 0 ? void 0 : _el$classList5.contains('ZU-boardhideunhide');
     });
     if (hideBtn) {
       e.preventDefault();
@@ -1391,7 +1396,8 @@ var eventDispatcher = {
     }
     // Board hiding by OP
     var OPhideBtn = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-hide-board-by-op');
+      var _el$classList6;
+      return el === null || el === void 0 ? void 0 : (_el$classList6 = el.classList) === null || _el$classList6 === void 0 ? void 0 : _el$classList6.contains('ZU-hide-board-by-op');
     });
     if (OPhideBtn) {
       var _dir = OPhideBtn.parentElement.querySelector('a').getAttribute('href').replace(/\//g, '');
@@ -1399,65 +1405,76 @@ var eventDispatcher = {
     }
     // Share
     var shareBtn = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-share-btn');
+      var _el$classList7;
+      return el === null || el === void 0 ? void 0 : (_el$classList7 = el.classList) === null || _el$classList7 === void 0 ? void 0 : _el$classList7.contains('ZU-share-btn');
     });
     if (shareBtn) {
-      shareBtn.querySelector('.ZU-share-dropdown').classList.toggle('ZU-dropdown-show');
+      var _shareBtn$querySelect;
+      (_shareBtn$querySelect = shareBtn.querySelector('.ZU-share-dropdown').classList) === null || _shareBtn$querySelect === void 0 ? void 0 : _shareBtn$querySelect.toggle('ZU-dropdown-show');
     }
     // Share link
     var shareLink = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-share-link');
+      var _el$classList8;
+      return el === null || el === void 0 ? void 0 : (_el$classList8 = el.classList) === null || _el$classList8 === void 0 ? void 0 : _el$classList8.contains('ZU-share-link');
     });
     if (shareLink) {
       share.handleClick(shareLink);
     }
     // Mention
     var mention = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-mention-btn');
+      var _el$classList9;
+      return el === null || el === void 0 ? void 0 : (_el$classList9 = el.classList) === null || _el$classList9 === void 0 ? void 0 : _el$classList9.contains('ZU-mention-btn');
     });
     if (mention) {
       mentionPost(mention.findParent('.post'));
     }
     // Popup slosing
     if (e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-settings-btn');
+      var _el$classList10;
+      return el === null || el === void 0 ? void 0 : (_el$classList10 = el.classList) === null || _el$classList10 === void 0 ? void 0 : _el$classList10.contains('ZU-settings-btn');
     })) {
+      var _document$querySelect, _document$querySelect2;
       [].forEach.call(document.querySelectorAll('#ZU-settings > div'), function (el) {
         return el.hidden = true;
       });
       document.querySelector('#ZU-settings-main').hidden = false;
-      document.querySelector('#ZU-settings').classList.toggle('ZU-dropdown-show');
+      (_document$querySelect = document.querySelector('#ZU-settings')) === null || _document$querySelect === void 0 ? void 0 : (_document$querySelect2 = _document$querySelect.classList) === null || _document$querySelect2 === void 0 ? void 0 : _document$querySelect2.toggle('ZU-dropdown-show');
     } else if (!e.path.find(function (el) {
       return (el === null || el === void 0 ? void 0 : el.classList) && (el.classList.contains('ZU-settings-dropdown') || el.classList.contains('ZU-prevent-settings-dropdown-close'));
     })) {
-      var _document$querySelect, _document$querySelect2;
-      (_document$querySelect = document.querySelector('#ZU-settings')) === null || _document$querySelect === void 0 ? void 0 : (_document$querySelect2 = _document$querySelect.classList) === null || _document$querySelect2 === void 0 ? void 0 : _document$querySelect2.remove('ZU-dropdown-show');
+      var _document$querySelect3, _document$querySelect4;
+      (_document$querySelect3 = document.querySelector('#ZU-settings')) === null || _document$querySelect3 === void 0 ? void 0 : (_document$querySelect4 = _document$querySelect3.classList) === null || _document$querySelect4 === void 0 ? void 0 : _document$querySelect4.remove('ZU-dropdown-show');
     }
     if (!e.path.find(function (el) {
-      return (el === null || el === void 0 ? void 0 : el.classList) && (el.classList.contains('ZU-share-btn') || el.classList.contains('ZU-share-btn'));
+      var _el$classList11, _el$classList12;
+      return (el === null || el === void 0 ? void 0 : el.classList) && (((_el$classList11 = el.classList) === null || _el$classList11 === void 0 ? void 0 : _el$classList11.contains('ZU-share-btn')) || ((_el$classList12 = el.classList) === null || _el$classList12 === void 0 ? void 0 : _el$classList12.contains('ZU-share-btn')));
     })) {
       Array.prototype.forEach.call(document.querySelectorAll('.ZU-share-dropdown'), function (dd) {
-        return dd.classList.remove('ZU-dropdown-show');
+        var _dd$classList;
+        return (_dd$classList = dd.classList) === null || _dd$classList === void 0 ? void 0 : _dd$classList.remove('ZU-dropdown-show');
       });
     }
     // Top in-menu navigation
     var eat = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-enter-autohide-top');
+      var _el$classList13;
+      return el === null || el === void 0 ? void 0 : (_el$classList13 = el.classList) === null || _el$classList13 === void 0 ? void 0 : _el$classList13.contains('ZU-enter-autohide-top');
     });
     if (eat) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-settings-main', '#ZU-top-autohide');
     }
     // Page archiving
     var zpa = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-prepare-archive');
+      var _el$classList14;
+      return el === null || el === void 0 ? void 0 : (_el$classList14 = el.classList) === null || _el$classList14 === void 0 ? void 0 : _el$classList14.contains('ZU-prepare-archive');
     });
     if (zpa) {
-      var _document$querySelect3;
-      preparePageSave((_document$querySelect3 = document.querySelector('#ZU-archive-with-pictures')) === null || _document$querySelect3 === void 0 ? void 0 : _document$querySelect3.checked);
+      var _document$querySelect5;
+      preparePageSave((_document$querySelect5 = document.querySelector('#ZU-archive-with-pictures')) === null || _document$querySelect5 === void 0 ? void 0 : _document$querySelect5.checked);
     }
     // Saving autohide menu
     var ret = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-exit-autohide-top');
+      var _el$classList15;
+      return el === null || el === void 0 ? void 0 : (_el$classList15 = el.classList) === null || _el$classList15 === void 0 ? void 0 : _el$classList15.contains('ZU-exit-autohide-top');
     });
     if (ret) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-top-autohide', '#ZU-settings-main');
@@ -1466,7 +1483,8 @@ var eventDispatcher = {
     }
     // Hide by attachment
     var hba = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-hide-attachment');
+      var _el$classList16;
+      return el === null || el === void 0 ? void 0 : (_el$classList16 = el.classList) === null || _el$classList16 === void 0 ? void 0 : _el$classList16.contains('ZU-hide-attachment');
     });
     if (hba) {
       var figVue = hba.findParent('figure').__vue__;
@@ -1477,7 +1495,8 @@ var eventDispatcher = {
     }
     // Remove autohide entry
     var rae = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-remove-autohide-entry');
+      var _el$classList17;
+      return el === null || el === void 0 ? void 0 : (_el$classList17 = el.classList) === null || _el$classList17 === void 0 ? void 0 : _el$classList17.contains('ZU-remove-autohide-entry');
     });
     if (rae) {
       var data = rae.findParent('.ZU-autohide-attachemnt-entry').dataset;
@@ -1485,35 +1504,43 @@ var eventDispatcher = {
     }
     // Radio button group behavior
     var rbg = e.path.find(function (el) {
-        return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-radio-btn-group');
+        var _el$classList18;
+        return el === null || el === void 0 ? void 0 : (_el$classList18 = el.classList) === null || _el$classList18 === void 0 ? void 0 : _el$classList18.contains('ZU-radio-btn-group');
       }),
       rbb = e.path.find(function (el) {
-        return el === null || el === void 0 ? void 0 : el.classList.contains('btn');
+        var _el$classList19;
+        return el === null || el === void 0 ? void 0 : (_el$classList19 = el.classList) === null || _el$classList19 === void 0 ? void 0 : _el$classList19.contains('btn');
       });
     if (rbg && rbb) {
+      var _rbb$classList;
       ;
       [].forEach.call(rbg.querySelectorAll('.btn'), function (btn) {
-        return btn.classList.remove('active');
+        var _btn$classList;
+        return (_btn$classList = btn.classList) === null || _btn$classList === void 0 ? void 0 : _btn$classList.remove('active');
       });
-      rbb.classList.add('active');
+      (_rbb$classList = rbb.classList) === null || _rbb$classList === void 0 ? void 0 : _rbb$classList.add('active');
     }
     // Entering Null Restyling mode
     var nr = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-restyle-null');
+      var _el$classList20;
+      return el === null || el === void 0 ? void 0 : (_el$classList20 = el.classList) === null || _el$classList20 === void 0 ? void 0 : _el$classList20.contains('ZU-restyle-null');
     });
     if (nr) {
-      document.querySelector('#sidebar').classList.add('edit-null');
+      var _document$querySelect6;
+      (_document$querySelect6 = document.querySelector('#sidebar').classList) === null || _document$querySelect6 === void 0 ? void 0 : _document$querySelect6.add('edit-null');
     }
     // Exiting Null Restyling mode
     var nrs = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-nulltwk-save');
+      var _el$classList21;
+      return el === null || el === void 0 ? void 0 : (_el$classList21 = el.classList) === null || _el$classList21 === void 0 ? void 0 : _el$classList21.contains('ZU-nulltwk-save');
     });
     if (nrs) {
       NullRestyler.save();
     }
     // Resetting the Null
     var nrr = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-nulltwk-revert');
+      var _el$classList22;
+      return el === null || el === void 0 ? void 0 : (_el$classList22 = el.classList) === null || _el$classList22 === void 0 ? void 0 : _el$classList22.contains('ZU-nulltwk-revert');
     });
     if (nrr) {
       var res = NullRestyler.setValues(settings.defaults.nullColor);
@@ -1524,20 +1551,23 @@ var eventDispatcher = {
     }
     // Hiding/unhiding selection in stegospoiler
     var shs = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-hide-selection');
+      var _el$classList23;
+      return el === null || el === void 0 ? void 0 : (_el$classList23 = el.classList) === null || _el$classList23 === void 0 ? void 0 : _el$classList23.contains('ZU-hide-selection');
     });
     if (shs) {
       textSteganography.hideSelection(shs.findParent('.reply-form').querySelector('textarea'));
     }
     var srs = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-remove-spoilers');
+      var _el$classList24;
+      return el === null || el === void 0 ? void 0 : (_el$classList24 = el.classList) === null || _el$classList24 === void 0 ? void 0 : _el$classList24.contains('ZU-remove-spoilers');
     });
     if (srs) {
       textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'));
     }
     // Collapsed references uncollapsing
     var expRef = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-expand-refs');
+      var _el$classList25;
+      return el === null || el === void 0 ? void 0 : (_el$classList25 = el.classList) === null || _el$classList25 === void 0 ? void 0 : _el$classList25.contains('ZU-expand-refs');
     });
     if (expRef) {
       referenceCollapsing.expand(expRef.findParent('.post'));
@@ -1548,10 +1578,12 @@ var eventDispatcher = {
   mousedown: function mousedown(e) {
     // Quote on reply
     var replyBtn = e.path.find(function (el) {
-      return (el === null || el === void 0 ? void 0 : el.classList) && (el.classList.contains('post-button-reply') || el.classList.contains('ZU-quote-on-click'));
+      var _el$classList26, _el$classList27;
+      return (el === null || el === void 0 ? void 0 : el.classList) && (((_el$classList26 = el.classList) === null || _el$classList26 === void 0 ? void 0 : _el$classList26.contains('post-button-reply')) || ((_el$classList27 = el.classList) === null || _el$classList27 === void 0 ? void 0 : _el$classList27.contains('ZU-quote-on-click')));
     });
     if (replyBtn) {
-      if (replyBtn.classList.contains('ZU-qoc-from-anywhere')) {
+      var _replyBtn$classList;
+      if ((_replyBtn$classList = replyBtn.classList) !== null && _replyBtn$classList !== void 0 && _replyBtn$classList.contains('ZU-qoc-from-anywhere')) {
         var selection = getSelection();
         if (selection) postQuotation = selection.text;
       } else postQuotation = getPostQuotation(replyBtn.findParent('.post'), replyBtn.classList.contains('ZU-qoc-textonly') || replyBtn.classList.contains('post-button-reply'));
@@ -1567,7 +1599,8 @@ var eventDispatcher = {
     // Noko
     if (!IS_OCHKO) {
       var noko = e.path.find(function (el) {
-        return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-noko');
+        var _el$classList28;
+        return el === null || el === void 0 ? void 0 : (_el$classList28 = el.classList) === null || _el$classList28 === void 0 ? void 0 : _el$classList28.contains('ZU-noko');
       });
       if (noko) {
         settings.noko = noko.checked;
@@ -1606,7 +1639,8 @@ var eventDispatcher = {
     }
     // Null Restyling inputs
     var nr = e.path.find(function (el) {
-      return el === null || el === void 0 ? void 0 : el.classList.contains('ZU-range');
+      var _el$classList29;
+      return el === null || el === void 0 ? void 0 : (_el$classList29 = el.classList) === null || _el$classList29 === void 0 ? void 0 : _el$classList29.contains('ZU-range');
     });
     if (nr) {
       nr.parentElement.querySelector('output .ZU-output').innerText = nr.value;
@@ -2561,14 +2595,14 @@ function start() {
 }
 start();
 function onFreshContent() {
-  var _document$querySelect4;
+  var _document$querySelect7;
   try {
     state.type = app.$router.currentRoute.name;
   } catch (e) {
     console.warn('[0u] Unable to determine app state', e);
   }
   content = document.querySelector('#content > div');
-  if (state.type === 'thread') singleThread = (_document$querySelect4 = document.querySelector('.post-op')) === null || _document$querySelect4 === void 0 ? void 0 : _document$querySelect4.parentNode.parentNode;
+  if (state.type === 'thread') singleThread = (_document$querySelect7 = document.querySelector('.post-op')) === null || _document$querySelect7 === void 0 ? void 0 : _document$querySelect7.parentNode.parentNode;
   if (!state.initialized) {
     init();
   } else {

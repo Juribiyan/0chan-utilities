@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.4.3
+// @version      3.4.4
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -1422,32 +1422,32 @@ const boardHider = {
 var eventDispatcher = {
   click: function(e) {
     // Close alerts with one click
-    let alertsWrapper = e.path.find(el => el.classList.contains('alerts-wrapper'))
+    let alertsWrapper = e.path.find(el => el?.classList?.contains('alerts-wrapper'))
     if (alertsWrapper) {
       alertsWrapper.__vue__.alerts = []
     }
     // Thread updating and expanding
     if (e?.target?.classList.contains('ZU-expand-thread')) {
-      let thread = e.path.find(el => (el.classList && el.classList.contains('thread')))
+      let thread = e.path.find(el => (el?.classList?.contains('thread')))
       if (thread) {
         expandThread(thread)
       }
     }
     if (e?.target?.classList.contains('ZU-update-thread')) {
-      let thread = e.path.find(el => (el?.classList.contains('thread')))
+      let thread = e.path.find(el => (el?.classList?.contains('thread')))
       if (thread) {
         updateThread(thread)
       }
     }
     // No scroll
-    let img = e.path.find(el => el?.classList.contains('post-img'))
+    let img = e.path.find(el => el?.classList?.contains('post-img'))
     if (img) {
       if (settings.thumbNoScroll) {
         img.__vue__.noScroll = true
       }
     }
     // Board hiding
-    let hideBtn = e.path.find(el => el?.classList.contains('ZU-boardhideunhide'))
+    let hideBtn = e.path.find(el => el?.classList?.contains('ZU-boardhideunhide'))
     if (hideBtn) {
       e.preventDefault()
       e.stopPropagation()
@@ -1455,57 +1455,57 @@ var eventDispatcher = {
       boardHider.toggleBoard(dir)
     }
     // Board hiding by OP
-    let OPhideBtn = e.path.find(el => el?.classList.contains('ZU-hide-board-by-op'))
+    let OPhideBtn = e.path.find(el => el?.classList?.contains('ZU-hide-board-by-op'))
     if (OPhideBtn) {
       let dir = OPhideBtn.parentElement.querySelector('a').getAttribute('href').replace(/\//g, '')
       boardHider.toggleBoard(dir)
     }
     // Share
-    let shareBtn = e.path.find(el => el?.classList.contains('ZU-share-btn'))
+    let shareBtn = e.path.find(el => el?.classList?.contains('ZU-share-btn'))
     if (shareBtn) {
-      shareBtn.querySelector('.ZU-share-dropdown').classList.toggle('ZU-dropdown-show')
+      shareBtn.querySelector('.ZU-share-dropdown').classList?.toggle('ZU-dropdown-show')
     }
     // Share link
-    let shareLink = e.path.find(el => el?.classList.contains('ZU-share-link'))
+    let shareLink = e.path.find(el => el?.classList?.contains('ZU-share-link'))
     if (shareLink) {
       share.handleClick(shareLink)
     }
     // Mention
-    let mention = e.path.find(el => el?.classList.contains('ZU-mention-btn'))
+    let mention = e.path.find(el => el?.classList?.contains('ZU-mention-btn'))
     if (mention) {
       mentionPost(mention.findParent('.post'))
     }
     // Popup slosing
-    if (e.path.find(el => el?.classList.contains('ZU-settings-btn'))) {
+    if (e.path.find(el => el?.classList?.contains('ZU-settings-btn'))) {
       [].forEach.call(document.querySelectorAll('#ZU-settings > div'), el => el.hidden = true)
       document.querySelector('#ZU-settings-main').hidden = false
-      document.querySelector('#ZU-settings').classList.toggle('ZU-dropdown-show')
+      document.querySelector('#ZU-settings')?.classList?.toggle('ZU-dropdown-show')
     }
     else if (! e.path.find(el => el?.classList && (el.classList.contains('ZU-settings-dropdown') || el.classList.contains('ZU-prevent-settings-dropdown-close')))) {
       document.querySelector('#ZU-settings')?.classList?.remove('ZU-dropdown-show')
     }
-    if (! e.path.find(el => el?.classList && (el.classList.contains('ZU-share-btn') || el.classList.contains('ZU-share-btn')))) {
-      Array.prototype.forEach.call(document.querySelectorAll('.ZU-share-dropdown'), dd => dd.classList.remove('ZU-dropdown-show'))
+    if (! e.path.find(el => el?.classList && (el.classList?.contains('ZU-share-btn') || el.classList?.contains('ZU-share-btn')))) {
+      Array.prototype.forEach.call(document.querySelectorAll('.ZU-share-dropdown'), dd => dd.classList?.remove('ZU-dropdown-show'))
     }
     // Top in-menu navigation
-    let eat = e.path.find(el => el?.classList.contains('ZU-enter-autohide-top'))
+    let eat = e.path.find(el => el?.classList?.contains('ZU-enter-autohide-top'))
     if (eat) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-settings-main', '#ZU-top-autohide')
     }
     // Page archiving
-    let zpa = e.path.find(el => el?.classList.contains('ZU-prepare-archive'))
+    let zpa = e.path.find(el => el?.classList?.contains('ZU-prepare-archive'))
     if (zpa) {
       preparePageSave(document.querySelector('#ZU-archive-with-pictures')?.checked)
     }
     // Saving autohide menu
-    let ret = e.path.find(el => el?.classList.contains('ZU-exit-autohide-top'))
+    let ret = e.path.find(el => el?.classList?.contains('ZU-exit-autohide-top'))
     if (ret) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-top-autohide', '#ZU-settings-main')
       autohide.save()
       reAutohidePosts()
     }
     // Hide by attachment
-    let hba = e.path.find(el => el?.classList.contains('ZU-hide-attachment'))
+    let hba = e.path.find(el => el?.classList?.contains('ZU-hide-attachment'))
     if (hba) {
       let figVue = hba.findParent('figure').__vue__
       if (hba.dataset.inlist == 'true') {
@@ -1516,30 +1516,30 @@ var eventDispatcher = {
         autohideAtt.add(figVue)
     }
     // Remove autohide entry
-    let rae = e.path.find(el => el?.classList.contains('ZU-remove-autohide-entry'))
+    let rae = e.path.find(el => el?.classList?.contains('ZU-remove-autohide-entry'))
     if (rae) {
       let data = rae.findParent('.ZU-autohide-attachemnt-entry').dataset
       autohideAtt.remove(data.aid, !!data.eid)
     }
     // Radio button group behavior
-    let rbg = e.path.find(el => el?.classList.contains('ZU-radio-btn-group'))
-    , rbb = e.path.find(el => el?.classList.contains('btn'))
+    let rbg = e.path.find(el => el?.classList?.contains('ZU-radio-btn-group'))
+    , rbb = e.path.find(el => el?.classList?.contains('btn'))
     if (rbg && rbb) {
-      ;[].forEach.call(rbg.querySelectorAll('.btn'), btn => btn.classList.remove('active'))
-      rbb.classList.add('active')
+      ;[].forEach.call(rbg.querySelectorAll('.btn'), btn => btn.classList?.remove('active'))
+      rbb.classList?.add('active')
     }
     // Entering Null Restyling mode
-    let nr = e.path.find(el => el?.classList.contains('ZU-restyle-null'))
+    let nr = e.path.find(el => el?.classList?.contains('ZU-restyle-null'))
     if (nr) {
-      document.querySelector('#sidebar').classList.add('edit-null')
+      document.querySelector('#sidebar').classList?.add('edit-null')
     }
     // Exiting Null Restyling mode
-    let nrs = e.path.find(el => el?.classList.contains('ZU-nulltwk-save'))
+    let nrs = e.path.find(el => el?.classList?.contains('ZU-nulltwk-save'))
     if (nrs) {
       NullRestyler.save()
     }
     // Resetting the Null
-    let nrr = e.path.find(el => el?.classList.contains('ZU-nulltwk-revert'))
+    let nrr = e.path.find(el => el?.classList?.contains('ZU-nulltwk-revert'))
     if (nrr) {
       let res = NullRestyler.setValues(settings.defaults.nullColor)
       localStorage['ZU-null-css-cached'] = res.css
@@ -1548,16 +1548,16 @@ var eventDispatcher = {
       settings.save()
     }
     // Hiding/unhiding selection in stegospoiler
-    let shs = e.path.find(el => el?.classList.contains('ZU-hide-selection'))
+    let shs = e.path.find(el => el?.classList?.contains('ZU-hide-selection'))
     if (shs) {
       textSteganography.hideSelection(shs.findParent('.reply-form').querySelector('textarea'))
     }
-    let srs = e.path.find(el => el?.classList.contains('ZU-remove-spoilers'))
+    let srs = e.path.find(el => el?.classList?.contains('ZU-remove-spoilers'))
     if (srs) {
       textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'))
     }
     // Collapsed references uncollapsing
-    let expRef = e.path.find(el => el?.classList.contains('ZU-expand-refs'))
+    let expRef = e.path.find(el => el?.classList?.contains('ZU-expand-refs'))
     if (expRef) {
       referenceCollapsing.expand(expRef.findParent('.post'))
     }
@@ -1565,9 +1565,9 @@ var eventDispatcher = {
   },
   mousedown: function(e) {
     // Quote on reply
-    let replyBtn = e.path.find(el => el?.classList && (el.classList.contains('post-button-reply') || el.classList.contains('ZU-quote-on-click')))
+    let replyBtn = e.path.find(el => el?.classList && (el.classList?.contains('post-button-reply') || el.classList?.contains('ZU-quote-on-click')))
     if (replyBtn) {
-      if (replyBtn.classList.contains('ZU-qoc-from-anywhere')) {
+      if (replyBtn.classList?.contains('ZU-qoc-from-anywhere')) {
         let selection = getSelection()
         if (selection)
           postQuotation = selection.text
@@ -1585,7 +1585,7 @@ var eventDispatcher = {
   change: function(e) {
     // Noko
     if (!IS_OCHKO) {
-      let noko = e.path.find(el => el?.classList.contains('ZU-noko'))
+      let noko = e.path.find(el => el?.classList?.contains('ZU-noko'))
       if (noko) {
         settings.noko = noko.checked
         Array.prototype.forEach.call(document.querySelectorAll('.ZU-noko'), otherNoko => {
@@ -1627,7 +1627,7 @@ var eventDispatcher = {
       resizeTextAreaToContent(dialogTextArea)
     }
     // Null Restyling inputs
-    let nr = e.path.find(el => el?.classList.contains('ZU-range'))
+    let nr = e.path.find(el => el?.classList?.contains('ZU-range'))
     if (nr) {
       nr.parentElement.querySelector('output .ZU-output').innerText = nr.value
       NullRestyler.update()
