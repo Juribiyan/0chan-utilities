@@ -22,7 +22,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.4.4
+// @version      3.4.5
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.user.js
@@ -49,6 +49,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 // @include      https://0chna.ru/*
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
+// @include      https://0chan.me/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
 // @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
