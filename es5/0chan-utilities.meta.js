@@ -35,4 +35,3 @@
 // @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
 // @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
 // ==/UserScript==
-"use strict";
