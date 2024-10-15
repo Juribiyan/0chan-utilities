@@ -1,7 +1,10 @@
 .thread-tree {
   display: none;
 }
-div[board-id] {
+div[board-id], 
+.ZU-thread-hidden, 
+div:not(.ZU-thread-hidden) + .ZU-thread-hidden,
+.ZU-thread-hidden + div:not(.ZU-thread-hidden) {
   width: 250px;
   min-width: 250px;
   display: inline-block;

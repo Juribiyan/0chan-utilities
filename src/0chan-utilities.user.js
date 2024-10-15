@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.4.5
+// @version      3.5.0
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -2061,7 +2061,7 @@ function handlePost(post) {
         <span title="Поделиться" class="post-button ZU-share-btn ZU-quote-on-click ZU-qoc-from-anywhere">
           <i class="fa fa-share-alt"></i>
           ${share.dropdown(`${getOrigin()}/${postData.dir}/${postData.threadID}`, postData.title)}
-          </span>
+        </span>
       </div>`)
   }
 
@@ -2414,41 +2414,79 @@ var ZURouter = {
 }
 
 function forAllNodes(selFnMap, parent=document.body, options={}) {
-  let config = Object.assign({
+  const config = Object.assign({
     autoStart: true, // whether or not observer shall start observing immediately
     subtree: false,
     childList: true,
+    groupTargets: false, // whether or not a function shall be applied to a whole group instead of each element separately
+    queryTargets: false,
+    queryAdded: true,
     queryChildren: false //whether or not inserted nodes shall be searched for selector-matching elements
   }, options)
-  , afterClass
   // Setup observer
-  let observer = new MutationObserver(mutations => {
+  const observer = new MutationObserver(mutations => {
+    const targetGroups = config.groupTargets ? selFnMap.map(sf => []) : null
+    const targetMatched = selFnMap.map(v => false)
     mutations.forEach(mutation => {
-      Array.prototype.forEach.call(mutation.addedNodes, node => {
+      if (config.queryTargets) {
+        selFnMap.forEach((sf, i) => {
+          if (!(targetMatched[i]) && mutation.target.matches(sf.selector)) {
+            targetMatched[i] = mutation.target // Make sure target is matched only once
+          }
+        })
+      }
+      if (config.queryAdded) Array.prototype.forEach.call(mutation.addedNodes, node => {
         if (node.nodeType !== Node.ELEMENT_NODE) return;
-        selFnMap.forEach(sf => {
+        selFnMap.forEach((sf, i) => {
           if (node.matches(sf.selector)) {
-            sf.fn(node)
+            if (config.groupTargets)
+              targetGroups[i].push(node)
+            else
+              sf.fn(node)
           }
           else if (config.queryChildren || sf.queryChildren) {
             let foundChildren = node.querySelectorAll(sf.selector)
             if (foundChildren) {
               Array.prototype.forEach.call(foundChildren, childNode => {
-                sf.fn(childNode)
+                if (config.groupTargets)
+                  targetGroups[i].push(childNode)
+                else
+                  sf.fn(childNode)
               })
             }
           }
         })
       })
     })
+    if (config.queryTargets) {
+      targetMatched.forEach((target, i) => {
+        if (target) {
+          if (config.groupTargets)
+            targetGroups[i].push(target)
+          else
+            selFnMap[i].fn(target)
+        }
+      })
+    }
+    if (config.groupTargets) {
+      targetGroups.forEach((tg, i) => {
+        if (tg.length) 
+          selFnMap[i].fn(tg)
+      })
+    }
   })
   function start() {
     // Handle existing nodes
     selFnMap.forEach(sf => {
       let existingNodes = parent.querySelectorAll(sf.selector)
-      Array.prototype.forEach.call(existingNodes, node => {
-        sf.fn(node)
-      })
+      if (existingNodes.length) {
+        if (config.groupTargets)
+          sf.fn(Array.from(existingNodes))
+        else
+          Array.prototype.forEach.call(existingNodes, node => {
+            sf.fn(node)
+          })
+      }
     })
     // Handle future nodes
     observer.observe(parent, config)
@@ -2659,6 +2697,23 @@ function getOrigin() {
   return `${document.location.protocol}//${document.location.host}`
 }
 
+var groupHiddenThreads = {
+  init: function() {
+    forAllNodes([{
+      selector: 'div.block.post.post-op',
+      fn: () => {
+        this.update()
+      }
+    }], document.querySelector('#content > div'), { subtree: true, groupTargets: true, queryTargets: true, queryChildren:true })
+  },
+  update: function() {
+    document.querySelectorAll('.thread').forEach(thread => {
+      const threadVue = thread.children[0].__vue__
+      thread.parentElement.classList.toggle('ZU-thread-hidden', threadVue.isRootHidden)
+    })
+  }
+}
+
 
 function start() {
   let sidebarExtPromise = externallyResolvingPromise()
@@ -2720,6 +2775,8 @@ function onFreshContent() {
   catch(e) {
     console.warn('[0u] Unable to determine app state', e)
   }
+
+  groupHiddenThreads.init()
 
   content = document.querySelector('#content > div')
   if (state.type==='thread')
@@ -2981,7 +3038,7 @@ function preparePageSave(withPictures=false) {
   document.body.querySelector('#sidebar').remove()
   // Remove post footers
   document.body.querySelectorAll('.post-footer').forEach(foot => foot.innerHTML='')
-  // Remove unnecessary buttons buttons 
+  // Remove unnecessary buttons 
   document.body.querySelectorAll('.headmenu-buttons').forEach(buttonGroup => buttonGroup.remove())
   document.body.querySelector('.threads .btn-group')?.remove()
   // Remove scripts

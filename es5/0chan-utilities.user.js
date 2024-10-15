@@ -1,31 +1,31 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct.bind(); } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _construct(t, e, r) { if (_isNativeReflectConstruct()) return Reflect.construct.apply(null, arguments); var o = [null]; o.push.apply(o, e); var p = new (t.bind.apply(t, o))(); return r && _setPrototypeOf(p, r.prototype), p; }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.4.5
+// @version      3.5.0
 // @description  Various 0chan utilities
-// @updateURL    https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.meta.js
-// @downloadURL  https://juribiyan.github.io/0chan-utilities/es5/0chan-utilities.user.js
+// @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
+// @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
 // @author       Snivy & devarped
 // @include      https://www.0chan.pl/*
 // @include      https://p.0chan.pl/*
@@ -388,7 +388,6 @@ var autohideAtt = {
     this.initialized = true;
     // settings.save()
   },
-
   initialized: false,
   check: function check(att) {
     var _this6 = this;
@@ -649,7 +648,7 @@ var youtubeStuff = {
     var existingCodes = [];
     if (!(post !== null && post !== void 0 && post.attachments) || !post.attachments.find(function (att) {
       var _att$embed;
-      return (att === null || att === void 0 ? void 0 : (_att$embed = att.embed) === null || _att$embed === void 0 ? void 0 : _att$embed.service) == 'youtube';
+      return (att === null || att === void 0 || (_att$embed = att.embed) === null || _att$embed === void 0 ? void 0 : _att$embed.service) == 'youtube';
     })) {
       // prevent repeated embedding bug
       msg.querySelectorAll('a').forEach(function (a) {
@@ -674,21 +673,18 @@ var youtubeStuff = {
                   width: "200",
                   name: "youtube-".concat(code, "-200.jpg") // vendor script demands it
                 },
-
                 thumb_200px: {
                   url: "https://img.youtube.com/vi/".concat(code, "/hqdefault.jpg"),
                   height: "150",
                   width: "200",
                   name: "youtube-".concat(code, "-200.jpg") // vendor script demands it
                 },
-
                 thumb_400px: {
                   url: "https://img.youtube.com/vi/".concat(code, "/hqdefault.jpg"),
                   height: "150",
                   width: "200",
                   name: "youtube-".concat(code, "-200.jpg") // vendor script demands it
                 },
-
                 original: {
                   url: "https://img.youtube.com/vi/".concat(code, "/hqdefault.jpg"),
                   height: "150",
@@ -696,7 +692,6 @@ var youtubeStuff = {
                   name: "youtube-".concat(code, "-200.jpg") // vendor script demands it
                 }
               },
-
               id: "youtube-".concat(code),
               isDeleted: false,
               isNsfw: false,
@@ -850,7 +845,7 @@ var MediaViewer = /*#__PURE__*/function () {
     });
     MediaViewer.toggleScalability(true);
   }
-  _createClass(MediaViewer, [{
+  return _createClass(MediaViewer, [{
     key: "refreshList",
     value: function refreshList() {
       this.list = [].filter.call(document.querySelectorAll('figure.post-img'), function (fig) {
@@ -1186,7 +1181,6 @@ var MediaViewer = /*#__PURE__*/function () {
       vp.setAttribute('content', "width=device-width,initial-scale=1".concat(on ? '' : ',maximum-scale=1,minimum-scale=1,user-scalable=no'));
     }
   }]);
-  return MediaViewer;
 }();
 var settings = {
   defaults: {
@@ -1350,7 +1344,7 @@ var eventDispatcher = {
     // Close alerts with one click
     var alertsWrapper = e.path.find(function (el) {
       var _el$classList;
-      return el === null || el === void 0 ? void 0 : (_el$classList = el.classList) === null || _el$classList === void 0 ? void 0 : _el$classList.contains('alerts-wrapper');
+      return el === null || el === void 0 || (_el$classList = el.classList) === null || _el$classList === void 0 ? void 0 : _el$classList.contains('alerts-wrapper');
     });
     if (alertsWrapper) {
       alertsWrapper.__vue__.alerts = [];
@@ -1359,7 +1353,7 @@ var eventDispatcher = {
     if (e !== null && e !== void 0 && (_e$target = e.target) !== null && _e$target !== void 0 && _e$target.classList.contains('ZU-expand-thread')) {
       var thread = e.path.find(function (el) {
         var _el$classList2;
-        return el === null || el === void 0 ? void 0 : (_el$classList2 = el.classList) === null || _el$classList2 === void 0 ? void 0 : _el$classList2.contains('thread');
+        return el === null || el === void 0 || (_el$classList2 = el.classList) === null || _el$classList2 === void 0 ? void 0 : _el$classList2.contains('thread');
       });
       if (thread) {
         expandThread(thread);
@@ -1368,7 +1362,7 @@ var eventDispatcher = {
     if (e !== null && e !== void 0 && (_e$target2 = e.target) !== null && _e$target2 !== void 0 && _e$target2.classList.contains('ZU-update-thread')) {
       var _thread = e.path.find(function (el) {
         var _el$classList3;
-        return el === null || el === void 0 ? void 0 : (_el$classList3 = el.classList) === null || _el$classList3 === void 0 ? void 0 : _el$classList3.contains('thread');
+        return el === null || el === void 0 || (_el$classList3 = el.classList) === null || _el$classList3 === void 0 ? void 0 : _el$classList3.contains('thread');
       });
       if (_thread) {
         updateThread(_thread);
@@ -1377,7 +1371,7 @@ var eventDispatcher = {
     // No scroll
     var img = e.path.find(function (el) {
       var _el$classList4;
-      return el === null || el === void 0 ? void 0 : (_el$classList4 = el.classList) === null || _el$classList4 === void 0 ? void 0 : _el$classList4.contains('post-img');
+      return el === null || el === void 0 || (_el$classList4 = el.classList) === null || _el$classList4 === void 0 ? void 0 : _el$classList4.contains('post-img');
     });
     if (img) {
       if (settings.thumbNoScroll) {
@@ -1387,7 +1381,7 @@ var eventDispatcher = {
     // Board hiding
     var hideBtn = e.path.find(function (el) {
       var _el$classList5;
-      return el === null || el === void 0 ? void 0 : (_el$classList5 = el.classList) === null || _el$classList5 === void 0 ? void 0 : _el$classList5.contains('ZU-boardhideunhide');
+      return el === null || el === void 0 || (_el$classList5 = el.classList) === null || _el$classList5 === void 0 ? void 0 : _el$classList5.contains('ZU-boardhideunhide');
     });
     if (hideBtn) {
       e.preventDefault();
@@ -1398,7 +1392,7 @@ var eventDispatcher = {
     // Board hiding by OP
     var OPhideBtn = e.path.find(function (el) {
       var _el$classList6;
-      return el === null || el === void 0 ? void 0 : (_el$classList6 = el.classList) === null || _el$classList6 === void 0 ? void 0 : _el$classList6.contains('ZU-hide-board-by-op');
+      return el === null || el === void 0 || (_el$classList6 = el.classList) === null || _el$classList6 === void 0 ? void 0 : _el$classList6.contains('ZU-hide-board-by-op');
     });
     if (OPhideBtn) {
       var _dir = OPhideBtn.parentElement.querySelector('a').getAttribute('href').replace(/\//g, '');
@@ -1407,16 +1401,16 @@ var eventDispatcher = {
     // Share
     var shareBtn = e.path.find(function (el) {
       var _el$classList7;
-      return el === null || el === void 0 ? void 0 : (_el$classList7 = el.classList) === null || _el$classList7 === void 0 ? void 0 : _el$classList7.contains('ZU-share-btn');
+      return el === null || el === void 0 || (_el$classList7 = el.classList) === null || _el$classList7 === void 0 ? void 0 : _el$classList7.contains('ZU-share-btn');
     });
     if (shareBtn) {
       var _shareBtn$querySelect;
-      (_shareBtn$querySelect = shareBtn.querySelector('.ZU-share-dropdown').classList) === null || _shareBtn$querySelect === void 0 ? void 0 : _shareBtn$querySelect.toggle('ZU-dropdown-show');
+      (_shareBtn$querySelect = shareBtn.querySelector('.ZU-share-dropdown').classList) === null || _shareBtn$querySelect === void 0 || _shareBtn$querySelect.toggle('ZU-dropdown-show');
     }
     // Share link
     var shareLink = e.path.find(function (el) {
       var _el$classList8;
-      return el === null || el === void 0 ? void 0 : (_el$classList8 = el.classList) === null || _el$classList8 === void 0 ? void 0 : _el$classList8.contains('ZU-share-link');
+      return el === null || el === void 0 || (_el$classList8 = el.classList) === null || _el$classList8 === void 0 ? void 0 : _el$classList8.contains('ZU-share-link');
     });
     if (shareLink) {
       share.handleClick(shareLink);
@@ -1424,7 +1418,7 @@ var eventDispatcher = {
     // Mention
     var mention = e.path.find(function (el) {
       var _el$classList9;
-      return el === null || el === void 0 ? void 0 : (_el$classList9 = el.classList) === null || _el$classList9 === void 0 ? void 0 : _el$classList9.contains('ZU-mention-btn');
+      return el === null || el === void 0 || (_el$classList9 = el.classList) === null || _el$classList9 === void 0 ? void 0 : _el$classList9.contains('ZU-mention-btn');
     });
     if (mention) {
       mentionPost(mention.findParent('.post'));
@@ -1432,19 +1426,19 @@ var eventDispatcher = {
     // Popup slosing
     if (e.path.find(function (el) {
       var _el$classList10;
-      return el === null || el === void 0 ? void 0 : (_el$classList10 = el.classList) === null || _el$classList10 === void 0 ? void 0 : _el$classList10.contains('ZU-settings-btn');
+      return el === null || el === void 0 || (_el$classList10 = el.classList) === null || _el$classList10 === void 0 ? void 0 : _el$classList10.contains('ZU-settings-btn');
     })) {
-      var _document$querySelect, _document$querySelect2;
+      var _document$querySelect;
       [].forEach.call(document.querySelectorAll('#ZU-settings > div'), function (el) {
         return el.hidden = true;
       });
       document.querySelector('#ZU-settings-main').hidden = false;
-      (_document$querySelect = document.querySelector('#ZU-settings')) === null || _document$querySelect === void 0 ? void 0 : (_document$querySelect2 = _document$querySelect.classList) === null || _document$querySelect2 === void 0 ? void 0 : _document$querySelect2.toggle('ZU-dropdown-show');
+      (_document$querySelect = document.querySelector('#ZU-settings')) === null || _document$querySelect === void 0 || (_document$querySelect = _document$querySelect.classList) === null || _document$querySelect === void 0 || _document$querySelect.toggle('ZU-dropdown-show');
     } else if (!e.path.find(function (el) {
       return (el === null || el === void 0 ? void 0 : el.classList) && (el.classList.contains('ZU-settings-dropdown') || el.classList.contains('ZU-prevent-settings-dropdown-close'));
     })) {
-      var _document$querySelect3, _document$querySelect4;
-      (_document$querySelect3 = document.querySelector('#ZU-settings')) === null || _document$querySelect3 === void 0 ? void 0 : (_document$querySelect4 = _document$querySelect3.classList) === null || _document$querySelect4 === void 0 ? void 0 : _document$querySelect4.remove('ZU-dropdown-show');
+      var _document$querySelect2;
+      (_document$querySelect2 = document.querySelector('#ZU-settings')) === null || _document$querySelect2 === void 0 || (_document$querySelect2 = _document$querySelect2.classList) === null || _document$querySelect2 === void 0 || _document$querySelect2.remove('ZU-dropdown-show');
     }
     if (!e.path.find(function (el) {
       var _el$classList11, _el$classList12;
@@ -1458,7 +1452,7 @@ var eventDispatcher = {
     // Top in-menu navigation
     var eat = e.path.find(function (el) {
       var _el$classList13;
-      return el === null || el === void 0 ? void 0 : (_el$classList13 = el.classList) === null || _el$classList13 === void 0 ? void 0 : _el$classList13.contains('ZU-enter-autohide-top');
+      return el === null || el === void 0 || (_el$classList13 = el.classList) === null || _el$classList13 === void 0 ? void 0 : _el$classList13.contains('ZU-enter-autohide-top');
     });
     if (eat) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-settings-main', '#ZU-top-autohide');
@@ -1466,16 +1460,16 @@ var eventDispatcher = {
     // Page archiving
     var zpa = e.path.find(function (el) {
       var _el$classList14;
-      return el === null || el === void 0 ? void 0 : (_el$classList14 = el.classList) === null || _el$classList14 === void 0 ? void 0 : _el$classList14.contains('ZU-prepare-archive');
+      return el === null || el === void 0 || (_el$classList14 = el.classList) === null || _el$classList14 === void 0 ? void 0 : _el$classList14.contains('ZU-prepare-archive');
     });
     if (zpa) {
-      var _document$querySelect5;
-      preparePageSave((_document$querySelect5 = document.querySelector('#ZU-archive-with-pictures')) === null || _document$querySelect5 === void 0 ? void 0 : _document$querySelect5.checked);
+      var _document$querySelect3;
+      preparePageSave((_document$querySelect3 = document.querySelector('#ZU-archive-with-pictures')) === null || _document$querySelect3 === void 0 ? void 0 : _document$querySelect3.checked);
     }
     // Saving autohide menu
     var ret = e.path.find(function (el) {
       var _el$classList15;
-      return el === null || el === void 0 ? void 0 : (_el$classList15 = el.classList) === null || _el$classList15 === void 0 ? void 0 : _el$classList15.contains('ZU-exit-autohide-top');
+      return el === null || el === void 0 || (_el$classList15 = el.classList) === null || _el$classList15 === void 0 ? void 0 : _el$classList15.contains('ZU-exit-autohide-top');
     });
     if (ret) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-top-autohide', '#ZU-settings-main');
@@ -1485,7 +1479,7 @@ var eventDispatcher = {
     // Hide by attachment
     var hba = e.path.find(function (el) {
       var _el$classList16;
-      return el === null || el === void 0 ? void 0 : (_el$classList16 = el.classList) === null || _el$classList16 === void 0 ? void 0 : _el$classList16.contains('ZU-hide-attachment');
+      return el === null || el === void 0 || (_el$classList16 = el.classList) === null || _el$classList16 === void 0 ? void 0 : _el$classList16.contains('ZU-hide-attachment');
     });
     if (hba) {
       var figVue = hba.findParent('figure').__vue__;
@@ -1497,7 +1491,7 @@ var eventDispatcher = {
     // Remove autohide entry
     var rae = e.path.find(function (el) {
       var _el$classList17;
-      return el === null || el === void 0 ? void 0 : (_el$classList17 = el.classList) === null || _el$classList17 === void 0 ? void 0 : _el$classList17.contains('ZU-remove-autohide-entry');
+      return el === null || el === void 0 || (_el$classList17 = el.classList) === null || _el$classList17 === void 0 ? void 0 : _el$classList17.contains('ZU-remove-autohide-entry');
     });
     if (rae) {
       var data = rae.findParent('.ZU-autohide-attachemnt-entry').dataset;
@@ -1506,11 +1500,11 @@ var eventDispatcher = {
     // Radio button group behavior
     var rbg = e.path.find(function (el) {
         var _el$classList18;
-        return el === null || el === void 0 ? void 0 : (_el$classList18 = el.classList) === null || _el$classList18 === void 0 ? void 0 : _el$classList18.contains('ZU-radio-btn-group');
+        return el === null || el === void 0 || (_el$classList18 = el.classList) === null || _el$classList18 === void 0 ? void 0 : _el$classList18.contains('ZU-radio-btn-group');
       }),
       rbb = e.path.find(function (el) {
         var _el$classList19;
-        return el === null || el === void 0 ? void 0 : (_el$classList19 = el.classList) === null || _el$classList19 === void 0 ? void 0 : _el$classList19.contains('btn');
+        return el === null || el === void 0 || (_el$classList19 = el.classList) === null || _el$classList19 === void 0 ? void 0 : _el$classList19.contains('btn');
       });
     if (rbg && rbb) {
       var _rbb$classList;
@@ -1519,21 +1513,21 @@ var eventDispatcher = {
         var _btn$classList;
         return (_btn$classList = btn.classList) === null || _btn$classList === void 0 ? void 0 : _btn$classList.remove('active');
       });
-      (_rbb$classList = rbb.classList) === null || _rbb$classList === void 0 ? void 0 : _rbb$classList.add('active');
+      (_rbb$classList = rbb.classList) === null || _rbb$classList === void 0 || _rbb$classList.add('active');
     }
     // Entering Null Restyling mode
     var nr = e.path.find(function (el) {
       var _el$classList20;
-      return el === null || el === void 0 ? void 0 : (_el$classList20 = el.classList) === null || _el$classList20 === void 0 ? void 0 : _el$classList20.contains('ZU-restyle-null');
+      return el === null || el === void 0 || (_el$classList20 = el.classList) === null || _el$classList20 === void 0 ? void 0 : _el$classList20.contains('ZU-restyle-null');
     });
     if (nr) {
-      var _document$querySelect6;
-      (_document$querySelect6 = document.querySelector('#sidebar').classList) === null || _document$querySelect6 === void 0 ? void 0 : _document$querySelect6.add('edit-null');
+      var _document$querySelect4;
+      (_document$querySelect4 = document.querySelector('#sidebar').classList) === null || _document$querySelect4 === void 0 || _document$querySelect4.add('edit-null');
     }
     // Exiting Null Restyling mode
     var nrs = e.path.find(function (el) {
       var _el$classList21;
-      return el === null || el === void 0 ? void 0 : (_el$classList21 = el.classList) === null || _el$classList21 === void 0 ? void 0 : _el$classList21.contains('ZU-nulltwk-save');
+      return el === null || el === void 0 || (_el$classList21 = el.classList) === null || _el$classList21 === void 0 ? void 0 : _el$classList21.contains('ZU-nulltwk-save');
     });
     if (nrs) {
       NullRestyler.save();
@@ -1541,7 +1535,7 @@ var eventDispatcher = {
     // Resetting the Null
     var nrr = e.path.find(function (el) {
       var _el$classList22;
-      return el === null || el === void 0 ? void 0 : (_el$classList22 = el.classList) === null || _el$classList22 === void 0 ? void 0 : _el$classList22.contains('ZU-nulltwk-revert');
+      return el === null || el === void 0 || (_el$classList22 = el.classList) === null || _el$classList22 === void 0 ? void 0 : _el$classList22.contains('ZU-nulltwk-revert');
     });
     if (nrr) {
       var res = NullRestyler.setValues(settings.defaults.nullColor);
@@ -1553,14 +1547,14 @@ var eventDispatcher = {
     // Hiding/unhiding selection in stegospoiler
     var shs = e.path.find(function (el) {
       var _el$classList23;
-      return el === null || el === void 0 ? void 0 : (_el$classList23 = el.classList) === null || _el$classList23 === void 0 ? void 0 : _el$classList23.contains('ZU-hide-selection');
+      return el === null || el === void 0 || (_el$classList23 = el.classList) === null || _el$classList23 === void 0 ? void 0 : _el$classList23.contains('ZU-hide-selection');
     });
     if (shs) {
       textSteganography.hideSelection(shs.findParent('.reply-form').querySelector('textarea'));
     }
     var srs = e.path.find(function (el) {
       var _el$classList24;
-      return el === null || el === void 0 ? void 0 : (_el$classList24 = el.classList) === null || _el$classList24 === void 0 ? void 0 : _el$classList24.contains('ZU-remove-spoilers');
+      return el === null || el === void 0 || (_el$classList24 = el.classList) === null || _el$classList24 === void 0 ? void 0 : _el$classList24.contains('ZU-remove-spoilers');
     });
     if (srs) {
       textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'));
@@ -1568,14 +1562,13 @@ var eventDispatcher = {
     // Collapsed references uncollapsing
     var expRef = e.path.find(function (el) {
       var _el$classList25;
-      return el === null || el === void 0 ? void 0 : (_el$classList25 = el.classList) === null || _el$classList25 === void 0 ? void 0 : _el$classList25.contains('ZU-expand-refs');
+      return el === null || el === void 0 || (_el$classList25 = el.classList) === null || _el$classList25 === void 0 ? void 0 : _el$classList25.contains('ZU-expand-refs');
     });
     if (expRef) {
       referenceCollapsing.expand(expRef.findParent('.post'));
     }
     // Thumbnail expanding
   },
-
   mousedown: function mousedown(e) {
     // Quote on reply
     var replyBtn = e.path.find(function (el) {
@@ -1601,7 +1594,7 @@ var eventDispatcher = {
     if (!IS_OCHKO) {
       var noko = e.path.find(function (el) {
         var _el$classList28;
-        return el === null || el === void 0 ? void 0 : (_el$classList28 = el.classList) === null || _el$classList28 === void 0 ? void 0 : _el$classList28.contains('ZU-noko');
+        return el === null || el === void 0 || (_el$classList28 = el.classList) === null || _el$classList28 === void 0 ? void 0 : _el$classList28.contains('ZU-noko');
       });
       if (noko) {
         settings.noko = noko.checked;
@@ -1641,7 +1634,7 @@ var eventDispatcher = {
     // Null Restyling inputs
     var nr = e.path.find(function (el) {
       var _el$classList29;
-      return el === null || el === void 0 ? void 0 : (_el$classList29 = el.classList) === null || _el$classList29 === void 0 ? void 0 : _el$classList29.contains('ZU-range');
+      return el === null || el === void 0 || (_el$classList29 = el.classList) === null || _el$classList29 === void 0 ? void 0 : _el$classList29.contains('ZU-range');
     });
     if (nr) {
       nr.parentElement.querySelector('output .ZU-output').innerText = nr.value;
@@ -1929,7 +1922,6 @@ function init() {
   if (typeof content.__vue__ === 'undefined') {
     setupVueGetter(); // *swoosh* — and __vue__ is available outside dev tools!
   }
-
   contentVue = content.__vue__;
   router.setupInterceptor();
   settings.init();
@@ -1990,7 +1982,7 @@ function handlePost(post) {
   if (postData.isPopup) {
     repositionPopup(post.parentNode);
   } else if (postData.isOpPost) {
-    extraIconsContainer.insertAdjacentHTML('beforeBegin', "\n      <div class=\"pull-left\">\n        <span title=\"\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F\" class=\"post-button ZU-share-btn ZU-quote-on-click ZU-qoc-from-anywhere\">\n          <i class=\"fa fa-share-alt\"></i>\n          ".concat(share.dropdown("".concat(getOrigin(), "/").concat(postData.dir, "/").concat(postData.threadID), postData.title), "\n          </span>\n      </div>"));
+    extraIconsContainer.insertAdjacentHTML('beforeBegin', "\n      <div class=\"pull-left\">\n        <span title=\"\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F\" class=\"post-button ZU-share-btn ZU-quote-on-click ZU-qoc-from-anywhere\">\n          <i class=\"fa fa-share-alt\"></i>\n          ".concat(share.dropdown("".concat(getOrigin(), "/").concat(postData.dir, "/").concat(postData.threadID), postData.title), "\n        </span>\n      </div>"));
   }
 
   // Autohide posts
@@ -2297,40 +2289,70 @@ function forAllNodes(selFnMap) {
   var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : document.body;
   var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var config = Object.assign({
-      autoStart: true,
-      // whether or not observer shall start observing immediately
-      subtree: false,
-      childList: true,
-      queryChildren: false //whether or not inserted nodes shall be searched for selector-matching elements
-    }, options),
-    afterClass;
+    autoStart: true,
+    // whether or not observer shall start observing immediately
+    subtree: false,
+    childList: true,
+    groupTargets: false,
+    // whether or not a function shall be applied to a whole group instead of each element separately
+    queryTargets: false,
+    queryAdded: true,
+    queryChildren: false //whether or not inserted nodes shall be searched for selector-matching elements
+  }, options);
   // Setup observer
   var observer = new MutationObserver(function (mutations) {
+    var targetGroups = config.groupTargets ? selFnMap.map(function (sf) {
+      return [];
+    }) : null;
+    var targetMatched = selFnMap.map(function (v) {
+      return false;
+    });
     mutations.forEach(function (mutation) {
-      Array.prototype.forEach.call(mutation.addedNodes, function (node) {
+      if (config.queryTargets) {
+        selFnMap.forEach(function (sf, i) {
+          if (!targetMatched[i] && mutation.target.matches(sf.selector)) {
+            targetMatched[i] = mutation.target; // Make sure target is matched only once
+          }
+        });
+      }
+      if (config.queryAdded) Array.prototype.forEach.call(mutation.addedNodes, function (node) {
         if (node.nodeType !== Node.ELEMENT_NODE) return;
-        selFnMap.forEach(function (sf) {
+        selFnMap.forEach(function (sf, i) {
           if (node.matches(sf.selector)) {
-            sf.fn(node);
+            if (config.groupTargets) targetGroups[i].push(node);else sf.fn(node);
           } else if (config.queryChildren || sf.queryChildren) {
             var foundChildren = node.querySelectorAll(sf.selector);
             if (foundChildren) {
               Array.prototype.forEach.call(foundChildren, function (childNode) {
-                sf.fn(childNode);
+                if (config.groupTargets) targetGroups[i].push(childNode);else sf.fn(childNode);
               });
             }
           }
         });
       });
     });
+    if (config.queryTargets) {
+      targetMatched.forEach(function (target, i) {
+        if (target) {
+          if (config.groupTargets) targetGroups[i].push(target);else selFnMap[i].fn(target);
+        }
+      });
+    }
+    if (config.groupTargets) {
+      targetGroups.forEach(function (tg, i) {
+        if (tg.length) selFnMap[i].fn(tg);
+      });
+    }
   });
   function start() {
     // Handle existing nodes
     selFnMap.forEach(function (sf) {
       var existingNodes = parent.querySelectorAll(sf.selector);
-      Array.prototype.forEach.call(existingNodes, function (node) {
-        sf.fn(node);
-      });
+      if (existingNodes.length) {
+        if (config.groupTargets) sf.fn(Array.from(existingNodes));else Array.prototype.forEach.call(existingNodes, function (node) {
+          sf.fn(node);
+        });
+      }
     });
     // Handle future nodes
     observer.observe(parent, config);
@@ -2538,6 +2560,28 @@ function LSfetchJSON(key) {
 function getOrigin() {
   return "".concat(document.location.protocol, "//").concat(document.location.host);
 }
+var groupHiddenThreads = {
+  init: function init() {
+    var _this21 = this;
+    forAllNodes([{
+      selector: 'div.block.post.post-op',
+      fn: function fn() {
+        _this21.update();
+      }
+    }], document.querySelector('#content > div'), {
+      subtree: true,
+      groupTargets: true,
+      queryTargets: true,
+      queryChildren: true
+    });
+  },
+  update: function update() {
+    document.querySelectorAll('.thread').forEach(function (thread) {
+      var threadVue = thread.children[0].__vue__;
+      thread.parentElement.classList.toggle('ZU-thread-hidden', threadVue.isRootHidden);
+    });
+  }
+};
 function start() {
   var sidebarExtPromise = externallyResolvingPromise(),
     contentExtPromise = externallyResolvingPromise();
@@ -2596,14 +2640,15 @@ function start() {
 }
 start();
 function onFreshContent() {
-  var _document$querySelect7;
+  var _document$querySelect5;
   try {
     state.type = app.$router.currentRoute.name;
   } catch (e) {
     console.warn('[0u] Unable to determine app state', e);
   }
+  groupHiddenThreads.init();
   content = document.querySelector('#content > div');
-  if (state.type === 'thread') singleThread = (_document$querySelect7 = document.querySelector('.post-op')) === null || _document$querySelect7 === void 0 ? void 0 : _document$querySelect7.parentNode.parentNode;
+  if (state.type === 'thread') singleThread = (_document$querySelect5 = document.querySelector('.post-op')) === null || _document$querySelect5 === void 0 ? void 0 : _document$querySelect5.parentNode.parentNode;
   if (!state.initialized) {
     init();
   } else {
@@ -2729,11 +2774,11 @@ function fancyResizeXfade(container, hide, show) {
 var formOnZeroPage = {
   defaultBoard: 'b',
   init: function init() {
-    var _this21 = this;
+    var _this22 = this;
     var buttonsRight = document.querySelector('.headmenu-buttons-right');
     buttonsRight.insertAdjacentHTML('afterbegin', "\n      <div class=\"btn-group\">\n        <button type=\"button\" class=\"btn btn-primary ZU-toggleNewThreadForm\"><i class=\"fa fa-pencil-square-o\"></i> \n          <span class=\"btn-caption hidden-xs\">\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0442\u0440\u0435\u0434</span>\n        </button>\n      </div>");
     buttonsRight.querySelector('.ZU-toggleNewThreadForm').onclick = function () {
-      return _this21.toggleNewThreadForm();
+      return _this22.toggleNewThreadForm();
     };
     // prevent title replacement
     var title = document.querySelector('.headmenu-title'),
@@ -2751,7 +2796,7 @@ var formOnZeroPage = {
     }).forEach(function (board) {
       var name = board.name.length > 40 ? board.name.slice(0, 40 - 3) + '...' : board.name,
         opt = "<option value=\"".concat(board.dir, "\">").concat(board.dir, " \u2014 ").concat(name, "</option>");
-      if (board.dir == settings.selectedBoard && settings.selectedBoard != _this21.defaultBoard) optSel = opt;else if (board.dir == _this21.defaultBoard) optDefault = opt;else opts += opt;
+      if (board.dir == settings.selectedBoard && settings.selectedBoard != _this22.defaultBoard) optSel = opt;else if (board.dir == _this22.defaultBoard) optDefault = opt;else opts += opt;
     });
     sel += optSel + optDefault + opts + '</select>';
     document.querySelector('.new-thread-form .btn-primary').insertAdjacentHTML('afterEnd', sel);
@@ -2777,22 +2822,22 @@ var textSteganography = {
     return String.fromCharCode(n);
   }),
   encode: function encode(txt) {
-    var _this22 = this;
+    var _this23 = this;
     return txt.split('').map(function (_char) {
       return _char.charCodeAt(0).toString(4).split('').map(function (digit) {
-        return _this22.charMap[digit];
+        return _this23.charMap[digit];
       }).join('');
     }).join(this.charMap[4]);
   },
   decode: function decode(htm) {
-    var _this23 = this;
+    var _this24 = this;
     var startTag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
     var endTag = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
     var safe = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
     return htm.replace(/[\u200b\u200c\u200d\u200e\u200f]+/g, function (match) {
-      var decoded = match.split(_this23.charMap[4]).map(function (chars) {
+      var decoded = match.split(_this24.charMap[4]).map(function (chars) {
         return String.fromCharCode(parseInt(chars.split('').map(function (_char2) {
-          return _this23.charMap.indexOf(_char2);
+          return _this24.charMap.indexOf(_char2);
         }).join(''), 4));
       }).join('');
       if (safe) {
@@ -2832,11 +2877,11 @@ function preparePageSave() {
   document.body.querySelectorAll('.post-footer').forEach(function (foot) {
     return foot.innerHTML = '';
   });
-  // Remove unnecessary buttons buttons 
+  // Remove unnecessary buttons 
   document.body.querySelectorAll('.headmenu-buttons').forEach(function (buttonGroup) {
     return buttonGroup.remove();
   });
-  (_document$body$queryS = document.body.querySelector('.threads .btn-group')) === null || _document$body$queryS === void 0 ? void 0 : _document$body$queryS.remove();
+  (_document$body$queryS = document.body.querySelector('.threads .btn-group')) === null || _document$body$queryS === void 0 || _document$body$queryS.remove();
   // Remove scripts
   document.body.querySelectorAll('script').forEach(function (scr) {
     return scr.remove();
@@ -2861,8 +2906,8 @@ function preparePageSave() {
     var _fig$querySelector, _fig$querySelector2;
     if (fig.querySelector('.post-embed')) return;
     var uid = fig.__vue__._uid;
-    (_fig$querySelector = fig.querySelector('.ZU-thumb-overlay')) === null || _fig$querySelector === void 0 ? void 0 : _fig$querySelector.remove();
-    (_fig$querySelector2 = fig.querySelector('.ZU-hide-attachment')) === null || _fig$querySelector2 === void 0 ? void 0 : _fig$querySelector2.remove();
+    (_fig$querySelector = fig.querySelector('.ZU-thumb-overlay')) === null || _fig$querySelector === void 0 || _fig$querySelector.remove();
+    (_fig$querySelector2 = fig.querySelector('.ZU-hide-attachment')) === null || _fig$querySelector2 === void 0 || _fig$querySelector2.remove();
     var a = fig.querySelector('a'),
       img = fig.querySelector('.post-img-thumbnail'),
       container = a.parentElement;

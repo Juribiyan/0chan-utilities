@@ -718,3 +718,18 @@ span.ZU-hide-board-by-op {
     transform: translate(-50%, -50%) rotate(360deg);
   }
 }
+
+.ZU-thread-hidden {
+  margin-top: 0px!important;
+  display: inline-block;
+}
+.ZU-thread-hidden .thread-separator {
+  margin-top: 4px!important;
+  margin-bottom: 4px!important;
+}
+div:not(.ZU-thread-hidden) + .ZU-thread-hidden {
+  margin-top: -36px!important;
+}
+.ZU-thread-hidden + div:not(.ZU-thread-hidden) {
+  margin-top: 40px!important;
+}
