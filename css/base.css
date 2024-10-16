@@ -733,3 +733,6 @@ div:not(.ZU-thread-hidden) + .ZU-thread-hidden {
 .ZU-thread-hidden + div:not(.ZU-thread-hidden) {
   margin-top: 40px!important;
 }
+.ZU-thread-hidden div:not(.post-popup) > .post {
+    min-width: auto;
+}
