@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.5.0
+// @version      3.5.1
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -1601,23 +1601,6 @@ var eventDispatcher = {
       settings.save()
     }
   },
-  mouseenter: function(e) {
-    // Peek into hidden thread
-    let peek = e.path.find(el =>
-      el?.classList
-      &&
-      el.classList.contains('fa-plus-square-o')
-      &&
-      el.findParent('.post-footer')
-    )
-    if (peek) {
-      let post = peek.findParent('.post').parentNode
-      , postVue = post.__vue__
-      if (postVue?.isAutoHidden) {
-        console.log(postVue)
-      }
-    }
-  },
   input: function(e) {
     let dialogTextArea = e.path.find(el => 
       el.tagName == "TEXTAREA"
@@ -2710,6 +2693,9 @@ var groupHiddenThreads = {
     document.querySelectorAll('.thread').forEach(thread => {
       const threadVue = thread.children[0].__vue__
       thread.parentElement.classList.toggle('ZU-thread-hidden', threadVue.isRootHidden)
+      const post = thread.querySelector('.post')
+      , postVue = post.parentNode.__vue__
+      post.querySelector('.post-id a:last-of-type').dataset.post = postVue.post.id
     })
   }
 }
