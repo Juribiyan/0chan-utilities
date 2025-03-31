@@ -30,11 +30,14 @@
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
 // @include      https://0chan.1chan.cyou/*
+// @include      http://ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion/*
+// @include      http://ochko.i2p/*
+// @include      http://ochko.ygg/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
-// @resource     baseCSS http://0chan-utilities/css/base.css
-// @resource     darkCSS http://0chan-utilities/css/dark.css
-// @resource     catalogCSS http:/0chan-utilities/css/catalog.css
+// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
+// @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
+// @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
 // ==/UserScript==
 
 const icons =
@@ -108,7 +111,10 @@ if (
     "foxhound.cc",
     "0chna.ru",
     "mint.0chan.ru",
-    "0chans.ru"
+    "0chans.ru",
+    "0chan.1chan.cyou",
+    "ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion",
+    "ochko.ygg"
    ].includes(location.host)) {
     var IS_OCHKO = true
 } else {
