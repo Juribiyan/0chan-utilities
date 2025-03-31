@@ -29,11 +29,12 @@
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
+// @include      https://0chan.1chan.cyou/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
-// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
-// @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
-// @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
+// @resource     baseCSS http://0chan-utilities/css/base.css
+// @resource     darkCSS http://0chan-utilities/css/dark.css
+// @resource     catalogCSS http:/0chan-utilities/css/catalog.css
 // ==/UserScript==
 
 const icons =
@@ -365,11 +366,14 @@ const catalog = {
     let quickBtn = document.querySelector('#ZU-quickaction-catalogMode')
     if (quickBtn)
       quickBtn.classList.toggle('active', on)
+    const content = document.querySelector('#content')
     if (this.isApplicable && on) {
       injector.inject('ZU-catalog-mode', this.css)
+      content.classList.add('ZU-catalog-mode')
     }
     else {
       injector.remove('ZU-catalog-mode')
+      content.classList.remove('ZU-catalog-mode')
     }
   },
   css: GM_getResourceText("catalogCSS"),

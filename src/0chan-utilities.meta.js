@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.5.0
+// @version      3.5.1
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -29,6 +29,7 @@
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
+// @include      https://0chan.1chan.cyou/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
 // @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
