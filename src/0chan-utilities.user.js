@@ -2802,7 +2802,8 @@ function onFreshContent() {
   if (state.type == 'home')
     formOnZeroPage.init()
 
-  darkMode.addButton()
+  if (!IS_OCHKO)
+    darkMode.addButton()
 }
 
 function freezeSize(el) {

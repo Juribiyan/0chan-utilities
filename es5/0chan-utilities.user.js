@@ -2668,7 +2668,7 @@ function onFreshContent() {
   ZURouter.handleRoute(state.type);
   refresher.init();
   if (state.type == 'home') formOnZeroPage.init();
-  darkMode.addButton();
+  if (!IS_OCHKO) darkMode.addButton();
 }
 function freezeSize(el) {
   var bcr = el.getBoundingClientRect();
