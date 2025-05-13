@@ -721,7 +721,7 @@ span.ZU-hide-board-by-op {
 
 .ZU-thread-hidden {
   margin-top: 0px!important;
-  display: inline-block;
+  display: inline;
 }
 .ZU-thread-hidden .thread-separator {
   margin-top: 4px!important;
