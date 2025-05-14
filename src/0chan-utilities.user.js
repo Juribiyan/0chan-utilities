@@ -911,8 +911,10 @@ var darkMode = {
     this.css = GM_getResourceText("darkCSS")
     let settings = LSfetchJSON('ZU-settings')
     , on = (settings && settings.darkMode !== undefined) ? settings.darkMode : this.enabledByDefault
-    if (on) {
-      this.toggle(on, false)
+    if (!IS_OCHKO) {
+      if (on) {
+        this.toggle(on, false)
+      }
     }
   },
   addButton: function() {
