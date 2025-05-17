@@ -29,7 +29,7 @@
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
-// @include      https://0chan.1chan.cyou/*
+// @include      https://0chan.cyou/*
 // @include      http://ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion/*
 // @include      http://ochko.i2p/*
 // @include      http://ochko.ygg/*
