@@ -114,7 +114,8 @@ if (
     "0chans.ru",
     "0chan.cyou",
     "ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion",
-    "ochko.ygg"
+    "ochko.ygg",
+    "ochko.i2p"
    ].includes(location.host)) {
     var IS_OCHKO = true
 } else {
