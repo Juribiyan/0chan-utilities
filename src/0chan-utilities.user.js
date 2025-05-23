@@ -29,12 +29,15 @@
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
-// @include      https://0chan.1chan.cyou/*
+// @include      https://0chan.cyou/*
+// @include      http://ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion/*
+// @include      http://ochko.i2p/*
+// @include      http://ochko.ygg/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
-// @resource     baseCSS http://0chan-utilities/css/base.css
-// @resource     darkCSS http://0chan-utilities/css/dark.css
-// @resource     catalogCSS http:/0chan-utilities/css/catalog.css
+// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
+// @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
+// @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
 // ==/UserScript==
 
 const icons =
@@ -108,7 +111,11 @@ if (
     "foxhound.cc",
     "0chna.ru",
     "mint.0chan.ru",
-    "0chans.ru"
+    "0chans.ru",
+    "0chan.cyou",
+    "ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion",
+    "ochko.ygg",
+    "ochko.i2p"
    ].includes(location.host)) {
     var IS_OCHKO = true
 } else {
@@ -905,7 +912,7 @@ var darkMode = {
     this.css = GM_getResourceText("darkCSS")
     let settings = LSfetchJSON('ZU-settings')
     , on = (settings && settings.darkMode !== undefined) ? settings.darkMode : this.enabledByDefault
-    if (on) {
+    if (on && !IS_OCHKO) {
       this.toggle(on, false)
     }
   },
@@ -2796,7 +2803,8 @@ function onFreshContent() {
   if (state.type == 'home')
     formOnZeroPage.init()
 
-  darkMode.addButton()
+  if (!IS_OCHKO)
+    darkMode.addButton()
 }
 
 function freezeSize(el) {
