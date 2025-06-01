@@ -10,7 +10,7 @@
 // @include      https://p.0chan.pl/*
 // @include      https://0.1chan.pl/*
 // @include      https://ygg.0chan.pl/*
-// @include      https://www.0chan.club/*
+// @include      https://0chan.club/*
 // @include      http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion/*
 // @include      http://0pl.i2p/*
 // @include      http://gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p/*
