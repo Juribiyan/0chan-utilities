@@ -10,7 +10,7 @@
 // @include      https://p.0chan.pl/*
 // @include      https://0.1chan.pl/*
 // @include      https://ygg.0chan.pl/*
-// @include      https://www.0chan.club/*
+// @include      https://0chan.club/*
 // @include      http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion/*
 // @include      http://0pl.i2p/*
 // @include      http://gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p/*
@@ -29,12 +29,15 @@
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
-// @include      https://0chan.1chan.cyou/*
+// @include      https://0chan.cyou/*
+// @include      http://ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion/*
+// @include      http://ochko.i2p/*
+// @include      http://ochko.ygg/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
-// @resource     baseCSS http://0chan-utilities/css/base.css
-// @resource     darkCSS http://0chan-utilities/css/dark.css
-// @resource     catalogCSS http:/0chan-utilities/css/catalog.css
+// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
+// @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
+// @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
 // ==/UserScript==
 
 const icons =
@@ -96,7 +99,7 @@ if (
     "p.0chan.pl",
     "0.1chan.pl",
     "ygg.0chan.pl",
-    "www.0chan.club",
+    "0chan.club",
     "0chan.life",
     "www.0chan.life",
     "0chan.xyz",
@@ -108,7 +111,11 @@ if (
     "foxhound.cc",
     "0chna.ru",
     "mint.0chan.ru",
-    "0chans.ru"
+    "0chans.ru",
+    "0chan.cyou",
+    "ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion",
+    "ochko.ygg",
+    "ochko.i2p"
    ].includes(location.host)) {
     var IS_OCHKO = true
 } else {
@@ -905,7 +912,7 @@ var darkMode = {
     this.css = GM_getResourceText("darkCSS")
     let settings = LSfetchJSON('ZU-settings')
     , on = (settings && settings.darkMode !== undefined) ? settings.darkMode : this.enabledByDefault
-    if (on) {
+    if (on && !IS_OCHKO) {
       this.toggle(on, false)
     }
   },
@@ -2198,12 +2205,12 @@ function addThreadControls(threadDOM, threadVue) {
     }
     controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-update-thread-container"> | <a href="${href}" onclick="return false" class="ZU-update-thread">Обновить</a></span>`)
     controlsContainer.classList.add('ZU-thread-controls')
+
+    let op = threadDOM.querySelector('.post-op')
+    , opPostID = op.querySelector('.post-id')
+    op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container')
+    opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
   }
-  
-  let op = threadDOM.querySelector('.post-op')
-  , opPostID = op.querySelector('.post-id')
-  op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container')
-  opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
 }
 
 var settingsPanel = {
@@ -2796,7 +2803,8 @@ function onFreshContent() {
   if (state.type == 'home')
     formOnZeroPage.init()
 
-  darkMode.addButton()
+  if (!IS_OCHKO)
+    darkMode.addButton()
 }
 
 function freezeSize(el) {
