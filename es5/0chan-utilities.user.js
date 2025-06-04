@@ -2119,11 +2119,12 @@ function addThreadControls(threadDOM, threadVue) {
     }
     controlsContainer.insertAdjacentHTML('beforeEnd', "<span class=\"ZU-update-thread-container\"> | <a href=\"".concat(href, "\" onclick=\"return false\" class=\"ZU-update-thread\">\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C</a></span>"));
     controlsContainer.classList.add('ZU-thread-controls');
+  
+    var op = threadDOM.querySelector('.post-op'),
+      opPostID = op.querySelector('.post-id');
+    op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container');
+    opPostID.insertAdjacentHTML('afterBegin', "<span title=\"\u0421\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u0441\u043A\u0443\" class=\"post-button ZU-hide-board-by-op\"><i class=\"fa fa-minus-square-o\"></i></span>");
   }
-  var op = threadDOM.querySelector('.post-op'),
-    opPostID = op.querySelector('.post-id');
-  op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container');
-  opPostID.insertAdjacentHTML('afterBegin', "<span title=\"\u0421\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u0441\u043A\u0443\" class=\"post-button ZU-hide-board-by-op\"><i class=\"fa fa-minus-square-o\"></i></span>");
 }
 var settingsPanel = {
   modules: {

@@ -2205,12 +2205,12 @@ function addThreadControls(threadDOM, threadVue) {
     }
     controlsContainer.insertAdjacentHTML('beforeEnd', `<span class="ZU-update-thread-container"> | <a href="${href}" onclick="return false" class="ZU-update-thread">Обновить</a></span>`)
     controlsContainer.classList.add('ZU-thread-controls')
+
+    let op = threadDOM.querySelector('.post-op')
+    , opPostID = op.querySelector('.post-id')
+    op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container')
+    opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
   }
-  
-  let op = threadDOM.querySelector('.post-op')
-  , opPostID = op.querySelector('.post-id')
-  op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container')
-  opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
 }
 
 var settingsPanel = {
