@@ -22,7 +22,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.5.1
+// @version      3.5.2
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -51,6 +51,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
 // @include      https://0chan.1chan.cyou/*
+// @include      https://0chan.club/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
 // @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
@@ -79,7 +80,7 @@ var appObserver,
     initialized: false
   },
   version = GM_info.script.version;
-if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "0chan.xyz", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "foxhound.cc", "0chna.ru", "mint.0chan.ru", "0chans.ru"].includes(location.host)) {
+if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "0chan.xyz", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "foxhound.cc", "0chna.ru", "mint.0chan.ru", "0chans.ru", "0chan.club"].includes(location.host)) {
   var IS_OCHKO = true;
 } else {
   var IS_OCHKO = false;
@@ -300,10 +301,13 @@ var catalog = {
     var on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : settings.catalogMode;
     var quickBtn = document.querySelector('#ZU-quickaction-catalogMode');
     if (quickBtn) quickBtn.classList.toggle('active', on);
+    var content = document.querySelector('#content');
     if (this.isApplicable && on) {
       injector.inject('ZU-catalog-mode', this.css);
+      content.classList.add('ZU-catalog-mode');
     } else {
       injector.remove('ZU-catalog-mode');
+      content.classList.remove('ZU-catalog-mode');
     }
   },
   css: GM_getResourceText("catalogCSS"),
@@ -1612,19 +1616,6 @@ var eventDispatcher = {
       settings.save();
     }
   },
-  mouseenter: function mouseenter(e) {
-    // Peek into hidden thread
-    var peek = e.path.find(function (el) {
-      return (el === null || el === void 0 ? void 0 : el.classList) && el.classList.contains('fa-plus-square-o') && el.findParent('.post-footer');
-    });
-    if (peek) {
-      var post = peek.findParent('.post').parentNode,
-        postVue = post.__vue__;
-      if (postVue !== null && postVue !== void 0 && postVue.isAutoHidden) {
-        console.log(postVue);
-      }
-    }
-  },
   input: function input(e) {
     var dialogTextArea = e.path.find(function (el) {
       return el.tagName == "TEXTAREA" && el.findParent('.dialog-footer');
@@ -2580,6 +2571,9 @@ var groupHiddenThreads = {
     document.querySelectorAll('.thread').forEach(function (thread) {
       var threadVue = thread.children[0].__vue__;
       thread.parentElement.classList.toggle('ZU-thread-hidden', threadVue.isRootHidden);
+      var post = thread.querySelector('.post'),
+        postVue = post.parentNode.__vue__;
+      post.querySelector('.post-id a:last-of-type').dataset.post = postVue.post.id;
     });
   }
 };
