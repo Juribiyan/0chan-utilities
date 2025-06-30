@@ -32,9 +32,9 @@
 // @include      https://0chan.1chan.cyou/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
-// @resource     baseCSS http://0chan-utilities/css/base.css
-// @resource     darkCSS http://0chan-utilities/css/dark.css
-// @resource     catalogCSS http:/0chan-utilities/css/catalog.css
+// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
+// @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
+// @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
 // ==/UserScript==
 
 const icons =
