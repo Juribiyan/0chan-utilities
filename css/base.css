@@ -675,6 +675,8 @@ span.ZU-hide-board-by-op {
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
+  -webkit-user-drag: none;
+  user-drag: none;
 }
 .loaded .mv-over {
   display: block;
