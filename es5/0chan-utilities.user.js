@@ -22,7 +22,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.5.3
+// @version      3.6.0
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -55,7 +55,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 // @include      https://dev.0chan.club/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
-// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css?v=3.5.3
+// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css?v=3.6.0
 // @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css?v=3.5.3
 // @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css?v=3.5.3
 // ==/UserScript==
@@ -872,7 +872,7 @@ var MediaViewer = /*#__PURE__*/function () {
     key: "createContainer",
     value: function createContainer() {
       var _this13 = this;
-      this.container = document.body._ins('beforeend', "<div class=\"mv-container mvc-collapsed\">\n    <div class=\"media-viewer\">\n      <div class=\"mv-label\">\n        <span class=\"item-counter\"></span>\n        <span class=\"scale-indicator\"></span>\n      </div>\n      <div class=\"mv-button mv-prev-next mv-prev\"></div>\n      <div class=\"mv-button mv-prev-next mv-next\"></div>\n      <div class=\"mv-button mv-restore\"></div>\n      <div class=\"mv-button mv-close\"></div>\n    </div></div>");
+      this.container = document.body._ins('beforeend', "<div class=\"mv-container mvc-collapsed\">\n    <div class=\"media-viewer\">\n      <div class=\"mv-label\">\n        <span class=\"item-counter\"></span>\n        <span class=\"scale-indicator\"></span>\n      </div>\n      <div class=\"mv-button mv-prev-next mv-prev\"></div>\n      <div class=\"mv-button mv-prev-next mv-next\"></div>\n      <div class=\"mv-button mv-restore\"></div>\n      <div class=\"mv-button mv-rot mv-rot-left\"></div>\n      <div class=\"mv-button mv-rot mv-rot-right\"></div>\n      <div class=\"mv-button mv-close\"></div>\n    </div></div>");
       this.viewer = this.container.querySelector('.media-viewer');
       this.viewer.addEventListener('wheel', this.handleZoom.bind(this));
       this.viewer.addEventListener('mousemove', function (ev) {
@@ -926,6 +926,8 @@ var MediaViewer = /*#__PURE__*/function () {
             _this13.collapse();
           } else if (pnb.classList.contains('mv-restore')) {
             _this13.toggleFullSize(0);
+          } else if (pnb.classList.contains('mv-rot')) {
+            _this13.rotate(pnb.classList.contains('mv-rot-right') ? 1 : -1);
           }
         });
         ['mouseup', 'mousedown'].forEach(function (evt) {
@@ -945,7 +947,7 @@ var MediaViewer = /*#__PURE__*/function () {
     value: function applyTransform() {
       var me = this.currentMediaItem;
       if (!me) return;
-      me.style.transform = "translate(".concat(this.translateX, "px, ").concat(this.translateY, "px) scale(").concat(this.scale, ")");
+      me.style.transform = "translate(".concat(this.translateX, "px, ").concat(this.translateY, "px) scale(").concat(this.scale, ") rotate(").concat(this.rotation, "deg)");
     }
   }, {
     key: "resetTransform",
@@ -953,6 +955,7 @@ var MediaViewer = /*#__PURE__*/function () {
       this.translateX = 0;
       this.translateY = 0;
       this.scale = 1;
+      this.rotation = 0;
     }
     // Zooming
   }, {
@@ -1119,6 +1122,14 @@ var MediaViewer = /*#__PURE__*/function () {
     value: function createMediaElement(underImageSrc, imgw, imgh, imgurl) {
       var trans = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
       return "<div class=\"media-item\" ".concat(trans, ">\n      <div style=\"background-image: url(").concat(underImageSrc, "); max-width: ").concat(imgw, "px\" class=\"mv-under\"></div>\n      <img src=\"").concat(imgurl, "\" class=\"mv-over\" onload=\"this.parentElement.classList.add('loaded')\">\n      <img class=\"placeholder-svg\" src=\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width='").concat(imgw, "' height='").concat(imgh, "'%2F%3E\">\n    </div>");
+    }
+    // Rotation
+  }, {
+    key: "rotate",
+    value: function rotate() {
+      var cw = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      this.rotation += cw * 90;
+      this.applyTransform();
     }
   }], [{
     key: "handleAttachment",

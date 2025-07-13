@@ -653,6 +653,30 @@ span.ZU-hide-board-by-op {
   border-bottom: none;
   border-left: none;
 }
+.mv-rot {
+  top: 0px;
+  height: 80px;
+}
+.mv-rot::before {
+  position: absolute;
+  font-size: 40px;
+  color: #fff;
+  width: 80px;
+  text-align: center;
+  line-height: 80px;
+}
+.mv-rot-left::before {
+  content: "↺";
+}
+.mv-rot-right::before {
+  content: "↻";
+}
+.mv-rot-left {
+  left: 80px;
+}
+.mv-rot-right {
+  right: 80px;
+}
 .media-item img {
   max-width: 100%;
   max-height: 100%;
