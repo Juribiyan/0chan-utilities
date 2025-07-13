@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.5.1
+// @version      3.6.0
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -29,7 +29,6 @@
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
-// @include      https://0chan.cyou/*
 // @include      http://ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion/*
 // @include      http://ochko.i2p/*
 // @include      http://ochko.ygg/*
@@ -112,7 +111,6 @@ if (
     "0chna.ru",
     "mint.0chan.ru",
     "0chans.ru",
-    "0chan.cyou",
     "ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion",
     "ochko.ygg",
     "ochko.i2p"
@@ -1054,6 +1052,8 @@ class MediaViewer {
       <div class="mv-button mv-prev-next mv-prev"></div>
       <div class="mv-button mv-prev-next mv-next"></div>
       <div class="mv-button mv-restore"></div>
+      <div class="mv-button mv-rot mv-rot-left"></div>
+      <div class="mv-button mv-rot mv-rot-right"></div>
       <div class="mv-button mv-close"></div>
     </div></div>`)
     this.viewer = this.container.querySelector('.media-viewer')
@@ -1117,6 +1117,9 @@ class MediaViewer {
         else if (pnb.classList.contains('mv-restore')) {
           this.toggleFullSize(0)
         }
+        else if (pnb.classList.contains('mv-rot')) {
+          this.rotate(pnb.classList.contains('mv-rot-right') ? 1 : -1)
+        }
       })
       ;['mouseup', 'mousedown'].forEach(evt => pnb.addEventListener(evt, ev => ev.stopPropagation()))
     })
@@ -1129,12 +1132,13 @@ class MediaViewer {
   applyTransform() {
     let me = this.currentMediaItem
     if (!me) return;
-    me.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`
+    me.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale}) rotate(${this.rotation}deg)`
   }
   resetTransform() {
     this.translateX = 0
     this.translateY = 0
     this.scale = 1
+    this.rotation = 0
   }
   // Zooming
   initZoom() {
@@ -1271,6 +1275,11 @@ class MediaViewer {
       <img src="${imgurl}" class="mv-over" onload="this.parentElement.classList.add('loaded')">
       <img class="placeholder-svg" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' width='${imgw}' height='${imgh}'%2F%3E">
     </div>`
+  }
+  // Rotation
+  rotate(cw=1) {
+    this.rotation += (cw * 90)
+    this.applyTransform()
   }
 }
 
