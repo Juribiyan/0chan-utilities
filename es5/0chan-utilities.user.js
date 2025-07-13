@@ -31,7 +31,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 // @include      https://p.0chan.pl/*
 // @include      https://0.1chan.pl/*
 // @include      https://ygg.0chan.pl/*
-// @include      https://www.0chan.club/*
+// @include      https://0chan.club/*
 // @include      http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion/*
 // @include      http://0pl.i2p/*
 // @include      http://gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p/*
@@ -50,9 +50,9 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
-// @include      https://0chan.1chan.cyou/*
-// @include      https://0chan.club/*
-// @include      https://dev.0chan.club/*
+// @include      http://ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion/*
+// @include      http://ochko.i2p/*
+// @include      http://ochko.ygg/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
 // @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css?v=3.6.0
@@ -81,7 +81,7 @@ var appObserver,
     initialized: false
   },
   version = GM_info.script.version;
-if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "www.0chan.club", "0chan.life", "www.0chan.life", "0chan.xyz", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "foxhound.cc", "0chna.ru", "mint.0chan.ru", "0chans.ru", "0chan.club"].includes(location.host)) {
+if (["www.0chan.pl", "p.0chan.pl", "0.1chan.pl", "ygg.0chan.pl", "0chan.club", "0chan.life", "www.0chan.life", "0chan.xyz", "nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion", "0pl.i2p", "gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p", "[225:55:9ebf:1709:7b1f:a315:1119:6eff]", "0chan.ygg", "foxhound.cc", "0chna.ru", "mint.0chan.ru", "0chans.ru", "ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion", "ochko.ygg", "ochko.i2p"].includes(location.host)) {
   var IS_OCHKO = true;
 } else {
   var IS_OCHKO = false;
@@ -783,7 +783,7 @@ var darkMode = {
     this.css = GM_getResourceText("darkCSS");
     var settings = LSfetchJSON('ZU-settings'),
       on = settings && settings.darkMode !== undefined ? settings.darkMode : this.enabledByDefault;
-    if (on) {
+    if (on && !IS_OCHKO) {
       this.toggle(on, false);
     }
   },
@@ -2119,11 +2119,12 @@ function addThreadControls(threadDOM, threadVue) {
     }
     controlsContainer.insertAdjacentHTML('beforeEnd', "<span class=\"ZU-update-thread-container\"> | <a href=\"".concat(href, "\" onclick=\"return false\" class=\"ZU-update-thread\">\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C</a></span>"));
     controlsContainer.classList.add('ZU-thread-controls');
+  
+    var op = threadDOM.querySelector('.post-op'),
+      opPostID = op.querySelector('.post-id');
+    op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container');
+    opPostID.insertAdjacentHTML('afterBegin', "<span title=\"\u0421\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u0441\u043A\u0443\" class=\"post-button ZU-hide-board-by-op\"><i class=\"fa fa-minus-square-o\"></i></span>");
   }
-  var op = threadDOM.querySelector('.post-op'),
-    opPostID = op.querySelector('.post-id');
-  op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container');
-  opPostID.insertAdjacentHTML('afterBegin', "<span title=\"\u0421\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u0441\u043A\u0443\" class=\"post-button ZU-hide-board-by-op\"><i class=\"fa fa-minus-square-o\"></i></span>");
 }
 var settingsPanel = {
   modules: {
@@ -2671,7 +2672,7 @@ function onFreshContent() {
   ZURouter.handleRoute(state.type);
   refresher.init();
   if (state.type == 'home') formOnZeroPage.init();
-  darkMode.addButton();
+  if (!IS_OCHKO) darkMode.addButton();
 }
 function freezeSize(el) {
   var bcr = el.getBoundingClientRect();

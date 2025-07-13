@@ -10,7 +10,7 @@
 // @include      https://p.0chan.pl/*
 // @include      https://0.1chan.pl/*
 // @include      https://ygg.0chan.pl/*
-// @include      https://www.0chan.club/*
+// @include      https://0chan.club/*
 // @include      http://nullplctggmjazqcoboc2pw5anogckczzj6xo45ukrnsaxarpswu7sid.onion/*
 // @include      http://0pl.i2p/*
 // @include      http://gd7qe2pu2jwqabz4zcf3wwablrzym7p6qswczoapkm5oa5ouuaua.b32.i2p/*
@@ -29,12 +29,12 @@
 // @include      https://mint.0chan.ru/*
 // @include      https://0chans.ru/*
 // @include      https://0chan.me/*
-// @include      https://0chan.1chan.cyou/*
-// @include      https://0chan.club/*
-// @include      https://dev.0chan.club/*
+// @include      http://ochkocuka75kjdsqxwopbvbwr677t4udud2jdydejxerhjhey6sbpkid.onion/*
+// @include      http://ochko.i2p/*
+// @include      http://ochko.ygg/*
 // @grant        GM_getResourceText
 // @icon         https://juribiyan.github.io/0chan-utilities/icon.png
-// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css?v=3.6.0
-// @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css?v=3.5.3
-// @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css?v=3.5.3
+// @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css
+// @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css
+// @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css
 // ==/UserScript==
