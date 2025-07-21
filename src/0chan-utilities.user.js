@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.6.0
+// @version      3.7.0
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -1306,7 +1306,8 @@ var settings = {
     selectedInstance: 0,
     darkMode: darkMode.enabledByDefault,
     fixUkrSpelling: true,
-    legacyMediaViewer: false
+    legacyMediaViewer: false,
+    backgroundImage: false
   },
   _: {},
   hooks: {
@@ -1330,6 +1331,7 @@ var settings = {
     this._.autohide = this.autohide
     this._.autohideAtt = this.autohideAtt
     this._.nullColor = this.nullColor
+    this._.backgroundImage = this.backgroundImage
     localStorage['ZU-settings'] = JSON.stringify(this._)
   },
   init: function() {
@@ -1489,6 +1491,21 @@ var eventDispatcher = {
     if (shareLink) {
       share.handleClick(shareLink)
     }
+    // Set as background button
+    let setAsBg = e.path.find(el => el?.classList?.contains('ZU-set-as-bg'))
+    if (setAsBg) {
+      setAsBackground.showDropdown(setAsBg)
+    }
+    // Set as background option
+    let setAsBgOpt = e.path.find(el => el?.classList?.contains('ZU-background-option'))
+    if (setAsBgOpt) {
+      setAsBackground.handleOption(setAsBgOpt)
+    }
+    // Reset background
+    let resetbg = e.path.find(el => el?.classList?.contains('ZU-reset-background'))
+    if (resetbg) {
+      setAsBackground.reset()
+    }
     // Mention
     let mention = e.path.find(el => el?.classList?.contains('ZU-mention-btn'))
     if (mention) {
@@ -1503,8 +1520,11 @@ var eventDispatcher = {
     else if (! e.path.find(el => el?.classList && (el.classList.contains('ZU-settings-dropdown') || el.classList.contains('ZU-prevent-settings-dropdown-close')))) {
       document.querySelector('#ZU-settings')?.classList?.remove('ZU-dropdown-show')
     }
-    if (! e.path.find(el => el?.classList && (el.classList?.contains('ZU-share-btn') || el.classList?.contains('ZU-share-btn')))) {
+    if (! e.path.find(el => el?.classList && el.classList?.contains('ZU-share-btn'))) {
       Array.prototype.forEach.call(document.querySelectorAll('.ZU-share-dropdown'), dd => dd.classList?.remove('ZU-dropdown-show'))
+    }
+    if (! e.path.find(el => el?.classList && el.classList?.contains('ZU-set-as-bg'))) {
+      Array.prototype.forEach.call(document.querySelectorAll('.ZU-set-as-bg-dropdown'), dd => dd.classList?.remove('ZU-dropdown-show'))
     }
     // Top in-menu navigation
     let eat = e.path.find(el => el?.classList?.contains('ZU-enter-autohide-top'))
@@ -1997,6 +2017,8 @@ function init() {
   autohide.init()
   autohideAtt.init()
 
+  setAsBackground.init()
+
   contentObserver = forAllNodes([
     {
       selector: '.thread',
@@ -2119,6 +2141,82 @@ function handleAttachment(att) {
   autohideAtt.addButton(att)
   if (! settings.legacyMediaViewer) {
     MediaViewer.handleAttachment(att)
+  }
+  setAsBackground.addButton(att)
+}
+
+const setAsBackground = {
+  init: function() {
+    document.querySelector('#content').insertAdjacentHTML('beforeEnd', 
+      `<ul class="dropdown-menu ZU-dropdown ZU-set-as-bg-dropdown">
+        <li><a class="ZU-background-option" href="javascript:void(0)" data-bgsize="cover" data-bgatt="fixed">Растянуть</a></li>
+        <li><a class="ZU-background-option" href="javascript:void(0)" data-bgsize="auto" data-bgatt="fixed">Замостить (фикс.)</a></li>
+        <li><a class="ZU-background-option" href="javascript:void(0)" data-bgsize="auto" data-bgatt="scroll">Замостить (скр.)</a></li>
+      </ul>`)
+    this.dropdown = document.querySelector('.ZU-set-as-bg-dropdown')
+    if (settings.backgroundImage) {
+      this.applySetting(settings.backgroundImage)
+    }
+  },
+  addButton: function(fig) {
+    const btnContainer = fig.querySelector('.post-img-buttons')
+    if (! btnContainer) return;
+    btnContainer.insertAdjacentHTML('afterBegin', `
+      <span title="Установить на фон" class="post-img-button ZU-set-as-bg ZU-prevent-settings-dropdown-close">
+        <i class="fa fa-picture-o fa-fw"></i>
+      </span>
+    `)
+  },
+  showDropdown: function(btn) {
+    const fig = btn.findParent('figure').__vue__
+    this.currentID = fig.attachment.id
+    this.currentImgURL = fig.attachment.images.original.url
+    this.currentPostID = fig.$parent.post.id
+    const contentRect = document.querySelector('#content').getBoundingClientRect()
+    const bcr = btn.getBoundingClientRect()
+    this.dropdown.style.top = ((bcr.top - contentRect.top) + 16) + 'px'
+    this.dropdown.style.left = (bcr.left - contentRect.left) + 'px'
+    this.dropdown.classList.toggle('ZU-dropdown-show')
+  },
+  handleOption: function(a) {
+    this.applyBackground(this.currentImgURL, a.dataset.bgsize, a.dataset.bgatt)
+    settings.backgroundImage = {
+      postID: this.currentPostID,
+      attachmentID: this.currentID,
+      backgroundSize: a.dataset.bgsize,
+      backgroundAttachment: a.dataset.bgatt
+    }
+    settings.save()
+  },
+  applyBackground: function(imgURL, backgroundSize, backgroundAttachment) {
+    Object.assign(document.querySelector('#content').style, {
+      backgroundImage: `url(${imgURL})`,
+      backgroundSize,
+      backgroundAttachment
+    })
+    if (this.resetBtn)
+      this.resetBtn.style.display = 'block'
+  },
+  get resetBtn() {
+    return document.querySelector('.ZU-reset-background')
+  },
+  applySetting: async function(setting) {
+    const fetchResult = await fetch(`/api/post?post=${setting.postID}`, {credentials: 'same-origin'})
+    if (! fetchResult.ok) return false;
+    const post = (await fetchResult.json())?.post
+    if (! post) return false;
+    const attachment = post.attachments.find(att => att.id == setting.attachmentID)
+    if (! attachment?.images) return false;
+    const url = attachment.images.original.url
+    this.applyBackground(url, setting.backgroundSize, setting.backgroundAttachment)
+    return url
+  },
+  reset: function() {
+    document.querySelector('#content').style.backgroundImage = null
+    settings.backgroundImage = false
+    settings.save()
+    if (this.resetBtn)
+      this.resetBtn.style.display = 'none'
   }
 }
 
@@ -2338,6 +2436,7 @@ var settingsPanel = {
           <button class="btn btn-default btn-xs ZU-enter-autohide-top ZU-menu-fullsize-btn"><span>Автоскрытие</span></button>
           <button style="margin: 10px 0 2px 0; width: 100%" class="btn btn-default btn-xs ZU-prepare-archive ZU-menu-fullsize-btn" title="Подготовить страницу к сохранению"><span>Архивировать</span></button>
           <label style="display: block" for="ZU-archive-with-pictures"><input id="ZU-archive-with-pictures" type="checkbox" checked> с полноразмерными картинками</label>
+          <button style="margin: 10px 0 2px 0; width: 100%; ${settings.backgroundImage ? '' : 'display: none'}" class="btn btn-default btn-xs ZU-reset-background ZU-menu-fullsize-btn"><span>Сбросить фон</span></button>
         </div>
         <div id="ZU-top-autohide" class="ZU-top-menu-page" hidden>
           <div class="btn-group">
