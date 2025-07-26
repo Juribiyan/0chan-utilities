@@ -902,10 +902,11 @@ var darkMode = {
   },
   init: function() {
     //make sure to inject the base CSS first
-    var baseCSS = GM_getResourceText("baseCSS")
+    const baseCSS = GM_getResourceText("baseCSS")
     injector.inject('ZU-global', baseCSS)
-
     this.css = GM_getResourceText("darkCSS")
+    // Check if dark mode is supported natively
+    if (typeof LSfetchJSON('userSettings')?.isDark !== 'undefined') return;
     let settings = LSfetchJSON('ZU-settings')
     , on = (settings && settings.darkMode !== undefined) ? settings.darkMode : this.enabledByDefault
     if (on) {
@@ -913,6 +914,9 @@ var darkMode = {
     }
   },
   addButton: function() {
+    // Check if dark mode is supported natively
+    if (document.querySelectorAll('.btn .fa-adjust')) return;
+
     let buttonsRight = document.querySelector('.headmenu-buttons-right')
     buttonsRight.insertAdjacentHTML('afterbegin', `
       <div class="btn-group">
