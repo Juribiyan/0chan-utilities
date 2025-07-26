@@ -1,5 +1,8 @@
 "use strict";
 
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _construct(t, e, r) { if (_isNativeReflectConstruct()) return Reflect.construct.apply(null, arguments); var o = [null]; o.push.apply(o, e); var p = new (t.bind.apply(t, o))(); return r && _setPrototypeOf(p, r.prototype), p; }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
@@ -22,7 +25,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.6.0
+// @version      3.7.1
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -777,10 +780,13 @@ var darkMode = {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   },
   init: function init() {
+    var _LSfetchJSON;
     //make sure to inject the base CSS first
     var baseCSS = GM_getResourceText("baseCSS");
     injector.inject('ZU-global', baseCSS);
     this.css = GM_getResourceText("darkCSS");
+    // Check if dark mode is supported natively
+    if (typeof ((_LSfetchJSON = LSfetchJSON('userSettings')) === null || _LSfetchJSON === void 0 ? void 0 : _LSfetchJSON.isDark) !== 'undefined') return;
     var settings = LSfetchJSON('ZU-settings'),
       on = settings && settings.darkMode !== undefined ? settings.darkMode : this.enabledByDefault;
     if (on) {
@@ -789,6 +795,8 @@ var darkMode = {
   },
   addButton: function addButton() {
     var _this11 = this;
+    // Check if dark mode is supported natively
+    if (document.querySelectorAll('.btn .fa-adjust')) return;
     var buttonsRight = document.querySelector('.headmenu-buttons-right');
     buttonsRight.insertAdjacentHTML('afterbegin', "\n      <div class=\"btn-group\">\n        <button title=\"\u041F\u0435\u0440\u0435\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u0442\u0435\u043C\u0443\" class=\"btn btn-link ZU-btn-link ZU-toggle-dark-mode\"><i class=\"fa fa-adjust\"></i></button>\n      </div>");
     buttonsRight.querySelector('.ZU-toggle-dark-mode').onclick = function () {
@@ -1224,7 +1232,8 @@ var settings = {
     selectedInstance: 0,
     darkMode: darkMode.enabledByDefault,
     fixUkrSpelling: true,
-    legacyMediaViewer: false
+    legacyMediaViewer: false,
+    backgroundImage: false
   },
   _: {},
   hooks: {
@@ -1248,6 +1257,7 @@ var settings = {
     this._.autohide = this.autohide;
     this._.autohideAtt = this.autohideAtt;
     this._.nullColor = this.nullColor;
+    this._.backgroundImage = this.backgroundImage;
     localStorage['ZU-settings'] = JSON.stringify(this._);
   },
   init: function init() {
@@ -1320,7 +1330,16 @@ var boardHider = {
     }
     this.enabled = false;
   },
+  reCheckNativeSupport: function reCheckNativeSupport() {
+    if (document.querySelector('.post-button[title="Скрыть доску"]:not(.ZU-hide-board-by-op)')) this.nativeSupport = true;
+  },
   refresh: function refresh() {
+    var _LSfetchJSON2;
+    // check if supported natively
+    if (typeof ((_LSfetchJSON2 = LSfetchJSON('userSettings')) === null || _LSfetchJSON2 === void 0 ? void 0 : _LSfetchJSON2.hiddenBoards) !== 'undefined') {
+      this.nativeSupport = true;
+      return;
+    }
     if (settings.hiddenBoards.length) {
       var css;
       if (this.enabled) {
@@ -1432,18 +1451,42 @@ var eventDispatcher = {
     if (shareLink) {
       share.handleClick(shareLink);
     }
+    // Set as background button
+    var setAsBg = e.path.find(function (el) {
+      var _el$classList9;
+      return el === null || el === void 0 || (_el$classList9 = el.classList) === null || _el$classList9 === void 0 ? void 0 : _el$classList9.contains('ZU-set-as-bg');
+    });
+    if (setAsBg) {
+      setAsBackground.showDropdown(setAsBg);
+    }
+    // Set as background option
+    var setAsBgOpt = e.path.find(function (el) {
+      var _el$classList10;
+      return el === null || el === void 0 || (_el$classList10 = el.classList) === null || _el$classList10 === void 0 ? void 0 : _el$classList10.contains('ZU-background-option');
+    });
+    if (setAsBgOpt) {
+      setAsBackground.handleOption(setAsBgOpt);
+    }
+    // Reset background
+    var resetbg = e.path.find(function (el) {
+      var _el$classList11;
+      return el === null || el === void 0 || (_el$classList11 = el.classList) === null || _el$classList11 === void 0 ? void 0 : _el$classList11.contains('ZU-reset-background');
+    });
+    if (resetbg) {
+      setAsBackground.reset();
+    }
     // Mention
     var mention = e.path.find(function (el) {
-      var _el$classList9;
-      return el === null || el === void 0 || (_el$classList9 = el.classList) === null || _el$classList9 === void 0 ? void 0 : _el$classList9.contains('ZU-mention-btn');
+      var _el$classList12;
+      return el === null || el === void 0 || (_el$classList12 = el.classList) === null || _el$classList12 === void 0 ? void 0 : _el$classList12.contains('ZU-mention-btn');
     });
     if (mention) {
       mentionPost(mention.findParent('.post'));
     }
     // Popup slosing
     if (e.path.find(function (el) {
-      var _el$classList10;
-      return el === null || el === void 0 || (_el$classList10 = el.classList) === null || _el$classList10 === void 0 ? void 0 : _el$classList10.contains('ZU-settings-btn');
+      var _el$classList13;
+      return el === null || el === void 0 || (_el$classList13 = el.classList) === null || _el$classList13 === void 0 ? void 0 : _el$classList13.contains('ZU-settings-btn');
     })) {
       var _document$querySelect;
       [].forEach.call(document.querySelectorAll('#ZU-settings > div'), function (el) {
@@ -1458,26 +1501,35 @@ var eventDispatcher = {
       (_document$querySelect2 = document.querySelector('#ZU-settings')) === null || _document$querySelect2 === void 0 || (_document$querySelect2 = _document$querySelect2.classList) === null || _document$querySelect2 === void 0 || _document$querySelect2.remove('ZU-dropdown-show');
     }
     if (!e.path.find(function (el) {
-      var _el$classList11, _el$classList12;
-      return (el === null || el === void 0 ? void 0 : el.classList) && (((_el$classList11 = el.classList) === null || _el$classList11 === void 0 ? void 0 : _el$classList11.contains('ZU-share-btn')) || ((_el$classList12 = el.classList) === null || _el$classList12 === void 0 ? void 0 : _el$classList12.contains('ZU-share-btn')));
+      var _el$classList14;
+      return (el === null || el === void 0 ? void 0 : el.classList) && ((_el$classList14 = el.classList) === null || _el$classList14 === void 0 ? void 0 : _el$classList14.contains('ZU-share-btn'));
     })) {
       Array.prototype.forEach.call(document.querySelectorAll('.ZU-share-dropdown'), function (dd) {
         var _dd$classList;
         return (_dd$classList = dd.classList) === null || _dd$classList === void 0 ? void 0 : _dd$classList.remove('ZU-dropdown-show');
       });
     }
+    if (!e.path.find(function (el) {
+      var _el$classList15;
+      return (el === null || el === void 0 ? void 0 : el.classList) && ((_el$classList15 = el.classList) === null || _el$classList15 === void 0 ? void 0 : _el$classList15.contains('ZU-set-as-bg'));
+    })) {
+      Array.prototype.forEach.call(document.querySelectorAll('.ZU-set-as-bg-dropdown'), function (dd) {
+        var _dd$classList2;
+        return (_dd$classList2 = dd.classList) === null || _dd$classList2 === void 0 ? void 0 : _dd$classList2.remove('ZU-dropdown-show');
+      });
+    }
     // Top in-menu navigation
     var eat = e.path.find(function (el) {
-      var _el$classList13;
-      return el === null || el === void 0 || (_el$classList13 = el.classList) === null || _el$classList13 === void 0 ? void 0 : _el$classList13.contains('ZU-enter-autohide-top');
+      var _el$classList16;
+      return el === null || el === void 0 || (_el$classList16 = el.classList) === null || _el$classList16 === void 0 ? void 0 : _el$classList16.contains('ZU-enter-autohide-top');
     });
     if (eat) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-settings-main', '#ZU-top-autohide');
     }
     // Page archiving
     var zpa = e.path.find(function (el) {
-      var _el$classList14;
-      return el === null || el === void 0 || (_el$classList14 = el.classList) === null || _el$classList14 === void 0 ? void 0 : _el$classList14.contains('ZU-prepare-archive');
+      var _el$classList17;
+      return el === null || el === void 0 || (_el$classList17 = el.classList) === null || _el$classList17 === void 0 ? void 0 : _el$classList17.contains('ZU-prepare-archive');
     });
     if (zpa) {
       var _document$querySelect3;
@@ -1485,8 +1537,8 @@ var eventDispatcher = {
     }
     // Saving autohide menu
     var ret = e.path.find(function (el) {
-      var _el$classList15;
-      return el === null || el === void 0 || (_el$classList15 = el.classList) === null || _el$classList15 === void 0 ? void 0 : _el$classList15.contains('ZU-exit-autohide-top');
+      var _el$classList18;
+      return el === null || el === void 0 || (_el$classList18 = el.classList) === null || _el$classList18 === void 0 ? void 0 : _el$classList18.contains('ZU-exit-autohide-top');
     });
     if (ret) {
       fancyResizeXfade(document.querySelector('#ZU-settings'), '#ZU-top-autohide', '#ZU-settings-main');
@@ -1495,8 +1547,8 @@ var eventDispatcher = {
     }
     // Hide by attachment
     var hba = e.path.find(function (el) {
-      var _el$classList16;
-      return el === null || el === void 0 || (_el$classList16 = el.classList) === null || _el$classList16 === void 0 ? void 0 : _el$classList16.contains('ZU-hide-attachment');
+      var _el$classList19;
+      return el === null || el === void 0 || (_el$classList19 = el.classList) === null || _el$classList19 === void 0 ? void 0 : _el$classList19.contains('ZU-hide-attachment');
     });
     if (hba) {
       var figVue = hba.findParent('figure').__vue__;
@@ -1507,8 +1559,8 @@ var eventDispatcher = {
     }
     // Remove autohide entry
     var rae = e.path.find(function (el) {
-      var _el$classList17;
-      return el === null || el === void 0 || (_el$classList17 = el.classList) === null || _el$classList17 === void 0 ? void 0 : _el$classList17.contains('ZU-remove-autohide-entry');
+      var _el$classList20;
+      return el === null || el === void 0 || (_el$classList20 = el.classList) === null || _el$classList20 === void 0 ? void 0 : _el$classList20.contains('ZU-remove-autohide-entry');
     });
     if (rae) {
       var data = rae.findParent('.ZU-autohide-attachemnt-entry').dataset;
@@ -1516,12 +1568,12 @@ var eventDispatcher = {
     }
     // Radio button group behavior
     var rbg = e.path.find(function (el) {
-        var _el$classList18;
-        return el === null || el === void 0 || (_el$classList18 = el.classList) === null || _el$classList18 === void 0 ? void 0 : _el$classList18.contains('ZU-radio-btn-group');
+        var _el$classList21;
+        return el === null || el === void 0 || (_el$classList21 = el.classList) === null || _el$classList21 === void 0 ? void 0 : _el$classList21.contains('ZU-radio-btn-group');
       }),
       rbb = e.path.find(function (el) {
-        var _el$classList19;
-        return el === null || el === void 0 || (_el$classList19 = el.classList) === null || _el$classList19 === void 0 ? void 0 : _el$classList19.contains('btn');
+        var _el$classList22;
+        return el === null || el === void 0 || (_el$classList22 = el.classList) === null || _el$classList22 === void 0 ? void 0 : _el$classList22.contains('btn');
       });
     if (rbg && rbb) {
       var _rbb$classList;
@@ -1534,8 +1586,8 @@ var eventDispatcher = {
     }
     // Entering Null Restyling mode
     var nr = e.path.find(function (el) {
-      var _el$classList20;
-      return el === null || el === void 0 || (_el$classList20 = el.classList) === null || _el$classList20 === void 0 ? void 0 : _el$classList20.contains('ZU-restyle-null');
+      var _el$classList23;
+      return el === null || el === void 0 || (_el$classList23 = el.classList) === null || _el$classList23 === void 0 ? void 0 : _el$classList23.contains('ZU-restyle-null');
     });
     if (nr) {
       var _document$querySelect4;
@@ -1543,16 +1595,16 @@ var eventDispatcher = {
     }
     // Exiting Null Restyling mode
     var nrs = e.path.find(function (el) {
-      var _el$classList21;
-      return el === null || el === void 0 || (_el$classList21 = el.classList) === null || _el$classList21 === void 0 ? void 0 : _el$classList21.contains('ZU-nulltwk-save');
+      var _el$classList24;
+      return el === null || el === void 0 || (_el$classList24 = el.classList) === null || _el$classList24 === void 0 ? void 0 : _el$classList24.contains('ZU-nulltwk-save');
     });
     if (nrs) {
       NullRestyler.save();
     }
     // Resetting the Null
     var nrr = e.path.find(function (el) {
-      var _el$classList22;
-      return el === null || el === void 0 || (_el$classList22 = el.classList) === null || _el$classList22 === void 0 ? void 0 : _el$classList22.contains('ZU-nulltwk-revert');
+      var _el$classList25;
+      return el === null || el === void 0 || (_el$classList25 = el.classList) === null || _el$classList25 === void 0 ? void 0 : _el$classList25.contains('ZU-nulltwk-revert');
     });
     if (nrr) {
       var res = NullRestyler.setValues(settings.defaults.nullColor);
@@ -1563,23 +1615,23 @@ var eventDispatcher = {
     }
     // Hiding/unhiding selection in stegospoiler
     var shs = e.path.find(function (el) {
-      var _el$classList23;
-      return el === null || el === void 0 || (_el$classList23 = el.classList) === null || _el$classList23 === void 0 ? void 0 : _el$classList23.contains('ZU-hide-selection');
+      var _el$classList26;
+      return el === null || el === void 0 || (_el$classList26 = el.classList) === null || _el$classList26 === void 0 ? void 0 : _el$classList26.contains('ZU-hide-selection');
     });
     if (shs) {
       textSteganography.hideSelection(shs.findParent('.reply-form').querySelector('textarea'));
     }
     var srs = e.path.find(function (el) {
-      var _el$classList24;
-      return el === null || el === void 0 || (_el$classList24 = el.classList) === null || _el$classList24 === void 0 ? void 0 : _el$classList24.contains('ZU-remove-spoilers');
+      var _el$classList27;
+      return el === null || el === void 0 || (_el$classList27 = el.classList) === null || _el$classList27 === void 0 ? void 0 : _el$classList27.contains('ZU-remove-spoilers');
     });
     if (srs) {
       textSteganography.removeSpoilers(srs.findParent('.reply-form').querySelector('textarea'));
     }
     // Collapsed references uncollapsing
     var expRef = e.path.find(function (el) {
-      var _el$classList25;
-      return el === null || el === void 0 || (_el$classList25 = el.classList) === null || _el$classList25 === void 0 ? void 0 : _el$classList25.contains('ZU-expand-refs');
+      var _el$classList28;
+      return el === null || el === void 0 || (_el$classList28 = el.classList) === null || _el$classList28 === void 0 ? void 0 : _el$classList28.contains('ZU-expand-refs');
     });
     if (expRef) {
       referenceCollapsing.expand(expRef.findParent('.post'));
@@ -1589,8 +1641,8 @@ var eventDispatcher = {
   mousedown: function mousedown(e) {
     // Quote on reply
     var replyBtn = e.path.find(function (el) {
-      var _el$classList26, _el$classList27;
-      return (el === null || el === void 0 ? void 0 : el.classList) && (((_el$classList26 = el.classList) === null || _el$classList26 === void 0 ? void 0 : _el$classList26.contains('post-button-reply')) || ((_el$classList27 = el.classList) === null || _el$classList27 === void 0 ? void 0 : _el$classList27.contains('ZU-quote-on-click')));
+      var _el$classList29, _el$classList30;
+      return (el === null || el === void 0 ? void 0 : el.classList) && (((_el$classList29 = el.classList) === null || _el$classList29 === void 0 ? void 0 : _el$classList29.contains('post-button-reply')) || ((_el$classList30 = el.classList) === null || _el$classList30 === void 0 ? void 0 : _el$classList30.contains('ZU-quote-on-click')));
     });
     if (replyBtn) {
       var _replyBtn$classList;
@@ -1610,8 +1662,8 @@ var eventDispatcher = {
     // Noko
     if (!IS_OCHKO) {
       var noko = e.path.find(function (el) {
-        var _el$classList28;
-        return el === null || el === void 0 || (_el$classList28 = el.classList) === null || _el$classList28 === void 0 ? void 0 : _el$classList28.contains('ZU-noko');
+        var _el$classList31;
+        return el === null || el === void 0 || (_el$classList31 = el.classList) === null || _el$classList31 === void 0 ? void 0 : _el$classList31.contains('ZU-noko');
       });
       if (noko) {
         settings.noko = noko.checked;
@@ -1637,8 +1689,8 @@ var eventDispatcher = {
     }
     // Null Restyling inputs
     var nr = e.path.find(function (el) {
-      var _el$classList29;
-      return el === null || el === void 0 || (_el$classList29 = el.classList) === null || _el$classList29 === void 0 ? void 0 : _el$classList29.contains('ZU-range');
+      var _el$classList32;
+      return el === null || el === void 0 || (_el$classList32 = el.classList) === null || _el$classList32 === void 0 ? void 0 : _el$classList32.contains('ZU-range');
     });
     if (nr) {
       nr.parentElement.querySelector('output .ZU-output').innerText = nr.value;
@@ -1919,7 +1971,7 @@ function addSettingsButtons() {
   });
 }
 function handleBoardItem(board) {
-  if (board.querySelector('.ZU-boardhideunhide')) return;
+  if (board.querySelector('.ZU-boardhideunhide') || boardHider !== null && boardHider !== void 0 && boardHider.nativeSupport) return;
   board.insertAdjacentHTML('afterBegin', "<span class=\"pull-left sidemenu-board-icons ZU-boardhideunhide\">\n      <span title=\"\u0421\u043A\u0440\u044B\u0442\u044C\" class=\"ZU-board-hide-icon\">\n        <i class=\"fa fa-minus-square-o\"></i>\n      </span>\n      <span title=\"\u0420\u0430\u0441\u043A\u0440\u044B\u0442\u044C\" class=\"ZU-board-unhide-icon\">\n        <i class=\"fa fa-plus-square-o\"></i>\n      </span>\n    </span>");
 }
 function init() {
@@ -1934,6 +1986,7 @@ function init() {
   boardHider.refresh();
   autohide.init();
   autohideAtt.init();
+  setAsBackground.init();
   contentObserver = forAllNodes([{
     selector: '.thread',
     fn: handleThread
@@ -2031,7 +2084,130 @@ function handleAttachment(att) {
   if (!settings.legacyMediaViewer) {
     MediaViewer.handleAttachment(att);
   }
+  setAsBackground.addButton(att);
 }
+var setAsBackground = {
+  init: function init() {
+    document.querySelector('#content').insertAdjacentHTML('beforeEnd', "<ul class=\"dropdown-menu ZU-dropdown ZU-set-as-bg-dropdown\">\n        <li><a class=\"ZU-background-option\" href=\"javascript:void(0)\" data-bgsize=\"cover\" data-bgatt=\"fixed\">\u0420\u0430\u0441\u0442\u044F\u043D\u0443\u0442\u044C</a></li>\n        <li><a class=\"ZU-background-option\" href=\"javascript:void(0)\" data-bgsize=\"auto\" data-bgatt=\"fixed\">\u0417\u0430\u043C\u043E\u0441\u0442\u0438\u0442\u044C (\u0444\u0438\u043A\u0441.)</a></li>\n        <li><a class=\"ZU-background-option\" href=\"javascript:void(0)\" data-bgsize=\"auto\" data-bgatt=\"scroll\">\u0417\u0430\u043C\u043E\u0441\u0442\u0438\u0442\u044C (\u0441\u043A\u0440.)</a></li>\n      </ul>");
+    this.dropdown = document.querySelector('.ZU-set-as-bg-dropdown');
+    if (settings.backgroundImage) {
+      this.applySetting(settings.backgroundImage);
+    }
+  },
+  addButton: function addButton(fig) {
+    var btnContainer = fig.querySelector('.post-img-buttons');
+    if (!btnContainer) return;
+    btnContainer.insertAdjacentHTML('afterBegin', "\n      <span title=\"\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043D\u0430 \u0444\u043E\u043D\" class=\"post-img-button ZU-set-as-bg ZU-prevent-settings-dropdown-close\">\n        <i class=\"fa fa-picture-o fa-fw\"></i>\n      </span>\n    ");
+  },
+  showDropdown: function showDropdown(btn) {
+    var fig = btn.findParent('figure').__vue__;
+    this.currentID = fig.attachment.id;
+    this.currentImgURL = fig.attachment.images.original.url;
+    this.currentPostID = fig.$parent.post.id;
+    var contentRect = document.querySelector('#content').getBoundingClientRect();
+    var bcr = btn.getBoundingClientRect();
+    this.dropdown.style.top = bcr.top - contentRect.top + 16 + 'px';
+    this.dropdown.style.left = bcr.left - contentRect.left + 'px';
+    this.dropdown.classList.toggle('ZU-dropdown-show');
+  },
+  handleOption: function handleOption(a) {
+    this.applyBackground(this.currentImgURL, a.dataset.bgsize, a.dataset.bgatt);
+    settings.backgroundImage = {
+      postID: this.currentPostID,
+      attachmentID: this.currentID,
+      backgroundSize: a.dataset.bgsize,
+      backgroundAttachment: a.dataset.bgatt
+    };
+    settings.save();
+  },
+  applyBackground: function applyBackground(imgURL, backgroundSize, backgroundAttachment) {
+    Object.assign(document.querySelector('#content').style, {
+      backgroundImage: "url(".concat(imgURL, ")"),
+      backgroundSize: backgroundSize,
+      backgroundAttachment: backgroundAttachment
+    });
+    if (this.resetBtn) this.resetBtn.style.display = 'block';
+  },
+  get resetBtn() {
+    return document.querySelector('.ZU-reset-background');
+  },
+  applySetting: function () {
+    var _applySetting = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(setting) {
+      var _yield$fetchResult$js;
+      var fetchResult, post, attachment, url;
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return fetch("/api/post?post=".concat(setting.postID), {
+              credentials: 'same-origin'
+            });
+          case 2:
+            fetchResult = _context.sent;
+            if (fetchResult.ok) {
+              _context.next = 5;
+              break;
+            }
+            return _context.abrupt("return", false);
+          case 5:
+            _context.next = 7;
+            return fetchResult.json();
+          case 7:
+            _context.t1 = _yield$fetchResult$js = _context.sent;
+            _context.t0 = _context.t1 === null;
+            if (_context.t0) {
+              _context.next = 11;
+              break;
+            }
+            _context.t0 = _yield$fetchResult$js === void 0;
+          case 11:
+            if (!_context.t0) {
+              _context.next = 15;
+              break;
+            }
+            _context.t2 = void 0;
+            _context.next = 16;
+            break;
+          case 15:
+            _context.t2 = _yield$fetchResult$js.post;
+          case 16:
+            post = _context.t2;
+            if (post) {
+              _context.next = 19;
+              break;
+            }
+            return _context.abrupt("return", false);
+          case 19:
+            attachment = post.attachments.find(function (att) {
+              return att.id == setting.attachmentID;
+            });
+            if (attachment !== null && attachment !== void 0 && attachment.images) {
+              _context.next = 22;
+              break;
+            }
+            return _context.abrupt("return", false);
+          case 22:
+            url = attachment.images.original.url;
+            this.applyBackground(url, setting.backgroundSize, setting.backgroundAttachment);
+            return _context.abrupt("return", url);
+          case 25:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee, this);
+    }));
+    function applySetting(_x) {
+      return _applySetting.apply(this, arguments);
+    }
+    return applySetting;
+  }(),
+  reset: function reset() {
+    document.querySelector('#content').style.backgroundImage = null;
+    settings.backgroundImage = false;
+    settings.save();
+    if (this.resetBtn) this.resetBtn.style.display = 'none';
+  }
+};
 function reAutohidePosts() {
   [].forEach.call(document.querySelectorAll('.post'), function (post) {
     return autohidePost(getPostDataFromDOM(post));
@@ -2123,7 +2299,7 @@ function addThreadControls(threadDOM, threadVue) {
   var op = threadDOM.querySelector('.post-op'),
     opPostID = op.querySelector('.post-id');
   op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container');
-  opPostID.insertAdjacentHTML('afterBegin', "<span title=\"\u0421\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u0441\u043A\u0443\" class=\"post-button ZU-hide-board-by-op\"><i class=\"fa fa-minus-square-o\"></i></span>");
+  if (!(boardHider !== null && boardHider !== void 0 && boardHider.nativeSupport)) opPostID.insertAdjacentHTML('afterBegin', "<span title=\"\u0421\u043A\u0440\u044B\u0442\u044C \u0434\u043E\u0441\u043A\u0443\" class=\"post-button ZU-hide-board-by-op\"><i class=\"fa fa-minus-square-o\"></i></span>");
 }
 var settingsPanel = {
   modules: {
@@ -2231,7 +2407,7 @@ var settingsPanel = {
     });
     document.querySelector('.headmenu').insertAdjacentHTML('beforeEnd', "\n      <div class=\"dropdown-menu ZU-settings-dropdown ZU-dropdown\" id=\"ZU-settings\">\n        <div id=\"ZU-settings-main\" class=\"ZU-top-menu-page\">\n          <ul class=\"ZU-settings-list\">\n            ".concat(controls.reduce(function (htm, control) {
       return htm + _this19.modules[control.type].build(control);
-    }, ''), "\n          </ul>\n          <button class=\"btn btn-default btn-xs ZU-enter-autohide-top ZU-menu-fullsize-btn\"><span>\u0410\u0432\u0442\u043E\u0441\u043A\u0440\u044B\u0442\u0438\u0435</span></button>\n          <button style=\"margin: 10px 0 2px 0; width: 100%\" class=\"btn btn-default btn-xs ZU-prepare-archive ZU-menu-fullsize-btn\" title=\"\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u0438\u0442\u044C \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443 \u043A \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044E\"><span>\u0410\u0440\u0445\u0438\u0432\u0438\u0440\u043E\u0432\u0430\u0442\u044C</span></button>\n          <label style=\"display: block\" for=\"ZU-archive-with-pictures\"><input id=\"ZU-archive-with-pictures\" type=\"checkbox\" checked> \u0441 \u043F\u043E\u043B\u043D\u043E\u0440\u0430\u0437\u043C\u0435\u0440\u043D\u044B\u043C\u0438 \u043A\u0430\u0440\u0442\u0438\u043D\u043A\u0430\u043C\u0438</label>\n        </div>\n        <div id=\"ZU-top-autohide\" class=\"ZU-top-menu-page\" hidden>\n          <div class=\"btn-group\">\n            <button class=\"btn btn-default btn-xs ZU-exit-autohide-top\"><span><i class=\"fa fa-chevron-left\"></i> <i class=\"fa fa-save\"></i> \u041D\u0430\u0437\u0430\u0434</span></button>\n            <!-- button class=\"btn btn-default btn-xs\"><span><i class=\"fa fa-undo\"></i></span></button -->\n          </div>\n          <div class=\"btn-group ZU-autohide-type-switch ZU-radio-btn-group\" data-toggle=\"buttons\">\n            <label class=\"btn btn-xs btn-default active\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"txt\" autocomplete=\"off\" checked> \u0422\u0435\u043A\u0441\u0442\n            </label>\n            <label class=\"btn btn-xs btn-default\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"img\" autocomplete=\"off\"> \u041A\u0430\u0440\u0442\u0438\u043D\u043A\u0438\n            </label>\n          </div>\n          <br>\n          <textarea id=\"ZU-autohide-text\" cols=\"30\" rows=\"10\" class=\"form-control ZU-autohide-content\"></textarea>\n          <div id=\"ZU-autohide-images\" class=\"ZU-autohide-content\" hidden>\n            ").concat(autohideAtt.getListHTML(), "\n          </div>\n        </div>\n      </div>"));
+    }, ''), "\n          </ul>\n          <button class=\"btn btn-default btn-xs ZU-enter-autohide-top ZU-menu-fullsize-btn\"><span>\u0410\u0432\u0442\u043E\u0441\u043A\u0440\u044B\u0442\u0438\u0435</span></button>\n          <button style=\"margin: 10px 0 2px 0; width: 100%\" class=\"btn btn-default btn-xs ZU-prepare-archive ZU-menu-fullsize-btn\" title=\"\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u0438\u0442\u044C \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443 \u043A \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u044E\"><span>\u0410\u0440\u0445\u0438\u0432\u0438\u0440\u043E\u0432\u0430\u0442\u044C</span></button>\n          <label style=\"display: block\" for=\"ZU-archive-with-pictures\"><input id=\"ZU-archive-with-pictures\" type=\"checkbox\" checked> \u0441 \u043F\u043E\u043B\u043D\u043E\u0440\u0430\u0437\u043C\u0435\u0440\u043D\u044B\u043C\u0438 \u043A\u0430\u0440\u0442\u0438\u043D\u043A\u0430\u043C\u0438</label>\n          <button style=\"margin: 10px 0 2px 0; width: 100%; ").concat(settings.backgroundImage ? '' : 'display: none', "\" class=\"btn btn-default btn-xs ZU-reset-background ZU-menu-fullsize-btn\"><span>\u0421\u0431\u0440\u043E\u0441\u0438\u0442\u044C \u0444\u043E\u043D</span></button>\n        </div>\n        <div id=\"ZU-top-autohide\" class=\"ZU-top-menu-page\" hidden>\n          <div class=\"btn-group\">\n            <button class=\"btn btn-default btn-xs ZU-exit-autohide-top\"><span><i class=\"fa fa-chevron-left\"></i> <i class=\"fa fa-save\"></i> \u041D\u0430\u0437\u0430\u0434</span></button>\n            <!-- button class=\"btn btn-default btn-xs\"><span><i class=\"fa fa-undo\"></i></span></button -->\n          </div>\n          <div class=\"btn-group ZU-autohide-type-switch ZU-radio-btn-group\" data-toggle=\"buttons\">\n            <label class=\"btn btn-xs btn-default active\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"txt\" autocomplete=\"off\" checked> \u0422\u0435\u043A\u0441\u0442\n            </label>\n            <label class=\"btn btn-xs btn-default\">\n              <input type=\"radio\" name=\"ZU-autohide-type\" value=\"img\" autocomplete=\"off\"> \u041A\u0430\u0440\u0442\u0438\u043D\u043A\u0438\n            </label>\n          </div>\n          <br>\n          <textarea id=\"ZU-autohide-text\" cols=\"30\" rows=\"10\" class=\"form-control ZU-autohide-content\"></textarea>\n          <div id=\"ZU-autohide-images\" class=\"ZU-autohide-content\" hidden>\n            ").concat(autohideAtt.getListHTML(), "\n          </div>\n        </div>\n      </div>"));
     var spellsVal = settings.autohide.map(function (spell) {
         return _typeof(spell) === 'object' ? "/".concat(spell.source, "/").concat(spell.flags) : spell;
       }).join('\n'),
@@ -2648,6 +2824,7 @@ function start() {
 start();
 function onFreshContent() {
   var _document$querySelect5;
+  boardHider.reCheckNativeSupport();
   try {
     state.type = app.$router.currentRoute.name;
   } catch (e) {
