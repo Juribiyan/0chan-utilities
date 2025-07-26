@@ -1408,7 +1408,16 @@ const boardHider = {
     }
     this.enabled = false
   },
+  reCheckNativeSupport() {
+    if (document.querySelector('.post-button[title="Скрыть доску"]:not(.ZU-hide-board-by-op)'))
+      this.nativeSupport = true
+  },
   refresh: function() {
+    // check if supported natively
+    if (typeof LSfetchJSON('userSettings')?.hiddenBoards !== 'undefined') {
+      this.nativeSupport = true
+      return
+    }
     if (settings.hiddenBoards.length) {
       let css
       if (this.enabled) {
@@ -1988,7 +1997,7 @@ function addSettingsButtons() {
 }
 
 function handleBoardItem(board) {
-  if (board.querySelector('.ZU-boardhideunhide')) return;
+  if (board.querySelector('.ZU-boardhideunhide') || boardHider?.nativeSupport) return;
   board.insertAdjacentHTML('afterBegin',
     `<span class="pull-left sidemenu-board-icons ZU-boardhideunhide">
       <span title="Скрыть" class="ZU-board-hide-icon">
@@ -2319,7 +2328,8 @@ function addThreadControls(threadDOM, threadVue) {
   let op = threadDOM.querySelector('.post-op')
   , opPostID = op.querySelector('.post-id')
   op.querySelector('.post-header').classList.add('ZU-hide-board-by-op-container')
-  opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
+  if (! boardHider?.nativeSupport)
+    opPostID.insertAdjacentHTML('afterBegin', `<span title="Скрыть доску" class="post-button ZU-hide-board-by-op"><i class="fa fa-minus-square-o"></i></span>`)
 }
 
 var settingsPanel = {
@@ -2876,6 +2886,8 @@ function start() {
 start()
 
 function onFreshContent() {
+  boardHider.reCheckNativeSupport()
+
   try {
     state.type = app.$router.currentRoute.name
   }
