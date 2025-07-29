@@ -762,3 +762,7 @@ div:not(.ZU-thread-hidden) + .ZU-thread-hidden {
 .ZU-thread-hidden div:not(.post-popup) > .post {
     min-width: auto;
 }
+
+.ZU-set-as-bg-dropdown {
+  padding: 0!important;
+}
