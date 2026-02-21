@@ -85,3 +85,7 @@ div:not(.ZU-thread-hidden) + .ZU-thread-hidden,
 .threads-scroll-spy {
   display: none;
 }
+.ZU-catalog-mode div:not(.post-popup) > .post > .post-footer span[title="Нульчую"],
+.ZU-catalog-mode div:not(.post-popup) > .post > .post-footer span[title="НСБ"]{
+  display: none;
+}
