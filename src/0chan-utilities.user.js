@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         0chan Utilities
 // @namespace    https://ochan.ru/userjs/
-// @version      3.9.2
+// @version      4.0.0
 // @description  Various 0chan utilities
 // @updateURL    https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.meta.js
 // @downloadURL  https://juribiyan.github.io/0chan-utilities/src/0chan-utilities.user.js
@@ -37,6 +37,7 @@
 // @resource     baseCSS https://juribiyan.github.io/0chan-utilities/css/base.css?v=3.9.2
 // @resource     darkCSS https://juribiyan.github.io/0chan-utilities/css/dark.css?v=3.5.3
 // @resource     catalogCSS https://juribiyan.github.io/0chan-utilities/css/catalog.css?v=3.5.3
+// @resource     liquidCSS https://juribiyan.github.io/0chan-utilities/css/liquid-ass.css
 // ==/UserScript==
 
 const icons =
@@ -904,13 +905,18 @@ var darkMode = {
     //make sure to inject the base CSS first
     const baseCSS = GM_getResourceText("baseCSS")
     injector.inject('ZU-global', baseCSS)
-    this.css = GM_getResourceText("darkCSS")
-    // Check if dark mode is supported natively
-    if (typeof LSfetchJSON('userSettings')?.isDark !== 'undefined') return;
-    let settings = LSfetchJSON('ZU-settings')
-    , on = (settings && settings.darkMode !== undefined) ? settings.darkMode : this.enabledByDefault
-    if (on) {
+    
+    const userSettings = LSfetchJSON('userSettings')
+    , nativeSupport = typeof userSettings?.isDark !== 'undefined'
+    , settings = LSfetchJSON('ZU-settings')
+    , on = nativeSupport
+      ? userSettings.isDark
+      : (settings && settings.darkMode !== undefined) ? settings.darkMode : this.enabledByDefault
+    if (!nativeSupport && on) {
       this.toggle(on, false)
+    }
+    if (on && settings?.liquidAss) {
+      this.toggleLiquidAss(true)
     }
   },
   addButton: function() {
@@ -926,15 +932,30 @@ var darkMode = {
     buttonsRight.querySelector('.ZU-toggle-dark-mode').onclick = () => this.toggle()
   },
   toggle: function(on=!this._on, byUser=true) {
+    if (!this.css) {
+      this.css = GM_getResourceText("darkCSS")
+    }
     if (on) 
       injector.inject('ZU-dark', this.css)
-    else
+    else {
       injector.remove('ZU-dark')
+      this.toggleLiquidAss(false)
+    }
     this._on = on
     if (byUser) {
       settings.darkMode = !!on
       settings.save
     }
+  },
+  toggleLiquidAss: function(on) {
+    console.log('toggle liqeuid ass', on)
+    if (!this.liquidCSS) {
+      this.liquidCSS = GM_getResourceText("liquidCSS")
+    }
+    if (on) 
+      injector.inject('ZU-liquid', this.liquidCSS)
+    else
+      injector.remove('ZU-liquid')
   }
 }
 darkMode.init() // must be called ahead of time to prevent flashes
@@ -1337,7 +1358,8 @@ var settings = {
     fixUkrSpelling: true,
     legacyMediaViewer: false,
     backgroundImage: false,
-    volume: [1, false]
+    volume: [1, false],
+    liquidAss: false
   },
   _: {},
   hooks: {
@@ -1354,7 +1376,8 @@ var settings = {
     turnOffSnow: desnower.toggle.bind(desnower),
     selectedInstance: youtubeStuff.changeInstance.bind(youtubeStuff),
     fixUkrSpelling: fixUkrSpelling.toggle.bind(fixUkrSpelling),
-    legacyMediaViewer: MediaViewer.toggle.bind(MediaViewer)
+    legacyMediaViewer: MediaViewer.toggle.bind(MediaViewer),
+    liquidAss: darkMode.toggleLiquidAss.bind(darkMode)
   },
   save: function() {
     this._.hiddenBoards = this.hiddenBoards
@@ -2469,6 +2492,12 @@ var settingsPanel = {
       id: 'turnOffSnow',
       title: "Убрать снег",
       description: "Не использовать анимацию в качестве фона. Имеет смысл только в период нового года (~15 декабря - ~14 января)"
+    },
+    {
+      type: 'checkbox',
+      id: 'liquidAss',
+      title: "✨ Liquid Ass ✨",
+      description: "Использовать модный CSS"
     },
   ],
   install: function() {
