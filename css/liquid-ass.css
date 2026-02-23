@@ -1,0 +1,146 @@
+
+:root {
+  --liquid-ass-shadow:
+    inset 0.5px 1px #ffffff7a, 
+    inset -1px -0.5px #ffffff36, 
+    inset 2px 4px 24px #ffffff1f, 
+    0px 6px 15px #00000057;
+  --liquid-ass-shadow-lite:
+    inset 0.5px 1px #ffffff7a, 
+    inset -1px -0.5px #ffffff36, 
+    inset 2px 4px 24px #ffffff1f;
+  --sidebar-width: 264px;
+}
+#content > * {
+  padding-top: 50px!important;
+}
+body {
+  /* background-image: linear-gradient(180deg, #20242b 0%, #303640 100px); */
+  background-attachment: fixed;
+}
+.sidebar {
+  background: #23272e4d;
+  /* border: 1px solid #0000002e; */
+  border-radius: 21px;
+  margin: 8px;
+  width: calc(var(--sidebar-width) - 16px)!important;
+  box-shadow: var(--liquid-ass-shadow);
+  corner-shape: squircle;
+  z-index: 3;
+}
+.ZU-sidebar-hidden .sidebar {
+  margin-left: calc(0px - var(--sidebar-width));
+}
+.headmenu {
+  background: none!important;
+  border-bottom: none!important;
+}
+#content {
+  background: none!important;
+  margin-left: var(--sidebar-width);
+}
+.headmenu-buttons > .btn,
+.btn-group {
+  box-shadow: var(--liquid-ass-shadow);
+  border-radius: 100px;
+  background: #23272e4d;
+  backdrop-filter: blur(4px);
+}
+.headmenu {
+  margin-top: 5px;
+  left: var(--sidebar-width);
+}
+#content::before {
+  content: "";
+  position: fixed;
+  left: 0px;
+  width: 100%;
+  background: linear-gradient(180deg, #2c323b, #9b555500);
+  top: 0px;
+  height: 110px;
+  z-index: 2;
+  pointer-events: none;
+}
+.headmenu-title span {
+  text-shadow: 0 3px 4px #000000;
+}
+.sidebar .sidemenu-boards-list-box .sidemenu-boards-list .sidemenu-board-item a  {
+  border: none;
+  margin: 1px 9px 1px 5px;
+  padding: 3px 2px 3px 5px;
+  border-radius: 20px;
+  corner-shape: squircle;
+}
+.sidebar .sidemenu-boards-list-box .sidemenu-boards-list .sidemenu-board-item a:hover, 
+.sidebar .sidemenu-boards-list-box .sidemenu-boards-list .sidemenu-board-item a.active {
+  
+}
+.block {
+  corner-shape: squircle;
+  border-radius: 20px;
+  border: none;
+  border: 1px solid #ffffff0d!important;
+  box-shadow: 0 1px 5px #171a1f!important;
+}
+.post .post-footer {
+  border-top: none!important;
+  box-shadow: none!important;
+  margin-top: 8px;
+}
+body:not(.ZU-sidebar-hidden) #content > div {
+  padding-left: 10px!important;
+}
+.ZU-sidebar-hidden .headmenu-buttons-left {
+  margin-left: 10px;
+}
+.btn-open-sidebar {
+  margin-right: 8px;
+}
+
+.ZU-btn-link.active {
+  background: none!important;
+  box-shadow: none!important;
+  border: 1px solid transparent!important;
+}
+.ZU-btn-link.active::before {
+  content: "";
+  position: absolute;
+  height: calc(100% - 4px);
+  width: calc(100% - 4px);
+  background: #2affd552;
+  left: 2px;
+  top: 2px;
+  border-radius: 100px!important;
+  mix-blend-mode:lighten;
+  /* height: 100%; */
+}
+.ZU-catalog-mode div:not(.post-popup) > .post > .post-footer span[title="Нульчую"],
+.ZU-catalog-mode div:not(.post-popup) > .post > .post-footer span[title="НСБ"]{
+  display: none;
+}
+.boardhideunhide {
+  right: 14px;
+  left: unset!important;
+}
+.sidebar .sidemenu-boards-search input  {
+  box-shadow: var(--liquid-ass-shadow-lite);
+  border: none;
+  background: #1c1f2452;
+}
+.dropdown-menu {
+  background: #292f39b0!important;
+  box-shadow: var(--liquid-ass-shadow)!important;
+  border-radius: 20px;
+  corner-shape: squircle;
+  backdrop-filter: blur(8px);
+}
+.ZU-settings-dropdown {
+  top: 40px;
+}
+.headmenu .btn-primary, .headmenu .btn-primary:active {
+  background: none;
+  border: none;
+}
+.ZU-sidebar-hidden .ZU-settings-dropdown {
+  left: 9px;
+}
